@@ -1,0 +1,13 @@
+pose.yaml
+version: "3"
+services:
+  frontend:
+    build:
+      context: .
+      dockerfile: ./Dockerfile
+    tty: true
+    volumes:
+      - .:/app
+    ports:
+      - 5173:5173
+    entrypoint: ["/bin/bash"]
