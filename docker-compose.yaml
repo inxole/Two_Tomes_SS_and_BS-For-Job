@@ -1,7 +1,6 @@
-pose.yaml
 version: "3"
 services:
-  frontend:
+  twotomes:
     build:
       context: .
       dockerfile: ./Dockerfile
