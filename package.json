@@ -10,25 +10,33 @@
     "preview": "vite preview"
   },
   "dependencies": {
-    "@react-three/drei": "^9.99.0",
-    "@react-three/fiber": "^8.15.16",
+    "@react-three/drei": "^9.105.4",
+    "@react-three/fiber": "^8.16.2",
+    "babylonjs": "^7.3.2",
+    "babylonjs-gui": "^7.3.2",
+    "babylonjs-loaders": "^7.3.2",
+    "babylonjs-materials": "^7.3.2",
+    "babylonjs-post-process": "^7.3.2",
+    "babylonjs-procedural-textures": "^7.3.2",
+    "babylonjs-serializers": "^7.3.2",
+    "babylonjs-viewer": "^7.3.2",
     "gltfjsx": "^6.2.16",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
     "recoil": "^0.7.7",
-    "three": "^0.161.0",
-    "three-stdlib": "^2.29.4"
+    "three": "^0.163.0",
+    "three-stdlib": "^2.29.6"
   },
   "devDependencies": {
-    "@types/react": "^18.2.57",
-    "@types/react-dom": "^18.2.19",
-    "@typescript-eslint/eslint-plugin": "^7.0.2",
-    "@typescript-eslint/parser": "^7.0.2",
+    "@types/react": "^18.2.79",
+    "@types/react-dom": "^18.2.25",
+    "@typescript-eslint/eslint-plugin": "^7.7.1",
+    "@typescript-eslint/parser": "^7.7.1",
     "@vitejs/plugin-react-swc": "^3.6.0",
-    "eslint": "^8.56.0",
+    "eslint": "^9.1.1",
     "eslint-plugin-react-hooks": "^4.6.0",
-    "eslint-plugin-react-refresh": "^0.4.5",
-    "typescript": "^5.3.3",
-    "vite": "^5.1.4"
+    "eslint-plugin-react-refresh": "^0.4.6",
+    "typescript": "^5.4.5",
+    "vite": "^5.2.10"
   }
 }
