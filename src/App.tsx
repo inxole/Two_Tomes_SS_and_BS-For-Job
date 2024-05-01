@@ -1,19 +1,20 @@
-import * as BABYLON from 'babylonjs';
-import { Suspense, useRef, useEffect } from "react";
+import { useRef, useEffect } from "react"
+import { GLTFFileLoader } from '@babylonjs/loaders'
+import { Engine, MeshBuilder, Scene, StandardMaterial, Texture, SceneLoader } from '@babylonjs/core'
 
 const App = () => {
-  const renderRef = useRef<HTMLCanvasElement | null>(null)
+  const renderRef = useRef(null)
 
   useEffect(() => {
     if (renderRef.current) {
-      const engine = new BABYLON.Engine(renderRef.current, true)
-      const scene = new BABYLON.Scene(engine)
+      const engine = new Engine(renderRef.current, true)
+      const scene = new Scene(engine)
 
       scene.createDefaultCameraOrLight(true, true, true)
 
-      const ground = BABYLON.MeshBuilder.CreateGround("ground", { width: 6, height: 6 }, scene)
-      const groundMaterial = new BABYLON.StandardMaterial("Ground Material", scene)
-      let groundTexture = new BABYLON.Texture("path/to/checkerboard_basecolor.png", scene)
+      const ground = MeshBuilder.CreateGround("ground", { width: 6, height: 6 }, scene)
+      const groundMaterial = new StandardMaterial("Ground Material", scene)
+      let groundTexture = new Texture("path/to/checkerboard_basecolor.png", scene)
 
       groundMaterial.diffuseTexture = groundTexture
       ground.material = groundMaterial
@@ -21,18 +22,28 @@ const App = () => {
       engine.runRenderLoop(() => {
         scene.render()
       })
+      GLTFFileLoader.IncrementalLoading = true
+      SceneLoader.ImportMesh("", "./", "Tome_SS.glb", scene, function (newMeshes) {
+        // This function is called when the GLB file is loaded
+        // newMeshes is an array of all the meshes in the GLB file
+        newMeshes.forEach(mesh => {
+          // Do something with the mesh
+          if (mesh.name === "nameOfTheMeshYouWantToModify") {
+            // Modify the mesh
+          }
+        })
+      })
 
       return () => {
+        scene.dispose()
         engine.dispose()
       }
     }
   }, [])
 
   return (
-    <Suspense fallback={<div>Loading...</div>}>
-      <canvas id="render" style={{ width: "100%", height: "800px" }} ref={renderRef}>
-      </canvas>
-    </Suspense>
+    <canvas id="render" style={{ width: "100%", height: "800px" }} ref={renderRef}>
+    </canvas>
   )
 }
 

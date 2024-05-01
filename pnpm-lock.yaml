@@ -5,6 +5,12 @@ settings:
   excludeLinksFromLockfile: false
 
 dependencies:
+  '@babylonjs/core':
+    specifier: ^7.4.0
+    version: 7.4.0
+  '@babylonjs/loaders':
+    specifier: ^7.4.0
+    version: 7.4.0(@babylonjs/core@7.4.0)(babylonjs-gltf2interface@7.3.2)
   '@react-three/drei':
     specifier: ^9.105.4
     version: 9.105.4(@react-three/fiber@8.16.2)(@types/react@18.2.79)(@types/three@0.163.0)(react-dom@18.2.0)(react@18.2.0)(three@0.163.0)
@@ -131,6 +137,20 @@ packages:
     engines: {node: '>=6.9.0'}
     dependencies:
       regenerator-runtime: 0.14.1
+    dev: false
+
+  /@babylonjs/core@7.4.0:
+    resolution: {integrity: sha512-HwFDX7AMw03uo0QeUymtjTF1y8tedbJCMlx0Y1bZQHaBW0+OR7w1yEPclaM160SG9OaSwemJwG/EvD48ykzSDA==}
+    dev: false
+
+  /@babylonjs/loaders@7.4.0(@babylonjs/core@7.4.0)(babylonjs-gltf2interface@7.3.2):
+    resolution: {integrity: sha512-5yk7+8KOB8Dnu9C+u07sQvszy8HpY27/QUmJ5E4Siu+pcGnIV+w5dU0/3iyE3KbXQDU5yTPOFQpfiB7b2Du0yg==}
+    peerDependencies:
+      '@babylonjs/core': ^7.0.0
+      babylonjs-gltf2interface: ^7.0.0
+    dependencies:
+      '@babylonjs/core': 7.4.0
+      babylonjs-gltf2interface: 7.3.2
     dev: false
 
   /@esbuild/aix-ppc64@0.20.2:
