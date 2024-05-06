@@ -1,9 +1,11 @@
-import { useRef, useEffect } from "react"
-import { GLTFFileLoader } from '@babylonjs/loaders'
-import { Engine, MeshBuilder, Scene, StandardMaterial, Texture, SceneLoader } from '@babylonjs/core'
+import { useRef, useEffect, useState } from "react"
+import { AnimationGroup, Engine, Scene, SceneLoader } from '@babylonjs/core'
+import '@babylonjs/loaders'
 
 const App = () => {
   const renderRef = useRef(null)
+  const [isAnimating, setIsAnimating] = useState(false)
+  const animationRef = useRef<AnimationGroup | null>(null)
 
   useEffect(() => {
     if (renderRef.current) {
@@ -12,26 +14,15 @@ const App = () => {
 
       scene.createDefaultCameraOrLight(true, true, true)
 
-      const ground = MeshBuilder.CreateGround("ground", { width: 6, height: 6 }, scene)
-      const groundMaterial = new StandardMaterial("Ground Material", scene)
-      let groundTexture = new Texture("path/to/checkerboard_basecolor.png", scene)
-
-      groundMaterial.diffuseTexture = groundTexture
-      ground.material = groundMaterial
-
       engine.runRenderLoop(() => {
         scene.render()
       })
-      GLTFFileLoader.IncrementalLoading = true
-      SceneLoader.ImportMesh("", "./", "Tome_SS.glb", scene, function (newMeshes) {
-        // This function is called when the GLB file is loaded
-        // newMeshes is an array of all the meshes in the GLB file
-        newMeshes.forEach(mesh => {
-          // Do something with the mesh
-          if (mesh.name === "nameOfTheMeshYouWantToModify") {
-            // Modify the mesh
-          }
-        })
+
+      SceneLoader.Append("./", "test_page.glb", scene, function (scene) {
+        let foundAnimation = scene.getAnimationGroupByName("page_action")
+        if (foundAnimation) {
+          animationRef.current = foundAnimation
+        }
       })
 
       return () => {
@@ -41,21 +32,21 @@ const App = () => {
     }
   }, [])
 
+  const toggleAnimation = () => {
+    if (animationRef.current) {
+      if (isAnimating) {
+        animationRef.current.stop()
+      } else {
+        animationRef.current.start(true)
+      }
+      setIsAnimating(!isAnimating)
+    }
+  }
+
   return (
-    <canvas id="render" style={{ width: "100%", height: "800px" }} ref={renderRef}>
+    <canvas id="render" style={{ width: "100%", height: "800px" }} ref={renderRef} onClick={toggleAnimation}>
     </canvas>
   )
 }
 
 export default App
-
-// ゲームの進行状況の保存
-
-// 未クリア：天使文字変換不可
-// クリア：天使文字変換
-
-// frontend(見た目) babylon
-
-//OpenID と OAuth
-// backend user認証 supabase 
-// user data supabase postgreSQL
