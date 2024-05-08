@@ -1,11 +1,36 @@
-import { useRef, useEffect, useState } from "react"
-import { AnimationGroup, Engine, Scene, SceneLoader } from '@babylonjs/core'
+import { useRef, useEffect } from "react"
+import { AnimationGroup, Engine, PointerEventTypes, PointerInfo, Scene, SceneLoader } from '@babylonjs/core'
 import '@babylonjs/loaders'
 
 const App = () => {
   const renderRef = useRef(null)
-  const [isAnimating, setIsAnimating] = useState(false)
+  const isAnimatingRef = useRef(false)
   const animationRef = useRef<AnimationGroup | null>(null)
+
+  const toggleAnimation = () => {
+    if (animationRef.current) {
+      if (isAnimatingRef.current) {
+        animationRef.current.stop()
+      } else {
+        animationRef.current.start(true)
+      }
+      isAnimatingRef.current = !isAnimatingRef.current
+    }
+  }
+
+  function pointerobserber(pointerInfo: PointerInfo) {
+    if (pointerInfo.pickInfo !== null) {
+      if (pointerInfo.type === PointerEventTypes.POINTERDOWN) {
+        if (pointerInfo.pickInfo.hit) {
+          if (pointerInfo.pickInfo.pickedMesh) {
+            if (pointerInfo.pickInfo.pickedMesh.name === "Plane") {
+              toggleAnimation()
+            }
+          }
+        }
+      }
+    }
+  }
 
   useEffect(() => {
     if (renderRef.current) {
@@ -25,6 +50,8 @@ const App = () => {
         }
       })
 
+      scene.onPointerObservable.add(pointerobserber)
+
       return () => {
         scene.dispose()
         engine.dispose()
@@ -32,19 +59,8 @@ const App = () => {
     }
   }, [])
 
-  const toggleAnimation = () => {
-    if (animationRef.current) {
-      if (isAnimating) {
-        animationRef.current.stop()
-      } else {
-        animationRef.current.start(true)
-      }
-      setIsAnimating(!isAnimating)
-    }
-  }
-
   return (
-    <canvas id="render" style={{ width: "100%", height: "800px" }} ref={renderRef} onClick={toggleAnimation}>
+    <canvas id="render" style={{ width: "100%", height: "800px" }} ref={renderRef}>
     </canvas>
   )
 }
