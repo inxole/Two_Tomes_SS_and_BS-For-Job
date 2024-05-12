@@ -1,5 +1,5 @@
 import { useRef, useEffect } from "react"
-import { AnimationGroup, Engine, PointerEventTypes, PointerInfo, Scene, SceneLoader } from '@babylonjs/core'
+import { AnimationGroup, BoxBuilder, Color3, Engine, Mesh, MeshBuilder, PointerEventTypes, PointerInfo, Scene, SceneLoader, StandardMaterial } from '@babylonjs/core'
 import '@babylonjs/loaders'
 
 const App = () => {
@@ -18,15 +18,11 @@ const App = () => {
     }
   }
 
-  function pointerobserber(pointerInfo: PointerInfo) {
-    if (pointerInfo.pickInfo !== null) {
-      if (pointerInfo.type === PointerEventTypes.POINTERDOWN) {
-        if (pointerInfo.pickInfo.hit) {
-          if (pointerInfo.pickInfo.pickedMesh) {
-            if (pointerInfo.pickInfo.pickedMesh.name === "Plane") {
-              toggleAnimation()
-            }
-          }
+  function pointerObserver(pointerInfo: PointerInfo) {
+    if (pointerInfo.pickInfo !== null && pointerInfo.type === PointerEventTypes.POINTERDOWN) {
+      if (pointerInfo.pickInfo.hit && pointerInfo.pickInfo.pickedMesh) {
+        if (pointerInfo.pickInfo.pickedMesh.name === "hitBox") {
+          toggleAnimation()
         }
       }
     }
@@ -48,9 +44,23 @@ const App = () => {
         if (foundAnimation) {
           animationRef.current = foundAnimation
         }
+
+        // ヒットボックスを追加
+        const targetMesh = scene.getMeshByName("Plane")
+        if (targetMesh) {
+          const hitBox = MeshBuilder.CreateBox("hitBox", { width: 1, height: 1, depth: 1 }, scene)
+          hitBox.parent = targetMesh
+          hitBox.position.y += 1 // 位置を調整
+
+          // ヒットボックスのマテリアル設定（透明）
+          const mat = new StandardMaterial("hitBoxMat", scene)
+          mat.alpha = 0.3 // 完全に透明
+          mat.diffuseColor = new Color3(0.5, 0.5, 1)
+          hitBox.material = mat
+        }
       })
 
-      scene.onPointerObservable.add(pointerobserber)
+      scene.onPointerObservable.add(pointerObserver)
 
       return () => {
         scene.dispose()
