@@ -20,10 +20,17 @@ const App = () => {
 
   function pointerObserver(pointerInfo: PointerInfo) {
     if (pointerInfo.pickInfo !== null && pointerInfo.type === PointerEventTypes.POINTERDOWN) {
-      if (pointerInfo.pickInfo.hit && pointerInfo.pickInfo.pickedMesh?.name === "hitBox") {
+      if (pointerInfo.pickInfo.hit && /^hitBox_/.test(pointerInfo.pickInfo.pickedMesh?.name || "")) {
         toggleAnimation()
       }
     }
+  }
+
+  function createHitBoxMaterial(boneName: string, scene: Scene): StandardMaterial {
+    const material = new StandardMaterial(`hitBoxMat_${boneName}`, scene)
+    material.alpha = 0.3
+    material.diffuseColor = new Color3(0.5, 0.5, 1)
+    return material
   }
 
   useEffect(() => {
@@ -32,30 +39,23 @@ const App = () => {
       const scene = new Scene(engine)
 
       scene.createDefaultCameraOrLight(true, true, true)
-
-      engine.runRenderLoop(() => {
-        scene.render()
-      })
+      engine.runRenderLoop(() => { scene.render() })
 
       SceneLoader.Append("./", "page.glb", scene, function (scene) {
         const foundAnimation = scene.getAnimationGroupByName("page_action")
-        if (foundAnimation) {
-          animationRef.current = foundAnimation
-        }
+        if (foundAnimation) { animationRef.current = foundAnimation }
 
         const skeleton = scene.skeletons[0]
-        const bone = skeleton.bones.find(b => b.name === "Bone.001")
 
-        const Hit_Box = MeshBuilder.CreateBox("hitBox", { width: 0.1, height: 0.1, depth: 2 }, scene)
-        if (bone && scene.meshes[0]) {
-          Hit_Box.attachToBone(bone, scene.meshes[0])
-        }
+        skeleton.bones
+          .filter(bone => /^Bone(\.0?1[0-9]|\.00[1-9])?$/.test(bone.name))
+          .map(bone => {
 
-        const mat = new StandardMaterial("hitBoxMat", scene)
-        mat.alpha = 0.3
-        mat.diffuseColor = new Color3(0.5, 0.5, 1)
-        Hit_Box.material = mat
-        Hit_Box.position = new Vector3(0, 0.02, 0)
+            const hitBox = MeshBuilder.CreateBox(`hitBox_${bone.name}`, { width: 0.1, height: 0.1, depth: 2 }, scene)
+            hitBox.material = createHitBoxMaterial(bone.name, scene)
+            hitBox.attachToBone(bone, scene.meshes[0])
+            hitBox.position = new Vector3(0, 0.02, 0)
+          })
       })
 
       scene.onPointerObservable.add(pointerObserver)
