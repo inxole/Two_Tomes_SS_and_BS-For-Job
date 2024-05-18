@@ -11,42 +11,33 @@ importers:
       '@babylonjs/core':
         specifier: ^7.4.0
         version: 7.4.0
+      '@babylonjs/gui':
+        specifier: ^7.7.0
+        version: 7.7.0(@babylonjs/core@7.4.0)
       '@babylonjs/inspector':
         specifier: ^7.6.1
-        version: 7.6.1(@babylonjs/core@7.4.0)(@babylonjs/gui-editor@7.6.1(@babylonjs/core@7.4.0)(@babylonjs/gui@7.6.1(@babylonjs/core@7.4.0))(@types/react-dom@18.2.25)(@types/react@18.2.79))(@babylonjs/gui@7.6.1(@babylonjs/core@7.4.0))(@babylonjs/loaders@7.4.0(@babylonjs/core@7.4.0)(babylonjs-gltf2interface@7.3.2))(@babylonjs/materials@7.6.1(@babylonjs/core@7.4.0))(@babylonjs/serializers@7.6.1(@babylonjs/core@7.4.0)(babylonjs-gltf2interface@7.3.2))(@types/react-dom@18.2.25)(@types/react@18.2.79)
+        version: 7.6.1(@babylonjs/core@7.4.0)(@babylonjs/gui-editor@7.6.1(@babylonjs/core@7.4.0)(@babylonjs/gui@7.7.0(@babylonjs/core@7.4.0))(@types/react-dom@18.2.25)(@types/react@18.2.79))(@babylonjs/gui@7.7.0(@babylonjs/core@7.4.0))(@babylonjs/loaders@7.4.0(@babylonjs/core@7.4.0)(babylonjs-gltf2interface@7.3.2))(@babylonjs/materials@7.7.0(@babylonjs/core@7.4.0))(@babylonjs/serializers@7.7.0(@babylonjs/core@7.4.0)(babylonjs-gltf2interface@7.3.2))(@types/react-dom@18.2.25)(@types/react@18.2.79)
       '@babylonjs/loaders':
         specifier: ^7.4.0
         version: 7.4.0(@babylonjs/core@7.4.0)(babylonjs-gltf2interface@7.3.2)
+      '@babylonjs/materials':
+        specifier: ^7.7.0
+        version: 7.7.0(@babylonjs/core@7.4.0)
+      '@babylonjs/post-processes':
+        specifier: ^7.7.0
+        version: 7.7.0(@babylonjs/core@7.4.0)
+      '@babylonjs/procedural-textures':
+        specifier: ^7.7.0
+        version: 7.7.0(@babylonjs/core@7.4.0)
+      '@babylonjs/serializers':
+        specifier: ^7.7.0
+        version: 7.7.0(@babylonjs/core@7.4.0)(babylonjs-gltf2interface@7.3.2)
       '@react-three/drei':
         specifier: ^9.105.4
         version: 9.105.4(@react-three/fiber@8.16.2(react-dom@18.2.0(react@18.2.0))(react@18.2.0)(three@0.163.0))(@types/react@18.2.79)(@types/three@0.163.0)(react-dom@18.2.0(react@18.2.0))(react@18.2.0)(three@0.163.0)
       '@react-three/fiber':
         specifier: ^8.16.2
         version: 8.16.2(react-dom@18.2.0(react@18.2.0))(react@18.2.0)(three@0.163.0)
-      babylonjs:
-        specifier: ^7.3.2
-        version: 7.3.2
-      babylonjs-gui:
-        specifier: ^7.3.2
-        version: 7.3.2
-      babylonjs-loaders:
-        specifier: ^7.3.2
-        version: 7.3.2
-      babylonjs-materials:
-        specifier: ^7.3.2
-        version: 7.3.2
-      babylonjs-post-process:
-        specifier: ^7.3.2
-        version: 7.3.2
-      babylonjs-procedural-textures:
-        specifier: ^7.3.2
-        version: 7.3.2
-      babylonjs-serializers:
-        specifier: ^7.3.2
-        version: 7.3.2
-      babylonjs-viewer:
-        specifier: ^7.3.2
-        version: 7.3.2
       gltfjsx:
         specifier: ^6.2.16
         version: 6.2.16
@@ -133,8 +124,8 @@ packages:
       '@types/react': '>=16.7.3'
       '@types/react-dom': '>=16.0.9'
 
-  '@babylonjs/gui@7.6.1':
-    resolution: {integrity: sha512-Rh46RiNA5K6SRvPR5ybub7/KeAEQL9l6cVs/jsBpXSGr+Wx4VUYK9OjmsnI9kaOdHOmzWWn1n+R3B2mLDGC6kw==}
+  '@babylonjs/gui@7.7.0':
+    resolution: {integrity: sha512-PbE9LWI8c8J+N1QQJ3Ayareigj9zWsPTnGf6pcyrM5tuN2AhkUfSJVaUo6jsox4gbcB7l429ieS1oIzrtTuB7g==}
     peerDependencies:
       '@babylonjs/core': ^7.0.0
 
@@ -156,13 +147,23 @@ packages:
       '@babylonjs/core': ^7.0.0
       babylonjs-gltf2interface: ^7.0.0
 
-  '@babylonjs/materials@7.6.1':
-    resolution: {integrity: sha512-CF9cBLZ2kcAkyWfaU7pYx/K6Jt5t3npShoNbeRWQDvSP1lKpTPc4JjPC7IqatQ8/91oF/pGG659pw3N+wyZlcw==}
+  '@babylonjs/materials@7.7.0':
+    resolution: {integrity: sha512-dyPPdo/CQ/YmIg+dHFSY8E98I+lwxVYj9UYtrlv0p7cxgDG4GZiWI95AF1MfzztIOhXVX9KDqhruV5UzvCiZrg==}
     peerDependencies:
       '@babylonjs/core': ^7.0.0
 
-  '@babylonjs/serializers@7.6.1':
-    resolution: {integrity: sha512-vXZUoyO73UAp2OBZAMkbrfLFQU15i0Qtw4KBaei+h5DbzPrpd12c4hW/lUttJYL4Sz0LEwzCPBMD79uJxwZBiw==}
+  '@babylonjs/post-processes@7.7.0':
+    resolution: {integrity: sha512-zuycAuKLAhD8C9jS/cWz9Gs9M1O2hbQAiZK2hgkpu1EUsXBHvoqictRZFVJNUm1N8imbv7W22y0WQHnzLbyAQg==}
+    peerDependencies:
+      '@babylonjs/core': ^7.0.0
+
+  '@babylonjs/procedural-textures@7.7.0':
+    resolution: {integrity: sha512-tsngELzU8MKXB9uk7docuXxE61GJQNsonnC6Twaa35a8kTh9YfNxaJ1pGH0CqBtPMkTk386Tjql3gvAP9K/CGg==}
+    peerDependencies:
+      '@babylonjs/core': ^7.0.0
+
+  '@babylonjs/serializers@7.7.0':
+    resolution: {integrity: sha512-aX9fF082QwGgriHp+DiQ/UpCfd6c5X1Sca2F3PLz1WinARPJnExCH/E/qWs/JoHGXD2N6plmYM83Nja4xIz1DA==}
     peerDependencies:
       '@babylonjs/core': ^7.0.0
       babylonjs-gltf2interface: ^7.0.0
@@ -768,30 +769,6 @@ packages:
 
   babylonjs-gltf2interface@7.3.2:
     resolution: {integrity: sha512-vi6XARcvIdzEdB2wXDT55H3TOiHeFEsohrOb28RHXH9s3BlbMoXH2Gg2aZWXkOMFODfvtLyEU7KjVuCkbOEYcQ==}
-
-  babylonjs-gui@7.3.2:
-    resolution: {integrity: sha512-1WgIJ2Ca5hR6p8py8wEqWQV4g0PQ0lRFh3zT17XCEGLfP1fbEs061jsjrEjvL7QYtGucS8OcJAWk4+saO30qvw==}
-
-  babylonjs-loaders@7.3.2:
-    resolution: {integrity: sha512-65CMj8Z00dTT/8/kzJV7O/1MuYby/Dc84FWAhIxiNlP5lmV+7xXjpoPFu+3C9+uDLTqm4zoV8sum1BefBhm24Q==}
-
-  babylonjs-materials@7.3.2:
-    resolution: {integrity: sha512-NPxaDZLZ6cHJANmS39hxCC4pu10zEU5accq+nWw+EyPYZ7h5RdkbqU/Rgbes5Estnzu8kJzmXFPD53WE00S+AA==}
-
-  babylonjs-post-process@7.3.2:
-    resolution: {integrity: sha512-uwkak/wvhqJAfO6mnUCGgpjYlVNXRiKY5y9nCdtcZNnwKJmGlP/0MGR2TdE3bpkKRwm+8JdQzbOYE88vB38K9w==}
-
-  babylonjs-procedural-textures@7.3.2:
-    resolution: {integrity: sha512-t3bLsXkdWZvydZfLBt7kezTsxL9raPfBKTtGVOBNZigGDG6G+6LZmro6YsNAjHdY/v4jD0m4uwHPu4ugbtrHPA==}
-
-  babylonjs-serializers@7.3.2:
-    resolution: {integrity: sha512-Mx/x+DMP8m17b2wsUPcykQeDYCJ/5AOMoAODoVPMVEkXvcDIO6/3fRcdW/kkQ3hki82Op09NxTIgI34M48WRiQ==}
-
-  babylonjs-viewer@7.3.2:
-    resolution: {integrity: sha512-ts/+SisVkuwtuc4oj6PwI2wqBJd4xHyybUdTLcLh3trvFiaVZEVsgvDwxGJWGYOMFq4Uhu/BraKQY7cDC/OAhw==}
-
-  babylonjs@7.3.2:
-    resolution: {integrity: sha512-5EATRxTwhlTX7O9BX1PGGV8OjT1KpFGJA3s7dUNdotIuGzFycmKYihsMGAZurEdu1dl5mm/06woQVNLoJ7XfGw==}
 
   balanced-match@1.0.2:
     resolution: {integrity: sha512-3oSeUO0TMV67hN1AmbXsK4yaqU7tjiHlbxRDZOpH0KW9+CeX4bRAaX0Anxt0tx2MrpRpWwQaPwIlISEJhYU5Pw==}
@@ -1969,25 +1946,25 @@ snapshots:
 
   '@babylonjs/core@7.4.0': {}
 
-  '@babylonjs/gui-editor@7.6.1(@babylonjs/core@7.4.0)(@babylonjs/gui@7.6.1(@babylonjs/core@7.4.0))(@types/react-dom@18.2.25)(@types/react@18.2.79)':
+  '@babylonjs/gui-editor@7.6.1(@babylonjs/core@7.4.0)(@babylonjs/gui@7.7.0(@babylonjs/core@7.4.0))(@types/react-dom@18.2.25)(@types/react@18.2.79)':
     dependencies:
       '@babylonjs/core': 7.4.0
-      '@babylonjs/gui': 7.6.1(@babylonjs/core@7.4.0)
+      '@babylonjs/gui': 7.7.0(@babylonjs/core@7.4.0)
       '@types/react': 18.2.79
       '@types/react-dom': 18.2.25
 
-  '@babylonjs/gui@7.6.1(@babylonjs/core@7.4.0)':
+  '@babylonjs/gui@7.7.0(@babylonjs/core@7.4.0)':
     dependencies:
       '@babylonjs/core': 7.4.0
 
-  '@babylonjs/inspector@7.6.1(@babylonjs/core@7.4.0)(@babylonjs/gui-editor@7.6.1(@babylonjs/core@7.4.0)(@babylonjs/gui@7.6.1(@babylonjs/core@7.4.0))(@types/react-dom@18.2.25)(@types/react@18.2.79))(@babylonjs/gui@7.6.1(@babylonjs/core@7.4.0))(@babylonjs/loaders@7.4.0(@babylonjs/core@7.4.0)(babylonjs-gltf2interface@7.3.2))(@babylonjs/materials@7.6.1(@babylonjs/core@7.4.0))(@babylonjs/serializers@7.6.1(@babylonjs/core@7.4.0)(babylonjs-gltf2interface@7.3.2))(@types/react-dom@18.2.25)(@types/react@18.2.79)':
+  '@babylonjs/inspector@7.6.1(@babylonjs/core@7.4.0)(@babylonjs/gui-editor@7.6.1(@babylonjs/core@7.4.0)(@babylonjs/gui@7.7.0(@babylonjs/core@7.4.0))(@types/react-dom@18.2.25)(@types/react@18.2.79))(@babylonjs/gui@7.7.0(@babylonjs/core@7.4.0))(@babylonjs/loaders@7.4.0(@babylonjs/core@7.4.0)(babylonjs-gltf2interface@7.3.2))(@babylonjs/materials@7.7.0(@babylonjs/core@7.4.0))(@babylonjs/serializers@7.7.0(@babylonjs/core@7.4.0)(babylonjs-gltf2interface@7.3.2))(@types/react-dom@18.2.25)(@types/react@18.2.79)':
     dependencies:
       '@babylonjs/core': 7.4.0
-      '@babylonjs/gui': 7.6.1(@babylonjs/core@7.4.0)
-      '@babylonjs/gui-editor': 7.6.1(@babylonjs/core@7.4.0)(@babylonjs/gui@7.6.1(@babylonjs/core@7.4.0))(@types/react-dom@18.2.25)(@types/react@18.2.79)
+      '@babylonjs/gui': 7.7.0(@babylonjs/core@7.4.0)
+      '@babylonjs/gui-editor': 7.6.1(@babylonjs/core@7.4.0)(@babylonjs/gui@7.7.0(@babylonjs/core@7.4.0))(@types/react-dom@18.2.25)(@types/react@18.2.79)
       '@babylonjs/loaders': 7.4.0(@babylonjs/core@7.4.0)(babylonjs-gltf2interface@7.3.2)
-      '@babylonjs/materials': 7.6.1(@babylonjs/core@7.4.0)
-      '@babylonjs/serializers': 7.6.1(@babylonjs/core@7.4.0)(babylonjs-gltf2interface@7.3.2)
+      '@babylonjs/materials': 7.7.0(@babylonjs/core@7.4.0)
+      '@babylonjs/serializers': 7.7.0(@babylonjs/core@7.4.0)(babylonjs-gltf2interface@7.3.2)
       '@fortawesome/fontawesome-svg-core': 6.5.2
       '@fortawesome/free-regular-svg-icons': 6.5.2
       '@fortawesome/free-solid-svg-icons': 6.5.2
@@ -1999,11 +1976,19 @@ snapshots:
       '@babylonjs/core': 7.4.0
       babylonjs-gltf2interface: 7.3.2
 
-  '@babylonjs/materials@7.6.1(@babylonjs/core@7.4.0)':
+  '@babylonjs/materials@7.7.0(@babylonjs/core@7.4.0)':
     dependencies:
       '@babylonjs/core': 7.4.0
 
-  '@babylonjs/serializers@7.6.1(@babylonjs/core@7.4.0)(babylonjs-gltf2interface@7.3.2)':
+  '@babylonjs/post-processes@7.7.0(@babylonjs/core@7.4.0)':
+    dependencies:
+      '@babylonjs/core': 7.4.0
+
+  '@babylonjs/procedural-textures@7.7.0(@babylonjs/core@7.4.0)':
+    dependencies:
+      '@babylonjs/core': 7.4.0
+
+  '@babylonjs/serializers@7.7.0(@babylonjs/core@7.4.0)(babylonjs-gltf2interface@7.3.2)':
     dependencies:
       '@babylonjs/core': 7.4.0
       babylonjs-gltf2interface: 7.3.2
@@ -2541,38 +2526,6 @@ snapshots:
   b4a@1.6.6: {}
 
   babylonjs-gltf2interface@7.3.2: {}
-
-  babylonjs-gui@7.3.2:
-    dependencies:
-      babylonjs: 7.3.2
-
-  babylonjs-loaders@7.3.2:
-    dependencies:
-      babylonjs: 7.3.2
-      babylonjs-gltf2interface: 7.3.2
-
-  babylonjs-materials@7.3.2:
-    dependencies:
-      babylonjs: 7.3.2
-
-  babylonjs-post-process@7.3.2:
-    dependencies:
-      babylonjs: 7.3.2
-
-  babylonjs-procedural-textures@7.3.2:
-    dependencies:
-      babylonjs: 7.3.2
-
-  babylonjs-serializers@7.3.2:
-    dependencies:
-      babylonjs: 7.3.2
-      babylonjs-gltf2interface: 7.3.2
-
-  babylonjs-viewer@7.3.2:
-    dependencies:
-      babylonjs-gltf2interface: 7.3.2
-
-  babylonjs@7.3.2: {}
 
   balanced-match@1.0.2: {}
 
