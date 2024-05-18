@@ -1,5 +1,5 @@
 import { useRef, useEffect } from 'react'
-import { Engine, Scene, ArcRotateCamera, Vector3, HemisphericLight, StandardMaterial, Color3, AxesViewer, Skeleton, Bone, Matrix, VertexData, DefaultRenderingPipeline } from '@babylonjs/core'
+import { Engine, Scene, ArcRotateCamera, Vector3, HemisphericLight, StandardMaterial, Color3, AxesViewer, Skeleton, Bone, Matrix, VertexData, DefaultRenderingPipeline, Animation } from '@babylonjs/core'
 import { Mesh } from '@babylonjs/core/Meshes/mesh'
 import { SkeletonViewer } from '@babylonjs/core/Debug/skeletonViewer'
 import { Inspector } from '@babylonjs/inspector'
@@ -20,10 +20,7 @@ const BabylonScene = () => {
         camera.upperRadiusLimit = 5
         camera.fov = 0.3
 
-        // レンダリングパイプラインの作成
         const pipeline = new DefaultRenderingPipeline("default", true, scene, [camera])
-
-        // Depth of Fieldの設定
         pipeline.depthOfFieldEnabled = true
         pipeline.depthOfField.focalLength = 0.1
         pipeline.depthOfField.fStop = 1.4
@@ -35,20 +32,19 @@ const BabylonScene = () => {
         const axesViewer = new AxesViewer(scene, 0.1)
         axesViewer.update(new Vector3(0, 0, 0), new Vector3(1, 0, 0), new Vector3(0, 1, 0), new Vector3(0, 0, 1))
 
-        // Define the plane's size and subdivisions
         const width = 0.2
         const height = 0.296
         const widthSubdivisions = 20
         const heightSubdivisions = 1
 
-        // Create custom mesh
         const page = new Mesh("page", scene)
         const positions = []
         const indices = []
         const normals = []
         const uvs = []
+        const weights = []
+        const influences = []
 
-        // Define the vertex positions, normals, and UVs
         for (let i = 0; i <= heightSubdivisions; i++) {
             for (let j = 0; j <= widthSubdivisions; j++) {
                 const x = (j * width) / widthSubdivisions - width / 2
@@ -56,10 +52,16 @@ const BabylonScene = () => {
                 positions.push(x, y, 0)
                 normals.push(0, 0, -1)
                 uvs.push(j / widthSubdivisions, i / heightSubdivisions)
+
+                // ウェイトとインフルエンスの設定
+                const weight = j / widthSubdivisions
+                weights.push(weight, 1 - weight, 0, 0)
+                const influence1 = Math.min(j, widthSubdivisions - 1)
+                const influence2 = Math.min(j + 1, widthSubdivisions)
+                influences.push(influence1, influence2, 0, 0)
             }
         }
 
-        // Define the indices
         for (let i = 0; i < heightSubdivisions; i++) {
             for (let j = 0; j < widthSubdivisions; j++) {
                 const a = i * (widthSubdivisions + 1) + j
@@ -71,44 +73,55 @@ const BabylonScene = () => {
             }
         }
 
-        // Set the vertex data
         const vertexData = new VertexData()
         vertexData.positions = positions
         vertexData.indices = indices
         vertexData.normals = normals
         vertexData.uvs = uvs
+        vertexData.matricesWeights = weights
+        vertexData.matricesIndices = influences
         vertexData.applyToMesh(page)
 
-        // Create material
         const pageMaterial = new StandardMaterial("pageMat", scene)
         pageMaterial.diffuseColor = new Color3(1, 1, 1)
-        pageMaterial.wireframe = true
+        pageMaterial.backFaceCulling = false
         page.material = pageMaterial
 
-        // Rotate the page
         page.rotation = new Vector3(Math.PI / 2, 0, 0)
 
-        // SceneLoader.Append("./", "page.glb", scene, function () { })
-
-        // スケルトンの作成
         const skeleton = new Skeleton("skeleton", "001", scene)
 
-        // 20個のボーンを作成し、x軸に沿って配置
         let parentBone = new Bone("rootBone", skeleton, null, Matrix.Translation(-0.1, 0, 0))
-        for (let i = 0; i < 20; i++) {
-            parentBone = new Bone(`bone${i}`, skeleton, parentBone, Matrix.Translation(0.01, 0, 0)) // ボーンをx軸に沿って配置
+        for (let i = 0; i <= widthSubdivisions; i++) {
+            parentBone = new Bone(`bone${i}`, skeleton, parentBone, Matrix.Translation(0.01, 0, 0))
         }
 
-        // メッシュにスケルトンを適用
         page.skeleton = skeleton
 
-        // スケルトンビューアの作成
         const skeletonViewer = new SkeletonViewer(skeleton, page, scene, false, 3, {
             displayMode: SkeletonViewer.DISPLAY_SPHERE_AND_SPURS
         })
         skeletonViewer.isEnabled = true
 
-        // スケルトンをインスペクターで見るために必須のフラグを設定
+        // アニメーションの作成
+        const animation = new Animation("boneAnimation", "rotation", 30, Animation.ANIMATIONTYPE_VECTOR3, Animation.ANIMATIONLOOPMODE_CYCLE)
+
+        // キーフレームの設定
+        const keys = [
+            { frame: 0, value: new Vector3(0, 0, 0) },
+            { frame: 30, value: new Vector3(0, 0.3, 0) }, // ページが半分めくられた状態
+            { frame: 60, value: new Vector3(0, 0, 0) } // ページが完全にめくられた状態
+        ]
+        animation.setKeys(keys)
+
+        // ボーンにアニメーションを適用
+        skeleton.bones.forEach((bone) => {
+            bone.animations = [animation]
+        })
+
+        // スケルトンに対してアニメーションを開始
+        scene.beginAnimation(skeleton, 0, 100, true)
+
         scene.debugLayer.show({
             embedMode: true
         })
