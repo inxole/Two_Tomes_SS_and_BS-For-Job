@@ -1,8 +1,9 @@
 import { useRef, useEffect } from 'react'
-import { Engine, Scene, ArcRotateCamera, Vector3, HemisphericLight, StandardMaterial, Color3, AxesViewer, Skeleton, Bone, Matrix, VertexData, DefaultRenderingPipeline, Animation } from '@babylonjs/core'
+import { Engine, Scene, ArcRotateCamera, Vector3, HemisphericLight, StandardMaterial, Color3, AxesViewer, Skeleton, Bone, Matrix, VertexData, DefaultRenderingPipeline } from '@babylonjs/core'
 import { Mesh } from '@babylonjs/core/Meshes/mesh'
 import { SkeletonViewer } from '@babylonjs/core/Debug/skeletonViewer'
 import { Inspector } from '@babylonjs/inspector'
+import createYRotationAnimation from './Animation_data'
 
 const BabylonScene = () => {
     const canvasRef = useRef<HTMLCanvasElement | null>(null)
@@ -91,9 +92,14 @@ const BabylonScene = () => {
 
         const skeleton = new Skeleton("skeleton", "001", scene)
 
-        let parentBone = new Bone("rootBone", skeleton, null, Matrix.Translation(-0.1, 0, 0))
+        let parentBone = new Bone("rootBone", skeleton, null, Matrix.Translation(-0.11, 0, 0))
         for (let i = 0; i <= widthSubdivisions; i++) {
-            parentBone = new Bone(`bone${i}`, skeleton, parentBone, Matrix.Translation(0.01, 0, 0))
+            const boneName = `bone${i}`
+            parentBone = new Bone(boneName, skeleton, parentBone, Matrix.Translation(0.01, 0, 0))
+
+            // 各ボーンにy軸回転アニメーションを適用
+            const boneAnimation = createYRotationAnimation(boneName)
+            parentBone.animations = [boneAnimation]
         }
 
         page.skeleton = skeleton
@@ -102,22 +108,6 @@ const BabylonScene = () => {
             displayMode: SkeletonViewer.DISPLAY_SPHERE_AND_SPURS
         })
         skeletonViewer.isEnabled = true
-
-        // アニメーションの作成
-        const animation = new Animation("boneAnimation", "rotation", 30, Animation.ANIMATIONTYPE_VECTOR3, Animation.ANIMATIONLOOPMODE_CYCLE)
-
-        // キーフレームの設定
-        const keys = [
-            { frame: 0, value: new Vector3(0, 0, 0) },
-            { frame: 30, value: new Vector3(0, 0.3, 0) }, // ページが半分めくられた状態
-            { frame: 60, value: new Vector3(0, 0, 0) } // ページが完全にめくられた状態
-        ]
-        animation.setKeys(keys)
-
-        // ボーンにアニメーションを適用
-        skeleton.bones.forEach((bone) => {
-            bone.animations = [animation]
-        })
 
         // スケルトンに対してアニメーションを開始
         scene.beginAnimation(skeleton, 0, 100, true)
