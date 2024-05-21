@@ -1,5 +1,5 @@
 import { useRef, useEffect } from 'react'
-import { Engine, Scene, ArcRotateCamera, Vector3, HemisphericLight, StandardMaterial, Color3, AxesViewer, Skeleton, Bone, Matrix, VertexData, DefaultRenderingPipeline } from '@babylonjs/core'
+import { Engine, Scene, ArcRotateCamera, Vector3, HemisphericLight, StandardMaterial, Color3, AxesViewer, Skeleton, Bone, Matrix, VertexData, DefaultRenderingPipeline, PointerInfo, PointerEventTypes, MeshBuilder } from '@babylonjs/core'
 import { Mesh } from '@babylonjs/core/Meshes/mesh'
 import { SkeletonViewer } from '@babylonjs/core/Debug/skeletonViewer'
 import { Inspector } from '@babylonjs/inspector'
@@ -7,7 +7,6 @@ import createYRotationAnimation from './Animation_data'
 
 const BabylonScene = () => {
     const canvasRef = useRef<HTMLCanvasElement | null>(null)
-
     useEffect(() => {
         const canvas = canvasRef.current
         const engine = new Engine(canvas, true)
@@ -20,18 +19,17 @@ const BabylonScene = () => {
         camera.lowerRadiusLimit = 1.2
         camera.upperRadiusLimit = 5
         camera.fov = 0.3
+        const light = new HemisphericLight('light1', new Vector3(1, 1, 0), scene)
+        light.intensity = 1.0
+
+        const axesViewer = new AxesViewer(scene, 0.1)
+        axesViewer.update(new Vector3(0, 0, 0), new Vector3(1, 0, 0), new Vector3(0, 1, 0), new Vector3(0, 0, 1))
 
         const pipeline = new DefaultRenderingPipeline("default", true, scene, [camera])
         pipeline.depthOfFieldEnabled = true
         pipeline.depthOfField.focalLength = 0.1
         pipeline.depthOfField.fStop = 1.4
         pipeline.depthOfField.focusDistance = 2000
-
-        const light = new HemisphericLight('light1', new Vector3(1, 1, 0), scene)
-        light.intensity = 0.7
-
-        const axesViewer = new AxesViewer(scene, 0.1)
-        axesViewer.update(new Vector3(0, 0, 0), new Vector3(1, 0, 0), new Vector3(0, 1, 0), new Vector3(0, 0, 1))
 
         const width = 0.2
         const height = 0.296
@@ -87,10 +85,15 @@ const BabylonScene = () => {
         pageMaterial.diffuseColor = new Color3(1, 1, 1)
         pageMaterial.backFaceCulling = false
         page.material = pageMaterial
-
         page.rotation = new Vector3(Math.PI / 2, 0, 0)
-
         const skeleton = new Skeleton("skeleton", "001", scene)
+
+        function createHitBoxMaterial(boneName: string, scene: Scene): StandardMaterial {
+            const material = new StandardMaterial(`hitBoxMat_${boneName}`, scene)
+            material.alpha = 0.3
+            material.diffuseColor = new Color3(0.5, 0.5, 1)
+            return material
+        }
 
         let parentBone = new Bone("rootBone", skeleton, null, Matrix.Translation(-0.11, 0, 0))
         for (let i = 0; i <= widthSubdivisions; i++) {
@@ -100,21 +103,37 @@ const BabylonScene = () => {
             // 各ボーンにy軸回転アニメーションを適用
             const boneAnimation = createYRotationAnimation(boneName)
             parentBone.animations = [boneAnimation]
+
+            // ヒットボックスを生成する部分
+            const hitBox = MeshBuilder.CreateBox(`hitBox_${boneName}`, { width: 0.01, height: 0.296, depth: 0.01 }, scene)
+            hitBox.material = createHitBoxMaterial(boneName, scene)
+            hitBox.position = new Vector3(0, 0, 0)  // 初期位置
+            hitBox.attachToBone(parentBone, page)  // ページメッシュに対してボーンをアタッチ
+
         }
 
         page.skeleton = skeleton
-
         const skeletonViewer = new SkeletonViewer(skeleton, page, scene, false, 3, {
             displayMode: SkeletonViewer.DISPLAY_SPHERE_AND_SPURS
         })
         skeletonViewer.isEnabled = true
 
-        // スケルトンに対してアニメーションを開始
-        scene.beginAnimation(skeleton, 0, 100, true)
-
         scene.debugLayer.show({
             embedMode: true
         })
+
+        const startAnimation = (pointerInfo: PointerInfo) => {
+            if (pointerInfo.pickInfo !== null && pointerInfo.type === PointerEventTypes.POINTERDOWN) {
+                {
+                    if (pointerInfo.pickInfo.hit && /^hitBox_/.test(pointerInfo.pickInfo.pickedMesh?.name || "")) {
+                        // スケルトンに対してアニメーションを開始
+                        scene.beginAnimation(skeleton, 0, Infinity, true)
+                    }
+                }
+            }
+        }
+
+        scene.onPointerObservable.add(startAnimation)
 
         Inspector.Show(scene, {})
 
