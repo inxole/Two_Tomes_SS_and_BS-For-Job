@@ -1,12 +1,52 @@
-import { useRef, useEffect } from 'react'
+import React, { useRef, useEffect, useReducer } from 'react'
 import { Engine, Scene, ArcRotateCamera, Vector3, HemisphericLight, StandardMaterial, Color3, AxesViewer, Skeleton, Bone, Matrix, VertexData, DefaultRenderingPipeline, PointerInfo, PointerEventTypes, MeshBuilder } from '@babylonjs/core'
 import { Mesh } from '@babylonjs/core/Meshes/mesh'
 import { SkeletonViewer } from '@babylonjs/core/Debug/skeletonViewer'
 import { Inspector } from '@babylonjs/inspector'
 import createYRotationAnimation from './Animation_data'
 
+type Action = { type: 'TOGGLE', open: VoidFunction, close: VoidFunction }
+function animationReducer(state: boolean, action: Action) {
+    switch (action.type) {
+        case 'TOGGLE':
+            if (state) {
+                action.close()
+            }
+            else {
+                action.open()
+            }
+            return !state
+        default:
+            console.log("error")
+            throw new Error()
+    }
+}
+
+function toggleAnimation(pointerInfo: PointerInfo, dispatch: React.Dispatch<Action>, scene: Scene, skeleton: Skeleton) {
+    if (pointerInfo.pickInfo !== null && pointerInfo.type === PointerEventTypes.POINTERDOWN) {
+        if (pointerInfo.pickInfo.hit && /^hitBox_/.test(pointerInfo.pickInfo.pickedMesh?.name || "")) {
+            dispatch({
+                type: "TOGGLE",
+                open: () => {
+                    console.log("open")
+                    scene.beginAnimation(skeleton, 0, 60, true, undefined, () => {
+                        console.log("opened")
+                    })
+                },
+                close: () => {
+                    console.log("close")
+                    scene.beginAnimation(skeleton, 60, 120, true, undefined, () => {
+                        console.log("closed")
+                    })
+                }
+            })
+        }
+    }
+}
+
 const BabylonScene = () => {
     const canvasRef = useRef<HTMLCanvasElement | null>(null)
+    const [, dispatch] = useReducer(animationReducer, false)
     useEffect(() => {
         const canvas = canvasRef.current
         const engine = new Engine(canvas, true)
@@ -122,18 +162,9 @@ const BabylonScene = () => {
             embedMode: true
         })
 
-        const startAnimation = (pointerInfo: PointerInfo) => {
-            if (pointerInfo.pickInfo !== null && pointerInfo.type === PointerEventTypes.POINTERDOWN) {
-                {
-                    if (pointerInfo.pickInfo.hit && /^hitBox_/.test(pointerInfo.pickInfo.pickedMesh?.name || "")) {
-                        // スケルトンに対してアニメーションを開始
-                        scene.beginAnimation(skeleton, 0, Infinity, true)
-                    }
-                }
-            }
-        }
-
-        scene.onPointerObservable.add(startAnimation)
+        scene.onPointerObservable.add(
+            (pointerInfo) => toggleAnimation(pointerInfo, dispatch, scene, skeleton)
+        )
 
         Inspector.Show(scene, {})
 

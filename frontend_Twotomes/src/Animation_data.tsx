@@ -39,6 +39,12 @@ const createYRotationAnimation = (boneName: string) => {
         { frame: 40, value: new Vector3(0, rotation.four, 0) },
         { frame: 50, value: new Vector3(0, rotation.five, 0) },
         { frame: 60, value: new Vector3(0, rotation.six, 0) },
+        { frame: 70, value: new Vector3(0, rotation.five, 0) },
+        { frame: 80, value: new Vector3(0, rotation.four, 0) },
+        { frame: 90, value: new Vector3(0, rotation.three, 0) },
+        { frame: 100, value: new Vector3(0, rotation.two, 0) },
+        { frame: 110, value: new Vector3(0, rotation.one, 0) },
+        { frame: 120, value: new Vector3(0, rotation.zero, 0) },
     ]
     animation.setKeys(keys)
 
