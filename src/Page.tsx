@@ -130,6 +130,14 @@ function createPageMaterial(scene: Scene, texture: DynamicTexture) {
     return material
 }
 
+function createPage(scene: Scene, name: string, text: string, z: number, isFront: boolean) {
+    const page = createPageMesh(scene, name, z, isFront);
+    const texture = createPageTexture(scene, text, isFront)
+    page.material = createPageMaterial(scene, texture)
+    page.rotation = new Vector3(Math.PI / 2, 0, 0)
+    return page
+}
+
 const BabylonScene = () => {
     const canvasRef = useRef<HTMLCanvasElement | null>(null)
     const [, dispatch] = useReducer(animationReducer, false)
@@ -159,15 +167,8 @@ const BabylonScene = () => {
 
         const widthSubdivisions = 20
 
-        const page = createPageMesh(scene, "front_page", 0, true);
-        const FrontTexture = createPageTexture(scene, "I'm front!", true)
-        page.material = createPageMaterial(scene, FrontTexture)
-        page.rotation = new Vector3(Math.PI / 2, 0, 0)
-
-        const back_page = createPageMesh(scene, "back_page", 0.0001, false)
-        const BackTexture = createPageTexture(scene, "I'm back!", false)
-        back_page.material = createPageMaterial(scene, BackTexture)
-        back_page.rotation = new Vector3(Math.PI / 2, 0, 0)
+        const front_page = createPage(scene, "front_page", "I'm front!", 0, true)
+        const back_page = createPage(scene, "back_page", "I'm back!", 0.0001, false)
 
         const skeleton = new Skeleton("skeleton", "001", scene)
 
@@ -191,13 +192,13 @@ const BabylonScene = () => {
             const hitBox = MeshBuilder.CreateBox(`hitBox_${boneName}`, { width: 0.01, height: 0.296, depth: 0.01 }, scene)
             hitBox.material = createHitBoxMaterial(boneName, scene)
             hitBox.position = new Vector3(0, 0, 0)  // 初期位置
-            hitBox.attachToBone(parentBone, page)  // ページメッシュに対してボーンをアタッチ
+            hitBox.attachToBone(parentBone, front_page)  // ページメッシュに対してボーンをアタッチ
 
         }
 
-        page.skeleton = skeleton
+        front_page.skeleton = skeleton
         back_page.skeleton = skeleton
-        const skeletonViewer = new SkeletonViewer(skeleton, page, scene, false, 3, {
+        const skeletonViewer = new SkeletonViewer(skeleton, front_page, scene, false, 3, {
             displayMode: SkeletonViewer.DISPLAY_SPHERE_AND_SPURS
         })
         skeletonViewer.isEnabled = true
