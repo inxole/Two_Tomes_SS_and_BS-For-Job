@@ -198,9 +198,6 @@ const BabylonScene = () => {
         const light = new HemisphericLight('light1', new Vector3(1, 1, 0), scene)
         light.intensity = 1.0
 
-        const axesViewer = new AxesViewer(scene, 0.1)
-        axesViewer.update(new Vector3(0, 0, 0), new Vector3(1, 0, 0), new Vector3(0, 1, 0), new Vector3(0, 0, 1))
-
         const pipeline = new DefaultRenderingPipeline("default", true, scene, [camera])
         pipeline.depthOfFieldEnabled = true
         pipeline.depthOfField.focalLength = 0.1
@@ -214,6 +211,8 @@ const BabylonScene = () => {
         back_page.skeleton = skeleton
 
         if (isDebug) {
+            const axesViewer = new AxesViewer(scene, 0.1)
+            axesViewer.update(new Vector3(0, 0, 0), new Vector3(1, 0, 0), new Vector3(0, 1, 0), new Vector3(0, 0, 1))
             const skeletonViewer = new SkeletonViewer(skeleton, front_page, scene, false, 3, {
                 displayMode: SkeletonViewer.DISPLAY_SPHERE_AND_SPURS
             })
