@@ -213,8 +213,8 @@ const BabylonScene = () => {
         }
 
         let parentBone = new Bone("rootBone", skeleton, null, Matrix.Translation(-0.11, 0, 0))
-        for (let i = 0; i <= widthSubdivisions; i++) {
-            const boneName = `bone${i}`
+        for (let w = 0; w <= widthSubdivisions; w++) {
+            const boneName = `bone${w}`
             parentBone = new Bone(boneName, skeleton, parentBone, Matrix.Translation(0.01, 0, 0))
 
             // 各ボーンにy軸回転アニメーションを適用
