@@ -39,6 +39,97 @@ function toggleAnimation(pointerInfo: PointerInfo, dispatch: React.Dispatch<Acti
     }
 }
 
+function createPageMesh(scene: Scene, name: string, z: number, isFront: boolean) {
+    const width = 0.2
+    const height = 0.296
+    const widthSubdivisions = 20
+    const heightSubdivisions = 1
+
+    const page = new Mesh(name, scene)
+    const positions = []
+    const indices = []
+    const normals = []
+    const uvs = []
+    const weights = []
+    const influences = []
+
+    for (let h = 0; h <= heightSubdivisions; h++) {
+        for (let w = 0; w <= widthSubdivisions; w++) {
+            const x = (w * width) / widthSubdivisions - width / 2
+            const y = (h * height) / heightSubdivisions - height / 2
+            positions.push(x, y, z)
+            normals.push(0, 0, isFront ? -1 : 1)
+            uvs.push(w / widthSubdivisions, h / heightSubdivisions)
+
+            // ウェイトとインフルエンスの設定
+            const weight = w / widthSubdivisions
+            weights.push(weight, 1 - weight, 0, 0)
+            const influence1 = Math.min(w, widthSubdivisions - 1)
+            const influence2 = Math.min(w + 1, widthSubdivisions)
+            influences.push(influence1, influence2, 0, 0)
+        }
+    }
+
+    for (let h = 0; h < heightSubdivisions; h++) {
+        for (let w = 0; w < widthSubdivisions; w++) {
+            const topLeft = h * (widthSubdivisions + 1) + w;
+            const topRight = topLeft + 1;
+            const bottomLeft = topLeft + (widthSubdivisions + 1);
+            const bottomRight = bottomLeft + 1;
+            indices.push(topLeft, topRight, bottomRight);
+            indices.push(topLeft, bottomRight, bottomLeft);
+        }
+    }
+
+    const vertexData = new VertexData()
+    vertexData.positions = positions
+    vertexData.indices = indices
+    vertexData.normals = normals
+    vertexData.uvs = uvs
+    vertexData.matricesWeights = weights
+    vertexData.matricesIndices = influences
+    vertexData.applyToMesh(page)
+    return page
+}
+
+function createPageTexture(scene: Scene, text: string, isFront: boolean) {
+    const font = "bold 44px monospace"
+    const Texture = new DynamicTexture("DynamicTexture", isFront ? 512 : { width: 345, height: 512 }, scene, true)
+    Texture.hasAlpha = true
+    if (isFront) {
+        Texture.drawText(text, null, null, font, "#000000", "#ffffff", true)
+    }
+    else {
+        // Canvasの2Dコンテキストにアクセス
+        const context = Texture.getContext()
+
+        // 背景を白に設定
+        context.fillStyle = "#ffffff"
+        context.fillRect(0, 0, Texture.getSize().width, Texture.getSize().height)
+
+        // テキストを描画する前にコンテキストを傾ける
+        context.save()
+        context.translate(270, 245)
+        context.rotate(Math.PI / 1)// 45度傾ける
+        context.fillStyle = "#000000"
+        context.font = font
+        context.fillText(text, 0, 0)
+        context.restore()
+
+        // テクスチャを更新
+        Texture.update(false)
+    }
+    return Texture
+}
+
+function createPageMaterial(scene: Scene, texture: DynamicTexture) {
+    const material = new StandardMaterial("pageMat", scene)
+    material.diffuseTexture = texture
+    material.diffuseColor = new Color3(1, 1, 1)
+    material.backFaceCulling = false
+    return material
+}
+
 const BabylonScene = () => {
     const canvasRef = useRef<HTMLCanvasElement | null>(null)
     const [, dispatch] = useReducer(animationReducer, false)
@@ -66,141 +157,16 @@ const BabylonScene = () => {
         pipeline.depthOfField.fStop = 1.4
         pipeline.depthOfField.focusDistance = 2000
 
-        const width = 0.2
-        const height = 0.296
         const widthSubdivisions = 20
-        const heightSubdivisions = 1
 
-        const page = new Mesh("page", scene)
-        const positions = []
-        const indices = []
-        const normals = []
-        const uvs = []
-        const weights = []
-        const influences = []
-
-        for (let h = 0; h <= heightSubdivisions; h++) {
-            for (let w = 0; w <= widthSubdivisions; w++) {
-                const x = (w * width) / widthSubdivisions - width / 2
-                const y = (h * height) / heightSubdivisions - height / 2
-                positions.push(x, y, 0)
-                normals.push(0, 0, -1)
-                uvs.push(w / widthSubdivisions, h / heightSubdivisions)
-
-                // ウェイトとインフルエンスの設定
-                const weight = w / widthSubdivisions
-                weights.push(weight, 1 - weight, 0, 0)
-                const influence1 = Math.min(w, widthSubdivisions - 1)
-                const influence2 = Math.min(w + 1, widthSubdivisions)
-                influences.push(influence1, influence2, 0, 0)
-            }
-        }
-
-        for (let h = 0; h < heightSubdivisions; h++) {
-            for (let w = 0; w < widthSubdivisions; w++) {
-            const topLeft = h * (widthSubdivisions + 1) + w;
-            const topRight = topLeft + 1;
-            const bottomLeft = topLeft + (widthSubdivisions + 1);
-            const bottomRight = bottomLeft + 1;
-            indices.push(topLeft, topRight, bottomRight);
-            indices.push(topLeft, bottomRight, bottomLeft);
-            }
-        }
-
-        const vertexData = new VertexData()
-        vertexData.positions = positions
-        vertexData.indices = indices
-        vertexData.normals = normals
-        vertexData.uvs = uvs
-        vertexData.matricesWeights = weights
-        vertexData.matricesIndices = influences
-        vertexData.applyToMesh(page)
-
-        const FrontTexture = new DynamicTexture("DynamicTexture", 512, scene, true)
-        FrontTexture.hasAlpha = true
-        const font = "bold 44px monospace"
-        FrontTexture.drawText("Hello, Babylon.js!", null, null, font, "#000000", "#ffffff", true)
-
-        const pageMaterial = new StandardMaterial("pageMat", scene)
-        pageMaterial.diffuseTexture = FrontTexture
-        pageMaterial.diffuseColor = new Color3(1, 1, 1)
-        pageMaterial.backFaceCulling = false
-        page.material = pageMaterial
+        const page = createPageMesh(scene, "front_page", 0, true);
+        const FrontTexture = createPageTexture(scene, "I'm front!", true)
+        page.material = createPageMaterial(scene, FrontTexture)
         page.rotation = new Vector3(Math.PI / 2, 0, 0)
 
-        const back_page = new Mesh("back_page", scene)
-        const back_positions = []
-        const back_indices = []
-        const back_normals = []
-        const back_uvs = []
-        const back_weights = []
-        const back_influences = []
-
-        for (let h = 0; h <= heightSubdivisions; h++) {
-            for (let w = 0; w <= widthSubdivisions; w++) {
-                const x = (w * width) / widthSubdivisions - width / 2
-                const y = (h * height) / heightSubdivisions - height / 2
-                back_positions.push(x, y, 0.0001)
-                back_normals.push(0, 0, 1)
-                back_uvs.push(w / widthSubdivisions, h / heightSubdivisions)
-
-                // ウェイトとインフルエンスの設定
-                const weight = w / widthSubdivisions
-                back_weights.push(weight, 1 - weight, 0, 0)
-                const influence1 = Math.min(w, widthSubdivisions - 1)
-                const influence2 = Math.min(w + 1, widthSubdivisions)
-                back_influences.push(influence1, influence2, 0, 0)
-            }
-        }
-
-        for (let h = 0; h < heightSubdivisions; h++) {
-            for (let w = 0; w < widthSubdivisions; w++) {
-                const topLeft = h * (widthSubdivisions + 1) + w;
-                const topRight = topLeft + 1;
-                const bottomLeft = topLeft + (widthSubdivisions + 1);
-                const bottomRight = bottomLeft + 1;
-                back_indices.push(topLeft, topRight, bottomRight);
-                back_indices.push(topLeft, bottomRight, bottomLeft);
-            }
-        }
-
-        const back_vertexData = new VertexData()
-        back_vertexData.positions = back_positions
-        back_vertexData.indices = back_indices
-        back_vertexData.normals = back_normals
-        back_vertexData.uvs = back_uvs
-        back_vertexData.matricesWeights = back_weights
-        back_vertexData.matricesIndices = back_influences
-        back_vertexData.applyToMesh(back_page)
-
-        const BackTexture = new DynamicTexture("DynamicTexture", { width: 345, height: 512 }, scene, true)
-        BackTexture.hasAlpha = true
-        const back = "bold 44px monospace"
-
-        // Canvasの2Dコンテキストにアクセス
-        const ctx = BackTexture.getContext()
-
-        // 背景を白に設定
-        ctx.fillStyle = "#ffffff"
-        ctx.fillRect(0, 0, BackTexture.getSize().width, BackTexture.getSize().height)
-
-        // テキストを描画する前にコンテキストを傾ける
-        ctx.save()
-        ctx.translate(270, 245)
-        ctx.rotate(Math.PI / 1)// 45度傾ける
-        ctx.fillStyle = "#000000"
-        ctx.font = back
-        ctx.fillText("I'm back!", 0, 0)
-        ctx.restore()
-
-        // テクスチャを更新
-        BackTexture.update(false)
-
-        const back_pageMaterial = new StandardMaterial("pageMat", scene)
-        back_pageMaterial.diffuseTexture = BackTexture
-        back_pageMaterial.diffuseColor = new Color3(1, 1, 1)
-        back_pageMaterial.backFaceCulling = false
-        back_page.material = back_pageMaterial
+        const back_page = createPageMesh(scene, "back_page", 0.0001, false)
+        const BackTexture = createPageTexture(scene, "I'm back!", false)
+        back_page.material = createPageMaterial(scene, BackTexture)
         back_page.rotation = new Vector3(Math.PI / 2, 0, 0)
 
         const skeleton = new Skeleton("skeleton", "001", scene)
