@@ -79,31 +79,31 @@ const BabylonScene = () => {
         const weights = []
         const influences = []
 
-        for (let i = 0; i <= heightSubdivisions; i++) {
-            for (let j = 0; j <= widthSubdivisions; j++) {
-                const x = (j * width) / widthSubdivisions - width / 2
-                const y = (i * height) / heightSubdivisions - height / 2
+        for (let h = 0; h <= heightSubdivisions; h++) {
+            for (let w = 0; w <= widthSubdivisions; w++) {
+                const x = (w * width) / widthSubdivisions - width / 2
+                const y = (h * height) / heightSubdivisions - height / 2
                 positions.push(x, y, 0)
                 normals.push(0, 0, -1)
-                uvs.push(j / widthSubdivisions, i / heightSubdivisions)
+                uvs.push(w / widthSubdivisions, h / heightSubdivisions)
 
                 // ウェイトとインフルエンスの設定
-                const weight = j / widthSubdivisions
+                const weight = w / widthSubdivisions
                 weights.push(weight, 1 - weight, 0, 0)
-                const influence1 = Math.min(j, widthSubdivisions - 1)
-                const influence2 = Math.min(j + 1, widthSubdivisions)
+                const influence1 = Math.min(w, widthSubdivisions - 1)
+                const influence2 = Math.min(w + 1, widthSubdivisions)
                 influences.push(influence1, influence2, 0, 0)
             }
         }
 
-        for (let i = 0; i < heightSubdivisions; i++) {
-            for (let j = 0; j < widthSubdivisions; j++) {
-                const a = i * (widthSubdivisions + 1) + j
-                const b = a + 1
-                const c = a + (widthSubdivisions + 1)
-                const d = c + 1
-                indices.push(a, b, d)
-                indices.push(a, d, c)
+        for (let h = 0; h < heightSubdivisions; h++) {
+            for (let w = 0; w < widthSubdivisions; w++) {
+            const topLeft = h * (widthSubdivisions + 1) + w;
+            const topRight = topLeft + 1;
+            const bottomLeft = topLeft + (widthSubdivisions + 1);
+            const bottomRight = bottomLeft + 1;
+            indices.push(topLeft, topRight, bottomRight);
+            indices.push(topLeft, bottomRight, bottomLeft);
             }
         }
 
@@ -136,31 +136,31 @@ const BabylonScene = () => {
         const back_weights = []
         const back_influences = []
 
-        for (let i = 0; i <= heightSubdivisions; i++) {
-            for (let j = 0; j <= widthSubdivisions; j++) {
-                const x = (j * width) / widthSubdivisions - width / 2
-                const y = (i * height) / heightSubdivisions - height / 2
+        for (let h = 0; h <= heightSubdivisions; h++) {
+            for (let w = 0; w <= widthSubdivisions; w++) {
+                const x = (w * width) / widthSubdivisions - width / 2
+                const y = (h * height) / heightSubdivisions - height / 2
                 back_positions.push(x, y, 0.0001)
                 back_normals.push(0, 0, 1)
-                back_uvs.push(j / widthSubdivisions, i / heightSubdivisions)
+                back_uvs.push(w / widthSubdivisions, h / heightSubdivisions)
 
                 // ウェイトとインフルエンスの設定
-                const weight = j / widthSubdivisions
+                const weight = w / widthSubdivisions
                 back_weights.push(weight, 1 - weight, 0, 0)
-                const influence1 = Math.min(j, widthSubdivisions - 1)
-                const influence2 = Math.min(j + 1, widthSubdivisions)
+                const influence1 = Math.min(w, widthSubdivisions - 1)
+                const influence2 = Math.min(w + 1, widthSubdivisions)
                 back_influences.push(influence1, influence2, 0, 0)
             }
         }
 
-        for (let i = 0; i < heightSubdivisions; i++) {
-            for (let j = 0; j < widthSubdivisions; j++) {
-                const a = i * (widthSubdivisions + 1) + j
-                const b = a + 1
-                const c = a + (widthSubdivisions + 1)
-                const d = c + 1
-                back_indices.push(a, b, d)
-                back_indices.push(a, d, c)
+        for (let h = 0; h < heightSubdivisions; h++) {
+            for (let w = 0; w < widthSubdivisions; w++) {
+                const topLeft = h * (widthSubdivisions + 1) + w;
+                const topRight = topLeft + 1;
+                const bottomLeft = topLeft + (widthSubdivisions + 1);
+                const bottomRight = bottomLeft + 1;
+                back_indices.push(topLeft, topRight, bottomRight);
+                back_indices.push(topLeft, bottomRight, bottomLeft);
             }
         }
 
