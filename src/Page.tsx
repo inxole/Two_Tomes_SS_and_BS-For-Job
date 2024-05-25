@@ -149,6 +149,37 @@ function createCamera(scene: Scene, canvas: HTMLCanvasElement) {
     return camera
 }
 
+function createHitBoxMaterial(boneName: string, scene: Scene): StandardMaterial {
+    const material = new StandardMaterial(`hitBoxMat_${boneName}`, scene)
+    material.alpha = 0.0
+    material.diffuseColor = new Color3(0.5, 0.5, 1)
+    return material
+}
+
+function createSkeleton(scene: Scene, name: string, targetMesh: Mesh) {
+    const skeleton = new Skeleton(name, "001", scene)
+
+    let parentBone = new Bone("rootBone", skeleton, null, Matrix.Translation(-0.11, 0, 0))
+    const widthSubdivisions = 20
+
+    for (let w = 0; w <= widthSubdivisions; w++) {
+        const boneName = `bone${w}`
+        parentBone = new Bone(boneName, skeleton, parentBone, Matrix.Translation(0.01, 0, 0))
+
+        // 各ボーンにy軸回転アニメーションを適用
+        const boneAnimation = createYRotationAnimation(boneName)
+        parentBone.animations = [boneAnimation]
+
+        // ヒットボックスを生成する部分
+        const hitBox = MeshBuilder.CreateBox(`hitBox_${boneName}`, { width: 0.01, height: 0.296, depth: 0.01 }, scene)
+        hitBox.material = createHitBoxMaterial(boneName, scene)
+        hitBox.position = new Vector3(0, 0, 0)  // 初期位置
+        hitBox.attachToBone(parentBone, targetMesh)  // ページメッシュに対してボーンをアタッチ
+
+    }
+    return skeleton
+}
+
 
 const BabylonScene = () => {
     const canvasRef = useRef<HTMLCanvasElement | null>(null)
@@ -175,39 +206,12 @@ const BabylonScene = () => {
         pipeline.depthOfField.fStop = 1.4
         pipeline.depthOfField.focusDistance = 2000
 
-        const widthSubdivisions = 20
-
         const front_page = createPage(scene, "front_page", "I'm front!", 0, true)
         const back_page = createPage(scene, "back_page", "I'm back!", 0.0001, false)
-
-        const skeleton = new Skeleton("skeleton", "001", scene)
-
-        function createHitBoxMaterial(boneName: string, scene: Scene): StandardMaterial {
-            const material = new StandardMaterial(`hitBoxMat_${boneName}`, scene)
-            material.alpha = 0.0
-            material.diffuseColor = new Color3(0.5, 0.5, 1)
-            return material
-        }
-
-        let parentBone = new Bone("rootBone", skeleton, null, Matrix.Translation(-0.11, 0, 0))
-        for (let w = 0; w <= widthSubdivisions; w++) {
-            const boneName = `bone${w}`
-            parentBone = new Bone(boneName, skeleton, parentBone, Matrix.Translation(0.01, 0, 0))
-
-            // 各ボーンにy軸回転アニメーションを適用
-            const boneAnimation = createYRotationAnimation(boneName)
-            parentBone.animations = [boneAnimation]
-
-            // ヒットボックスを生成する部分
-            const hitBox = MeshBuilder.CreateBox(`hitBox_${boneName}`, { width: 0.01, height: 0.296, depth: 0.01 }, scene)
-            hitBox.material = createHitBoxMaterial(boneName, scene)
-            hitBox.position = new Vector3(0, 0, 0)  // 初期位置
-            hitBox.attachToBone(parentBone, front_page)  // ページメッシュに対してボーンをアタッチ
-
-        }
-
+        const skeleton = createSkeleton(scene, "skeleton", front_page)
         front_page.skeleton = skeleton
         back_page.skeleton = skeleton
+
         const skeletonViewer = new SkeletonViewer(skeleton, front_page, scene, false, 3, {
             displayMode: SkeletonViewer.DISPLAY_SPHERE_AND_SPURS
         })
