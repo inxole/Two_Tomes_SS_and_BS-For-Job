@@ -138,6 +138,18 @@ function createPage(scene: Scene, name: string, text: string, z: number, isFront
     return page
 }
 
+function createCamera(scene: Scene, canvas: HTMLCanvasElement) {
+    const camera = new ArcRotateCamera('camera1', Math.PI / 2, Math.PI / 4, 2, new Vector3(0, 0, 0), scene)
+    camera.attachControl(canvas, true)
+    camera.setPosition(new Vector3(1, 1, -1))
+    camera.wheelPrecision = 200
+    camera.lowerRadiusLimit = 1.2
+    camera.upperRadiusLimit = 5
+    camera.fov = 0.3
+    return camera
+}
+
+
 const BabylonScene = () => {
     const canvasRef = useRef<HTMLCanvasElement | null>(null)
     const [, dispatch] = useReducer(animationReducer, false)
@@ -146,13 +158,11 @@ const BabylonScene = () => {
         const engine = new Engine(canvas, true)
         const scene = new Scene(engine)
 
-        const camera = new ArcRotateCamera('camera1', Math.PI / 2, Math.PI / 4, 2, new Vector3(0, 0, 0), scene)
-        camera.attachControl(canvas, true)
-        camera.setPosition(new Vector3(1, 1, -1))
-        camera.wheelPrecision = 200
-        camera.lowerRadiusLimit = 1.2
-        camera.upperRadiusLimit = 5
-        camera.fov = 0.3
+        if (!canvas) {
+            throw new Error("HTMLCanvasElement is not found.")
+        }
+        const camera = createCamera(scene, canvas)
+
         const light = new HemisphericLight('light1', new Vector3(1, 1, 0), scene)
         light.intensity = 1.0
 
