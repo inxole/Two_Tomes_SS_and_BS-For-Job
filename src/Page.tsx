@@ -182,6 +182,7 @@ function createSkeleton(scene: Scene, name: string, targetMesh: Mesh) {
 
 
 const BabylonScene = () => {
+    const isDebug = true
     const canvasRef = useRef<HTMLCanvasElement | null>(null)
     const [, dispatch] = useReducer(animationReducer, false)
     useEffect(() => {
@@ -212,28 +213,23 @@ const BabylonScene = () => {
         front_page.skeleton = skeleton
         back_page.skeleton = skeleton
 
-        const skeletonViewer = new SkeletonViewer(skeleton, front_page, scene, false, 3, {
-            displayMode: SkeletonViewer.DISPLAY_SPHERE_AND_SPURS
-        })
-        skeletonViewer.isEnabled = true
-
-        scene.debugLayer.show({
-            embedMode: true
-        })
-
+        if (isDebug) {
+            const skeletonViewer = new SkeletonViewer(skeleton, front_page, scene, false, 3, {
+                displayMode: SkeletonViewer.DISPLAY_SPHERE_AND_SPURS
+            })
+            skeletonViewer.isEnabled = true
+            scene.debugLayer.show({
+                embedMode: true
+            })
+            Inspector.Show(scene, {})
+        }
         scene.onPointerObservable.add(
             (pointerInfo) => toggleAnimation(pointerInfo, dispatch, scene, skeleton)
         )
 
-        Inspector.Show(scene, {})
+        engine.runRenderLoop(() => { scene.render() })
 
-        engine.runRenderLoop(() => {
-            scene.render()
-        })
-
-        const resize = () => {
-            engine.resize()
-        }
+        const resize = () => { engine.resize() }
 
         window.addEventListener('resize', resize)
 
