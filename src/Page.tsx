@@ -180,6 +180,24 @@ function createSkeleton(scene: Scene, name: string, targetMesh: Mesh) {
     return skeleton
 }
 
+function LightUp(scene: Scene) {
+    const light = new HemisphericLight('light1', new Vector3(1, 1, 0), scene)
+    light.intensity = 1.0
+
+}
+
+function CameraWork(scene: Scene, canvas: HTMLCanvasElement | null) {
+    if (!canvas) {
+        throw new Error("HTMLCanvasElement is not found.")
+    }
+    const camera = createCamera(scene, canvas)
+    const pipeline = new DefaultRenderingPipeline("default", true, scene, [camera])
+    pipeline.depthOfFieldEnabled = true
+    pipeline.depthOfField.focalLength = 0.1
+    pipeline.depthOfField.fStop = 1.4
+    pipeline.depthOfField.focusDistance = 2000
+}
+
 
 const BabylonScene = () => {
     const isDebug = true
@@ -190,19 +208,8 @@ const BabylonScene = () => {
         const engine = new Engine(canvas, true)
         const scene = new Scene(engine)
 
-        if (!canvas) {
-            throw new Error("HTMLCanvasElement is not found.")
-        }
-        const camera = createCamera(scene, canvas)
-
-        const light = new HemisphericLight('light1', new Vector3(1, 1, 0), scene)
-        light.intensity = 1.0
-
-        const pipeline = new DefaultRenderingPipeline("default", true, scene, [camera])
-        pipeline.depthOfFieldEnabled = true
-        pipeline.depthOfField.focalLength = 0.1
-        pipeline.depthOfField.fStop = 1.4
-        pipeline.depthOfField.focusDistance = 2000
+        LightUp(scene)
+        CameraWork(scene, canvas)
 
         const front_page = createPage(scene, "front_page", "I'm front!", 0, true)
         const back_page = createPage(scene, "back_page", "I'm back!", 0.0001, false)
