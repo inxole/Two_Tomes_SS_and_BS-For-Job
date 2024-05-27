@@ -39,7 +39,168 @@ function toggleAnimation(pointerInfo: PointerInfo, dispatch: React.Dispatch<Acti
     }
 }
 
+function createPageMesh(scene: Scene, name: string, z: number, isFront: boolean) {
+    const width = 0.2
+    const height = 0.296
+    const widthSubdivisions = 20
+    const heightSubdivisions = 1
+
+    const page = new Mesh(name, scene)
+    const positions = []
+    const indices = []
+    const normals = []
+    const uvs = []
+    const weights = []
+    const influences = []
+
+    for (let h = 0; h <= heightSubdivisions; h++) {
+        for (let w = 0; w <= widthSubdivisions; w++) {
+            const x = (w * width) / widthSubdivisions - width / 2
+            const y = (h * height) / heightSubdivisions - height / 2
+            positions.push(x, y, z)
+            normals.push(0, 0, isFront ? -1 : 1)
+            uvs.push(w / widthSubdivisions, h / heightSubdivisions)
+
+            // ウェイトとインフルエンスの設定
+            const weight = w / widthSubdivisions
+            weights.push(weight, 1 - weight, 0, 0)
+            const influence1 = Math.min(w, widthSubdivisions - 1)
+            const influence2 = Math.min(w + 1, widthSubdivisions)
+            influences.push(influence1, influence2, 0, 0)
+        }
+    }
+
+    for (let h = 0; h < heightSubdivisions; h++) {
+        for (let w = 0; w < widthSubdivisions; w++) {
+            const topLeft = h * (widthSubdivisions + 1) + w;
+            const topRight = topLeft + 1;
+            const bottomLeft = topLeft + (widthSubdivisions + 1);
+            const bottomRight = bottomLeft + 1;
+            indices.push(topLeft, topRight, bottomRight);
+            indices.push(topLeft, bottomRight, bottomLeft);
+        }
+    }
+
+    const vertexData = new VertexData()
+    vertexData.positions = positions
+    vertexData.indices = indices
+    vertexData.normals = normals
+    vertexData.uvs = uvs
+    vertexData.matricesWeights = weights
+    vertexData.matricesIndices = influences
+    vertexData.applyToMesh(page)
+    return page
+}
+
+function createPageTexture(scene: Scene, text: string, isFront: boolean) {
+    const font = "bold 44px monospace"
+    const Texture = new DynamicTexture("DynamicTexture", isFront ? 512 : { width: 345, height: 512 }, scene, true)
+    Texture.hasAlpha = true
+    if (isFront) {
+        Texture.drawText(text, null, null, font, "#000000", "#ffffff", true)
+    }
+    else {
+        // Canvasの2Dコンテキストにアクセス
+        const context = Texture.getContext()
+
+        // 背景を白に設定
+        context.fillStyle = "#ffffff"
+        context.fillRect(0, 0, Texture.getSize().width, Texture.getSize().height)
+
+        // テキストを描画する前にコンテキストを傾ける
+        context.save()
+        context.translate(270, 245)
+        context.rotate(Math.PI / 1)// 45度傾ける
+        context.fillStyle = "#000000"
+        context.font = font
+        context.fillText(text, 0, 0)
+        context.restore()
+
+        // テクスチャを更新
+        Texture.update(false)
+    }
+    return Texture
+}
+
+function createPageMaterial(scene: Scene, texture: DynamicTexture) {
+    const material = new StandardMaterial("pageMat", scene)
+    material.diffuseTexture = texture
+    material.diffuseColor = new Color3(1, 1, 1)
+    material.backFaceCulling = false
+    return material
+}
+
+function createPage(scene: Scene, name: string, text: string, z: number, isFront: boolean) {
+    const page = createPageMesh(scene, name, z, isFront);
+    const texture = createPageTexture(scene, text, isFront)
+    page.material = createPageMaterial(scene, texture)
+    page.rotation = new Vector3(Math.PI / 2, 0, 0)
+    return page
+}
+
+function createCamera(scene: Scene, canvas: HTMLCanvasElement) {
+    const camera = new ArcRotateCamera('camera1', Math.PI / 2, Math.PI / 4, 2, new Vector3(0, 0, 0), scene)
+    camera.attachControl(canvas, true)
+    camera.setPosition(new Vector3(1, 1, -1))
+    camera.wheelPrecision = 200
+    camera.lowerRadiusLimit = 1.2
+    camera.upperRadiusLimit = 5
+    camera.fov = 0.3
+    return camera
+}
+
+function createHitBoxMaterial(boneName: string, scene: Scene): StandardMaterial {
+    const material = new StandardMaterial(`hitBoxMat_${boneName}`, scene)
+    material.alpha = 0.0
+    material.diffuseColor = new Color3(0.5, 0.5, 1)
+    return material
+}
+
+function createSkeleton(scene: Scene, name: string, targetMesh: Mesh) {
+    const skeleton = new Skeleton(name, "001", scene)
+
+    let parentBone = new Bone("rootBone", skeleton, null, Matrix.Translation(-0.11, 0, 0))
+    const widthSubdivisions = 20
+
+    for (let w = 0; w <= widthSubdivisions; w++) {
+        const boneName = `bone${w}`
+        parentBone = new Bone(boneName, skeleton, parentBone, Matrix.Translation(0.01, 0, 0))
+
+        // 各ボーンにy軸回転アニメーションを適用
+        const boneAnimation = createYRotationAnimation(boneName)
+        parentBone.animations = [boneAnimation]
+
+        // ヒットボックスを生成する部分
+        const hitBox = MeshBuilder.CreateBox(`hitBox_${boneName}`, { width: 0.01, height: 0.296, depth: 0.01 }, scene)
+        hitBox.material = createHitBoxMaterial(boneName, scene)
+        hitBox.position = new Vector3(0, 0, 0)  // 初期位置
+        hitBox.attachToBone(parentBone, targetMesh)  // ページメッシュに対してボーンをアタッチ
+
+    }
+    return skeleton
+}
+
+function LightUp(scene: Scene) {
+    const light = new HemisphericLight('light1', new Vector3(1, 1, 0), scene)
+    light.intensity = 1.0
+
+}
+
+function CameraWork(scene: Scene, canvas: HTMLCanvasElement | null) {
+    if (!canvas) {
+        throw new Error("HTMLCanvasElement is not found.")
+    }
+    const camera = createCamera(scene, canvas)
+    const pipeline = new DefaultRenderingPipeline("default", true, scene, [camera])
+    pipeline.depthOfFieldEnabled = true
+    pipeline.depthOfField.focalLength = 0.1
+    pipeline.depthOfField.fStop = 1.4
+    pipeline.depthOfField.focusDistance = 2000
+}
+
+
 const BabylonScene = () => {
+    const isDebug = true
     const canvasRef = useRef<HTMLCanvasElement | null>(null)
     const [, dispatch] = useReducer(animationReducer, false)
     useEffect(() => {
@@ -47,212 +208,34 @@ const BabylonScene = () => {
         const engine = new Engine(canvas, true)
         const scene = new Scene(engine)
 
-        const camera = new ArcRotateCamera('camera1', Math.PI / 2, Math.PI / 4, 2, new Vector3(0, 0, 0), scene)
-        camera.attachControl(canvas, true)
-        camera.setPosition(new Vector3(1, 1, -1))
-        camera.wheelPrecision = 200
-        camera.lowerRadiusLimit = 1.2
-        camera.upperRadiusLimit = 5
-        camera.fov = 0.3
-        const light = new HemisphericLight('light1', new Vector3(1, 1, 0), scene)
-        light.intensity = 1.0
+        LightUp(scene)
+        CameraWork(scene, canvas)
 
-        const axesViewer = new AxesViewer(scene, 0.1)
-        axesViewer.update(new Vector3(0, 0, 0), new Vector3(1, 0, 0), new Vector3(0, 1, 0), new Vector3(0, 0, 1))
-
-        const pipeline = new DefaultRenderingPipeline("default", true, scene, [camera])
-        pipeline.depthOfFieldEnabled = true
-        pipeline.depthOfField.focalLength = 0.1
-        pipeline.depthOfField.fStop = 1.4
-        pipeline.depthOfField.focusDistance = 2000
-
-        const width = 0.2
-        const height = 0.296
-        const widthSubdivisions = 20
-        const heightSubdivisions = 1
-
-        const page = new Mesh("page", scene)
-        const positions = []
-        const indices = []
-        const normals = []
-        const uvs = []
-        const weights = []
-        const influences = []
-
-        for (let i = 0; i <= heightSubdivisions; i++) {
-            for (let j = 0; j <= widthSubdivisions; j++) {
-                const x = (j * width) / widthSubdivisions - width / 2
-                const y = (i * height) / heightSubdivisions - height / 2
-                positions.push(x, y, 0)
-                normals.push(0, 0, -1)
-                uvs.push(j / widthSubdivisions, i / heightSubdivisions)
-
-                // ウェイトとインフルエンスの設定
-                const weight = j / widthSubdivisions
-                weights.push(weight, 1 - weight, 0, 0)
-                const influence1 = Math.min(j, widthSubdivisions - 1)
-                const influence2 = Math.min(j + 1, widthSubdivisions)
-                influences.push(influence1, influence2, 0, 0)
-            }
-        }
-
-        for (let i = 0; i < heightSubdivisions; i++) {
-            for (let j = 0; j < widthSubdivisions; j++) {
-                const a = i * (widthSubdivisions + 1) + j
-                const b = a + 1
-                const c = a + (widthSubdivisions + 1)
-                const d = c + 1
-                indices.push(a, b, d)
-                indices.push(a, d, c)
-            }
-        }
-
-        const vertexData = new VertexData()
-        vertexData.positions = positions
-        vertexData.indices = indices
-        vertexData.normals = normals
-        vertexData.uvs = uvs
-        vertexData.matricesWeights = weights
-        vertexData.matricesIndices = influences
-        vertexData.applyToMesh(page)
-
-        const FrontTexture = new DynamicTexture("DynamicTexture", 512, scene, true)
-        FrontTexture.hasAlpha = true
-        const font = "bold 44px monospace"
-        FrontTexture.drawText("Hello, Babylon.js!", null, null, font, "#000000", "#ffffff", true)
-
-        const pageMaterial = new StandardMaterial("pageMat", scene)
-        pageMaterial.diffuseTexture = FrontTexture
-        pageMaterial.diffuseColor = new Color3(1, 1, 1)
-        pageMaterial.backFaceCulling = false
-        page.material = pageMaterial
-        page.rotation = new Vector3(Math.PI / 2, 0, 0)
-
-        const back_page = new Mesh("back_page", scene)
-        const back_positions = []
-        const back_indices = []
-        const back_normals = []
-        const back_uvs = []
-        const back_weights = []
-        const back_influences = []
-
-        for (let i = 0; i <= heightSubdivisions; i++) {
-            for (let j = 0; j <= widthSubdivisions; j++) {
-                const x = (j * width) / widthSubdivisions - width / 2
-                const y = (i * height) / heightSubdivisions - height / 2
-                back_positions.push(x, y, 0.0001)
-                back_normals.push(0, 0, 1)
-                back_uvs.push(j / widthSubdivisions, i / heightSubdivisions)
-
-                // ウェイトとインフルエンスの設定
-                const weight = j / widthSubdivisions
-                back_weights.push(weight, 1 - weight, 0, 0)
-                const influence1 = Math.min(j, widthSubdivisions - 1)
-                const influence2 = Math.min(j + 1, widthSubdivisions)
-                back_influences.push(influence1, influence2, 0, 0)
-            }
-        }
-
-        for (let i = 0; i < heightSubdivisions; i++) {
-            for (let j = 0; j < widthSubdivisions; j++) {
-                const a = i * (widthSubdivisions + 1) + j
-                const b = a + 1
-                const c = a + (widthSubdivisions + 1)
-                const d = c + 1
-                back_indices.push(a, b, d)
-                back_indices.push(a, d, c)
-            }
-        }
-
-        const back_vertexData = new VertexData()
-        back_vertexData.positions = back_positions
-        back_vertexData.indices = back_indices
-        back_vertexData.normals = back_normals
-        back_vertexData.uvs = back_uvs
-        back_vertexData.matricesWeights = back_weights
-        back_vertexData.matricesIndices = back_influences
-        back_vertexData.applyToMesh(back_page)
-
-        const BackTexture = new DynamicTexture("DynamicTexture", { width: 345, height: 512 }, scene, true)
-        BackTexture.hasAlpha = true
-        const back = "bold 44px monospace"
-
-        // Canvasの2Dコンテキストにアクセス
-        const ctx = BackTexture.getContext()
-
-        // 背景を白に設定
-        ctx.fillStyle = "#ffffff"
-        ctx.fillRect(0, 0, BackTexture.getSize().width, BackTexture.getSize().height)
-
-        // テキストを描画する前にコンテキストを傾ける
-        ctx.save()
-        ctx.translate(270, 245)
-        ctx.rotate(Math.PI / 1)// 45度傾ける
-        ctx.fillStyle = "#000000"
-        ctx.font = back
-        ctx.fillText("I'm back!", 0, 0)
-        ctx.restore()
-
-        // テクスチャを更新
-        BackTexture.update(false)
-
-        const back_pageMaterial = new StandardMaterial("pageMat", scene)
-        back_pageMaterial.diffuseTexture = BackTexture
-        back_pageMaterial.diffuseColor = new Color3(1, 1, 1)
-        back_pageMaterial.backFaceCulling = false
-        back_page.material = back_pageMaterial
-        back_page.rotation = new Vector3(Math.PI / 2, 0, 0)
-
-        const skeleton = new Skeleton("skeleton", "001", scene)
-
-        function createHitBoxMaterial(boneName: string, scene: Scene): StandardMaterial {
-            const material = new StandardMaterial(`hitBoxMat_${boneName}`, scene)
-            material.alpha = 0.0
-            material.diffuseColor = new Color3(0.5, 0.5, 1)
-            return material
-        }
-
-        let parentBone = new Bone("rootBone", skeleton, null, Matrix.Translation(-0.11, 0, 0))
-        for (let i = 0; i <= widthSubdivisions; i++) {
-            const boneName = `bone${i}`
-            parentBone = new Bone(boneName, skeleton, parentBone, Matrix.Translation(0.01, 0, 0))
-
-            // 各ボーンにy軸回転アニメーションを適用
-            const boneAnimation = createYRotationAnimation(boneName)
-            parentBone.animations = [boneAnimation]
-
-            // ヒットボックスを生成する部分
-            const hitBox = MeshBuilder.CreateBox(`hitBox_${boneName}`, { width: 0.01, height: 0.296, depth: 0.01 }, scene)
-            hitBox.material = createHitBoxMaterial(boneName, scene)
-            hitBox.position = new Vector3(0, 0, 0)  // 初期位置
-            hitBox.attachToBone(parentBone, page)  // ページメッシュに対してボーンをアタッチ
-
-        }
-
-        page.skeleton = skeleton
+        const front_page = createPage(scene, "front_page", "I'm front!", 0, true)
+        const back_page = createPage(scene, "back_page", "I'm back!", 0.0001, false)
+        const skeleton = createSkeleton(scene, "skeleton", front_page)
+        front_page.skeleton = skeleton
         back_page.skeleton = skeleton
-        const skeletonViewer = new SkeletonViewer(skeleton, page, scene, false, 3, {
-            displayMode: SkeletonViewer.DISPLAY_SPHERE_AND_SPURS
-        })
-        skeletonViewer.isEnabled = true
 
-        scene.debugLayer.show({
-            embedMode: true
-        })
-
+        if (isDebug) {
+            const axesViewer = new AxesViewer(scene, 0.1)
+            axesViewer.update(new Vector3(0, 0, 0), new Vector3(1, 0, 0), new Vector3(0, 1, 0), new Vector3(0, 0, 1))
+            const skeletonViewer = new SkeletonViewer(skeleton, front_page, scene, false, 3, {
+                displayMode: SkeletonViewer.DISPLAY_SPHERE_AND_SPURS
+            })
+            skeletonViewer.isEnabled = true
+            scene.debugLayer.show({
+                embedMode: true
+            })
+            Inspector.Show(scene, {})
+        }
         scene.onPointerObservable.add(
             (pointerInfo) => toggleAnimation(pointerInfo, dispatch, scene, skeleton)
         )
 
-        Inspector.Show(scene, {})
+        engine.runRenderLoop(() => { scene.render() })
 
-        engine.runRenderLoop(() => {
-            scene.render()
-        })
-
-        const resize = () => {
-            engine.resize()
-        }
+        const resize = () => { engine.resize() }
 
         window.addEventListener('resize', resize)
 
