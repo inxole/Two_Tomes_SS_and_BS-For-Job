@@ -1,9 +1,11 @@
-import React, { useRef, useEffect, useReducer } from 'react'
+import React, { useRef, useEffect, useReducer, useState} from 'react'
 import { Engine, Scene, ArcRotateCamera, Vector3, HemisphericLight, StandardMaterial, Color3, AxesViewer, Skeleton, Bone, Matrix, VertexData, DefaultRenderingPipeline, PointerInfo, PointerEventTypes, MeshBuilder, DynamicTexture } from '@babylonjs/core'
 import { Mesh } from '@babylonjs/core/Meshes/mesh'
 import { SkeletonViewer } from '@babylonjs/core/Debug/skeletonViewer'
 import { Inspector } from '@babylonjs/inspector'
 import createYRotationAnimation from './Animation_data'
+import { Box, Slider } from '@mui/material'
+import { Rnd } from 'react-rnd'
 
 type Action = { type: 'TOGGLE', open: VoidFunction, close: VoidFunction }
 function animationReducer(state: boolean, action: Action) {
@@ -93,11 +95,12 @@ function createPageMesh(scene: Scene, name: string, z: number, isFront: boolean)
 }
 
 function createPageTexture(scene: Scene, text: string, isFront: boolean) {
-    const font = "bold 44px monospace"
-    const Texture = new DynamicTexture("DynamicTexture", isFront ? 512 : { width: 345, height: 512 }, scene, true)
+    const text_size = 22
+    const font = "bold " + text_size + "px monospace"
+    const Texture = new DynamicTexture("DynamicTexture", { width: 345, height: 512 }, scene, true)
     Texture.hasAlpha = true
     if (isFront) {
-        Texture.drawText(text, null, null, font, "#000000", "#ffffff", true)
+        Texture.drawText(text, 0, text_size, font, "#000000", "#ffffff", true)//基準点は左上
     }
     else {
         // Canvasの2Dコンテキストにアクセス
@@ -109,8 +112,8 @@ function createPageTexture(scene: Scene, text: string, isFront: boolean) {
 
         // テキストを描画する前にコンテキストを傾ける
         context.save()
-        context.translate(270, 245)
-        context.rotate(Math.PI / 1)// 45度傾ける
+        context.translate(345, 512 - text_size)//基準点は右下
+        context.rotate(Math.PI / 1)
         context.fillStyle = "#000000"
         context.font = font
         context.fillText(text, 0, 0)
@@ -158,7 +161,6 @@ function createHitBoxMaterial(boneName: string, scene: Scene): StandardMaterial 
 
 function createSkeleton(scene: Scene, name: string, targetMesh: Mesh) {
     const skeleton = new Skeleton(name, "001", scene)
-
     let parentBone = new Bone("rootBone", skeleton, null, Matrix.Translation(-0.11, 0, 0))
     const widthSubdivisions = 20
 
@@ -175,7 +177,6 @@ function createSkeleton(scene: Scene, name: string, targetMesh: Mesh) {
         hitBox.material = createHitBoxMaterial(boneName, scene)
         hitBox.position = new Vector3(0, 0, 0)  // 初期位置
         hitBox.attachToBone(parentBone, targetMesh)  // ページメッシュに対してボーンをアタッチ
-
     }
     return skeleton
 }
@@ -183,7 +184,6 @@ function createSkeleton(scene: Scene, name: string, targetMesh: Mesh) {
 function LightUp(scene: Scene) {
     const light = new HemisphericLight('light1', new Vector3(1, 1, 0), scene)
     light.intensity = 1.0
-
 }
 
 function CameraWork(scene: Scene, canvas: HTMLCanvasElement | null) {
@@ -198,11 +198,77 @@ function CameraWork(scene: Scene, canvas: HTMLCanvasElement | null) {
     pipeline.depthOfField.focusDistance = 2000
 }
 
+interface RndComponentProps {
+    text: string
+    setText: (text: string) => void
+    fontSize: number
+    setFontSize: (size: number) => void
+}
+
+const RndComponent: React.FC<RndComponentProps> = ({ fontSize, setFontSize }) => {
+    return (
+        <Rnd
+            default={{ x: 400, y: 20, width: 320, height: 240, }}
+            style={{ backgroundColor: 'rgba(255, 255, 255, 0.65)', padding: '10px', borderRadius: '8px' }}
+            enableResizing={{
+                bottom: true,
+                bottomLeft: true,
+                bottomRight: true,
+                left: true,
+                right: true,
+                top: true,
+                topLeft: true,
+                topRight: true,
+            }}
+        >
+            <div style={{ paddingTop: "40px" }} />
+            <div
+                style={{ height: '100%', display: 'flex', flexDirection: 'column' }}
+                onMouseDown={(e) => e.stopPropagation()}
+                onTouchStart={(e) => e.stopPropagation()}
+            >
+                <textarea
+                    style={{
+                        width: '100%',
+                        height: '100%',
+                        border: 'none',
+                        outline: 'none',
+                        resize: 'none',
+                        backgroundColor: 'rgba(255, 255, 255, 1)',
+                    }}
+                    placeholder="文章を入力してください..."
+                />
+                <span style={{ marginRight: '10px' }}>フォントサイズ</span>
+                <div style={{ display: 'flex', alignItems: 'center', marginBottom: '40px' }}>
+                    <input
+                        type="number"
+                        value={fontSize}
+                        onChange={(e) => setFontSize(Number(e.target.value))}
+                        style={{ width: '60px', marginRight: '10px' }}
+                    />
+                    <Slider
+                        value={fontSize}
+                        onChange={(_, newValue) => setFontSize(newValue as number)}
+                        aria-labelledby="font-size-slider"
+                        valueLabelDisplay="auto"
+                        step={1}
+                        min={10}
+                        max={100}
+                        style={{ flexGrow: 1 }}
+                    />
+                </div>
+            </div>
+        </Rnd>
+    )
+}
 
 const BabylonScene = () => {
     const isDebug = true
     const canvasRef = useRef<HTMLCanvasElement | null>(null)
     const [, dispatch] = useReducer(animationReducer, false)
+    const [text, setText] = useState("I'm front!")
+    const [fontSize, setFontSize] = useState(24)
+
     useEffect(() => {
         const canvas = canvasRef.current
         const engine = new Engine(canvas, true)
@@ -211,7 +277,7 @@ const BabylonScene = () => {
         LightUp(scene)
         CameraWork(scene, canvas)
 
-        const front_page = createPage(scene, "front_page", "I'm front!", 0, true)
+        const front_page = createPage(scene, "front_page", text, 0, true)
         const back_page = createPage(scene, "back_page", "I'm back!", 0.0001, false)
         const skeleton = createSkeleton(scene, "skeleton", front_page)
         front_page.skeleton = skeleton
@@ -245,7 +311,12 @@ const BabylonScene = () => {
         }
     }, [])
 
-    return <canvas ref={canvasRef} style={{ width: '100%', height: '100%' }} />
+    return (
+        <Box style={{ position: 'relative', width: '100%', height: '100%' }}>
+            <canvas ref={canvasRef} style={{ width: '100%', height: '100%' }} />
+            <RndComponent text={text} setText={setText} fontSize={fontSize} setFontSize={setFontSize} />
+        </Box>
+    )
 }
 
 export default BabylonScene
