@@ -1,4 +1,4 @@
-import React, { useRef, useEffect, useReducer, useState } from 'react'
+import React, { useRef, useEffect, useReducer, useState, Children } from 'react'
 import { Engine, Scene, ArcRotateCamera, Vector3, HemisphericLight, StandardMaterial, Color3, AxesViewer, Skeleton, Bone, Matrix, VertexData, DefaultRenderingPipeline, PointerInfo, PointerEventTypes, MeshBuilder, DynamicTexture } from '@babylonjs/core'
 import { Mesh } from '@babylonjs/core/Meshes/mesh'
 import { SkeletonViewer } from '@babylonjs/core/Debug/skeletonViewer'
@@ -6,6 +6,10 @@ import { Inspector } from '@babylonjs/inspector'
 import createYRotationAnimation from './Animation_data'
 import { Box, Button, Slider } from '@mui/material'
 import { Rnd } from 'react-rnd'
+import { atom, useRecoilState } from 'recoil'
+
+const Text_Switch = atom({ key: 'TS', default: false })
+const Long_Text = atom({ key: 'LT', default: "I'm front!" })
 
 type Action = { type: 'TOGGLE', open: VoidFunction, close: VoidFunction }
 function animationReducer(state: boolean, action: Action) {
@@ -199,19 +203,21 @@ function CameraWork(scene: Scene, canvas: HTMLCanvasElement | null) {
 }
 
 interface RndComponentProps {
-    text: string
-    setText: (text: string) => void
+    // text: string
+    // setText: (text: string) => void
     fontSize: number
     setFontSize: (size: number) => void
 }
 
 const RndComponent: React.FC<RndComponentProps> = ({ fontSize, setFontSize }) => {
+    const [text_update, setText_update] = useRecoilState(Text_Switch)
+    const [updatedText, setUpdatedText] = useRecoilState(Long_Text)
 
-    // const handleUpdateClick = () => {
-    //     if (textAreaRef.current) {
-    //         updateText(textAreaRef.current.value)
-    //     }
-    // }
+    const handleUpdate = () => {
+        setUpdatedText(updatedText)
+        setText_update(true)
+        console.log(text_update)
+    }
 
     return (
         <Rnd
@@ -246,6 +252,8 @@ const RndComponent: React.FC<RndComponentProps> = ({ fontSize, setFontSize }) =>
                         backgroundColor: 'rgba(255, 255, 255, 1)',
                     }}
                     placeholder="文章を入力してください..."
+                    value={updatedText}
+                    onChange={e => setUpdatedText(e.target.value)}
                 />
                 <span style={{ marginRight: '10px' }}>フォントサイズ</span>
                 <div style={{ display: 'flex', alignItems: 'center', marginBottom: '10px' }}>
@@ -266,7 +274,9 @@ const RndComponent: React.FC<RndComponentProps> = ({ fontSize, setFontSize }) =>
                         style={{ flexGrow: 1 }}
                     />
                 </div>
-                <Button size='small' variant='outlined' style={{ alignSelf: 'flex-end' }}>Update</Button>
+                <Button size='small' variant='outlined' style={{ alignSelf: 'flex-end' }} onClick={handleUpdate}>
+                    Update
+                </Button>
             </div>
         </Rnd>
     )
@@ -276,8 +286,11 @@ const BabylonScene = () => {
     const isDebug = true
     const canvasRef = useRef<HTMLCanvasElement | null>(null)
     const [, dispatch] = useReducer(animationReducer, false)
-    const [text, setText] = useState("I'm front!")
-    const [fontSize, setFontSize] = useState(24)
+    // const [text, setText] = useState("I'm front!")
+    const [fontSize, setFontSize] = useState(22)
+
+    const [text_update, setText_update] = useRecoilState(Text_Switch)
+    const [updated_text] = useRecoilState(Long_Text)
 
     useEffect(() => {
         const canvas = canvasRef.current
@@ -287,11 +300,24 @@ const BabylonScene = () => {
         LightUp(scene)
         CameraWork(scene, canvas)
 
-        const front_page = createPage(scene, "front_page", text, 0, true)
+        const front_page = createPage(scene, "front_page", updated_text, 0, true)
         const back_page = createPage(scene, "back_page", "I'm back!", 0.0001, false)
         const skeleton = createSkeleton(scene, "skeleton", front_page)
         front_page.skeleton = skeleton
         back_page.skeleton = skeleton
+
+        const front_texture_info = front_page.material?.getActiveTextures()
+        // const front_texture = front_texture_info?.find(texture => texture instanceof DynamicTexture) as DynamicTexture
+        const front_texture = front_texture_info?.values().next().value as DynamicTexture
+
+        if (text_update) {
+            const text_size = 22
+            const font = "bold " + text_size + "px monospace"
+            front_texture.clear()
+            front_texture.drawText(updated_text, 0, text_size, font, "#000000", "#ffffff", true)
+            setText_update(false)
+            console.log(text_update)
+        }
 
         if (isDebug) {
             const axesViewer = new AxesViewer(scene, 0.1)
@@ -319,12 +345,12 @@ const BabylonScene = () => {
             engine.dispose()
             window.removeEventListener('resize', resize)
         }
-    }, [])
+    }, [updated_text])
 
     return (
         <Box style={{ position: 'relative', width: '100%', height: '100%' }}>
             <canvas ref={canvasRef} style={{ width: '100%', height: '100%' }} />
-            <RndComponent text={text} setText={setText} fontSize={fontSize} setFontSize={setFontSize} />
+            <RndComponent fontSize={fontSize} setFontSize={setFontSize} />
         </Box>
     )
 }
