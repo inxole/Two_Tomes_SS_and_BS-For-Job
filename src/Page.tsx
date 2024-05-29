@@ -298,7 +298,7 @@ const BabylonScene = () => {
         CameraWork(scene, canvas)
 
         const front_page = createPage(scene, "front_page", updated_text, 0, true)
-        const back_page = createPage(scene, "back_page", "I'm back!", 0.0001, false)
+        const back_page = createPage(scene, "back_page", "may be change!", 0.0001, false)
         const skeleton = createSkeleton(scene, "skeleton", front_page)
         front_page.skeleton = skeleton
         back_page.skeleton = skeleton
