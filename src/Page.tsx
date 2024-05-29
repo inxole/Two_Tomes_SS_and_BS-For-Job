@@ -1,4 +1,4 @@
-import React, { useRef, useEffect, useReducer, useState, Children } from 'react'
+import React, { useRef, useEffect, useReducer, useState } from 'react'
 import { Engine, Scene, ArcRotateCamera, Vector3, HemisphericLight, StandardMaterial, Color3, AxesViewer, Skeleton, Bone, Matrix, VertexData, DefaultRenderingPipeline, PointerInfo, PointerEventTypes, MeshBuilder, DynamicTexture } from '@babylonjs/core'
 import { Mesh } from '@babylonjs/core/Meshes/mesh'
 import { SkeletonViewer } from '@babylonjs/core/Debug/skeletonViewer'
@@ -203,8 +203,6 @@ function CameraWork(scene: Scene, canvas: HTMLCanvasElement | null) {
 }
 
 interface RndComponentProps {
-    // text: string
-    // setText: (text: string) => void
     fontSize: number
     setFontSize: (size: number) => void
 }
@@ -286,7 +284,6 @@ const BabylonScene = () => {
     const isDebug = true
     const canvasRef = useRef<HTMLCanvasElement | null>(null)
     const [, dispatch] = useReducer(animationReducer, false)
-    // const [text, setText] = useState("I'm front!")
     const [fontSize, setFontSize] = useState(22)
 
     const [text_update, setText_update] = useRecoilState(Text_Switch)
@@ -307,7 +304,6 @@ const BabylonScene = () => {
         back_page.skeleton = skeleton
 
         const front_texture_info = front_page.material?.getActiveTextures()
-        // const front_texture = front_texture_info?.find(texture => texture instanceof DynamicTexture) as DynamicTexture
         const front_texture = front_texture_info?.values().next().value as DynamicTexture
 
         if (text_update) {
@@ -345,7 +341,7 @@ const BabylonScene = () => {
             engine.dispose()
             window.removeEventListener('resize', resize)
         }
-    }, [updated_text])
+    }, [text_update])
 
     return (
         <Box style={{ position: 'relative', width: '100%', height: '100%' }}>
