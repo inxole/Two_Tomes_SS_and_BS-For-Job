@@ -1,10 +1,10 @@
-import React, { useRef, useEffect, useReducer, useState} from 'react'
+import React, { useRef, useEffect, useReducer, useState } from 'react'
 import { Engine, Scene, ArcRotateCamera, Vector3, HemisphericLight, StandardMaterial, Color3, AxesViewer, Skeleton, Bone, Matrix, VertexData, DefaultRenderingPipeline, PointerInfo, PointerEventTypes, MeshBuilder, DynamicTexture } from '@babylonjs/core'
 import { Mesh } from '@babylonjs/core/Meshes/mesh'
 import { SkeletonViewer } from '@babylonjs/core/Debug/skeletonViewer'
 import { Inspector } from '@babylonjs/inspector'
 import createYRotationAnimation from './Animation_data'
-import { Box, Slider } from '@mui/material'
+import { Box, Button, Slider } from '@mui/material'
 import { Rnd } from 'react-rnd'
 
 type Action = { type: 'TOGGLE', open: VoidFunction, close: VoidFunction }
@@ -206,10 +206,17 @@ interface RndComponentProps {
 }
 
 const RndComponent: React.FC<RndComponentProps> = ({ fontSize, setFontSize }) => {
+
+    // const handleUpdateClick = () => {
+    //     if (textAreaRef.current) {
+    //         updateText(textAreaRef.current.value)
+    //     }
+    // }
+
     return (
         <Rnd
-            default={{ x: 400, y: 20, width: 320, height: 240, }}
-            style={{ backgroundColor: 'rgba(255, 255, 255, 0.65)', padding: '10px', borderRadius: '8px' }}
+            default={{ x: 400, y: 20, width: 320, height: 300 }}
+            style={{ backgroundColor: 'rgba(255, 255, 255, 0.65)', padding: '10px', borderRadius: '8px', paddingBottom: '50px' }}
             enableResizing={{
                 bottom: true,
                 bottomLeft: true,
@@ -220,6 +227,8 @@ const RndComponent: React.FC<RndComponentProps> = ({ fontSize, setFontSize }) =>
                 topLeft: true,
                 topRight: true,
             }}
+            minWidth={320}
+            minHeight={300}
         >
             <div style={{ paddingTop: "40px" }} />
             <div
@@ -239,7 +248,7 @@ const RndComponent: React.FC<RndComponentProps> = ({ fontSize, setFontSize }) =>
                     placeholder="文章を入力してください..."
                 />
                 <span style={{ marginRight: '10px' }}>フォントサイズ</span>
-                <div style={{ display: 'flex', alignItems: 'center', marginBottom: '40px' }}>
+                <div style={{ display: 'flex', alignItems: 'center', marginBottom: '10px' }}>
                     <input
                         type="number"
                         value={fontSize}
@@ -257,6 +266,7 @@ const RndComponent: React.FC<RndComponentProps> = ({ fontSize, setFontSize }) =>
                         style={{ flexGrow: 1 }}
                     />
                 </div>
+                <Button size='small' variant='outlined' style={{ alignSelf: 'flex-end' }}>Update</Button>
             </div>
         </Rnd>
     )
