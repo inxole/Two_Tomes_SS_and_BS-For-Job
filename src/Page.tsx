@@ -1,15 +1,10 @@
-import React, { useRef, useEffect, useReducer, useState } from 'react'
-import { Engine, Scene, ArcRotateCamera, Vector3, HemisphericLight, StandardMaterial, Color3, AxesViewer, Skeleton, Bone, Matrix, VertexData, DefaultRenderingPipeline, PointerInfo, PointerEventTypes, MeshBuilder, DynamicTexture } from '@babylonjs/core'
-import { Mesh } from '@babylonjs/core/Meshes/mesh'
-import { SkeletonViewer } from '@babylonjs/core/Debug/skeletonViewer'
+// ModelComponent.tsx
+import React, { useEffect, useReducer, useRef } from 'react'
+import { Engine, Scene, Vector3, HemisphericLight, ArcRotateCamera, DefaultRenderingPipeline, AxesViewer, SkeletonViewer, PointerInfo, PointerEventTypes, Mesh, DynamicTexture, Skeleton, VertexData, StandardMaterial, Color3, Bone, MeshBuilder, Matrix } from '@babylonjs/core'
+import { useRecoilState } from 'recoil'
 import { Inspector } from '@babylonjs/inspector'
 import createYRotationAnimation from './Animation_data'
-import { Box, Button, Slider } from '@mui/material'
-import { Rnd } from 'react-rnd'
-import { atom, useRecoilState } from 'recoil'
-
-const Text_Switch = atom({ key: 'TS', default: false })
-const Long_Text = atom({ key: 'LT', default: "I'm front!" })
+import { Long_Text, Text_Switch } from './atom'
 
 type Action = { type: 'TOGGLE', open: VoidFunction, close: VoidFunction }
 function animationReducer(state: boolean, action: Action) {
@@ -78,12 +73,12 @@ function createPageMesh(scene: Scene, name: string, z: number, isFront: boolean)
 
     for (let h = 0; h < heightSubdivisions; h++) {
         for (let w = 0; w < widthSubdivisions; w++) {
-            const topLeft = h * (widthSubdivisions + 1) + w;
-            const topRight = topLeft + 1;
-            const bottomLeft = topLeft + (widthSubdivisions + 1);
-            const bottomRight = bottomLeft + 1;
-            indices.push(topLeft, topRight, bottomRight);
-            indices.push(topLeft, bottomRight, bottomLeft);
+            const topLeft = h * (widthSubdivisions + 1) + w
+            const topRight = topLeft + 1
+            const bottomLeft = topLeft + (widthSubdivisions + 1)
+            const bottomRight = bottomLeft + 1
+            indices.push(topLeft, topRight, bottomRight)
+            indices.push(topLeft, bottomRight, bottomLeft)
         }
     }
 
@@ -138,7 +133,7 @@ function createPageMaterial(scene: Scene, texture: DynamicTexture) {
 }
 
 function createPage(scene: Scene, name: string, text: string, z: number, isFront: boolean) {
-    const page = createPageMesh(scene, name, z, isFront);
+    const page = createPageMesh(scene, name, z, isFront)
     const texture = createPageTexture(scene, text, isFront)
     page.material = createPageMaterial(scene, texture)
     page.rotation = new Vector3(Math.PI / 2, 0, 0)
@@ -202,90 +197,12 @@ function CameraWork(scene: Scene, canvas: HTMLCanvasElement | null) {
     pipeline.depthOfField.focusDistance = 2000
 }
 
-interface RndComponentProps {
-    fontSize: number
-    setFontSize: (size: number) => void
-}
 
-const RndComponent: React.FC<RndComponentProps> = ({ fontSize, setFontSize }) => {
-    const [text_update, setText_update] = useRecoilState(Text_Switch)
-    const [updatedText, setUpdatedText] = useRecoilState(Long_Text)
 
-    const handleUpdate = () => {
-        setUpdatedText(updatedText)
-        setText_update(true)
-        console.log(text_update)
-    }
-
-    return (
-        <Rnd
-            default={{ x: 400, y: 20, width: 320, height: 300 }}
-            style={{ backgroundColor: 'rgba(255, 255, 255, 0.65)', padding: '10px', borderRadius: '8px', paddingBottom: '50px' }}
-            enableResizing={{
-                bottom: true,
-                bottomLeft: true,
-                bottomRight: true,
-                left: true,
-                right: true,
-                top: true,
-                topLeft: true,
-                topRight: true,
-            }}
-            minWidth={320}
-            minHeight={300}
-        >
-            <div style={{ paddingTop: "40px" }} />
-            <div
-                style={{ height: '100%', display: 'flex', flexDirection: 'column' }}
-                onMouseDown={(e) => e.stopPropagation()}
-                onTouchStart={(e) => e.stopPropagation()}
-            >
-                <textarea
-                    style={{
-                        width: '100%',
-                        height: '100%',
-                        border: 'none',
-                        outline: 'none',
-                        resize: 'none',
-                        backgroundColor: 'rgba(255, 255, 255, 1)',
-                    }}
-                    placeholder="文章を入力してください..."
-                    value={updatedText}
-                    onChange={e => setUpdatedText(e.target.value)}
-                />
-                <span style={{ marginRight: '10px' }}>フォントサイズ</span>
-                <div style={{ display: 'flex', alignItems: 'center', marginBottom: '10px' }}>
-                    <input
-                        type="number"
-                        value={fontSize}
-                        onChange={(e) => setFontSize(Number(e.target.value))}
-                        style={{ width: '60px', marginRight: '10px' }}
-                    />
-                    <Slider
-                        value={fontSize}
-                        onChange={(_, newValue) => setFontSize(newValue as number)}
-                        aria-labelledby="font-size-slider"
-                        valueLabelDisplay="auto"
-                        step={1}
-                        min={10}
-                        max={100}
-                        style={{ flexGrow: 1 }}
-                    />
-                </div>
-                <Button size='small' variant='outlined' style={{ alignSelf: 'flex-end' }} onClick={handleUpdate}>
-                    Update
-                </Button>
-            </div>
-        </Rnd>
-    )
-}
-
-const BabylonScene = () => {
+const Page = () => {
     const isDebug = true
     const canvasRef = useRef<HTMLCanvasElement | null>(null)
     const [, dispatch] = useReducer(animationReducer, false)
-    const [fontSize, setFontSize] = useState(22)
-
     const [text_update, setText_update] = useRecoilState(Text_Switch)
     const [updated_text] = useRecoilState(Long_Text)
 
@@ -343,12 +260,7 @@ const BabylonScene = () => {
         }
     }, [text_update])
 
-    return (
-        <Box style={{ position: 'relative', width: '100%', height: '100%' }}>
-            <canvas ref={canvasRef} style={{ width: '100%', height: '100%' }} />
-            <RndComponent fontSize={fontSize} setFontSize={setFontSize} />
-        </Box>
-    )
+    return <canvas ref={canvasRef} style={{ width: '100%', height: '100%' }} />
 }
 
-export default BabylonScene
+export default Page

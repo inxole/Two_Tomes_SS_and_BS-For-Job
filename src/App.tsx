@@ -1,73 +1,99 @@
-import { useRef, useEffect } from "react"
-import { AnimationGroup, Color3, Engine, MeshBuilder, PointerEventTypes, PointerInfo, Scene, SceneLoader, StandardMaterial, Vector3 } from '@babylonjs/core'
-import '@babylonjs/loaders'
+// BabylonScene.tsx
+import React, { useState } from 'react'
+import { Box, Button, Slider } from '@mui/material'
+import { Rnd } from 'react-rnd'
+import { useRecoilState } from 'recoil'
+import Page from './Page'
+import { Long_Text, Text_Switch } from './atom'
 
-const App = () => {
-  const renderRef = useRef<HTMLCanvasElement>(null)
-  const isAnimatingRef = useRef<boolean>(false)
-  const animationRef = useRef<AnimationGroup | null>(null)
-
-  const toggleAnimation = () => {
-    if (animationRef.current) {
-      if (isAnimatingRef.current) {
-        animationRef.current.stop()
-      } else {
-        animationRef.current.start(true)
-      }
-      isAnimatingRef.current = !isAnimatingRef.current
-    }
-  }
-
-  function pointerObserver(pointerInfo: PointerInfo) {
-    if (pointerInfo.pickInfo !== null && pointerInfo.type === PointerEventTypes.POINTERDOWN) {
-      if (pointerInfo.pickInfo.hit && /^hitBox_/.test(pointerInfo.pickInfo.pickedMesh?.name || "")) {
-        toggleAnimation()
-      }
-    }
-  }
-
-  function createHitBoxMaterial(boneName: string, scene: Scene): StandardMaterial {
-    const material = new StandardMaterial(`hitBoxMat_${boneName}`, scene)
-    material.alpha = 0.3
-    material.diffuseColor = new Color3(0.5, 0.5, 1)
-    return material
-  }
-
-  useEffect(() => {
-    if (renderRef.current) {
-      const engine = new Engine(renderRef.current, true)
-      const scene = new Scene(engine)
-
-      scene.createDefaultCameraOrLight(true, true, true)
-      engine.runRenderLoop(() => { scene.render() })
-
-      SceneLoader.Append("./", "page.glb", scene, function (scene) {
-        const foundAnimation = scene.getAnimationGroupByName("page_action")
-        if (foundAnimation) { animationRef.current = foundAnimation }
-
-        const skeleton = scene.skeletons[0]
-
-        skeleton.bones
-          .filter(bone => /^Bone(\.0?1[0-9]|\.00[1-9])?$/.test(bone.name))
-          .map(bone => {
-
-            const hitBox = MeshBuilder.CreateBox(`hitBox_${bone.name}`, { width: 0.1, height: 0.1, depth: 2 }, scene)
-            hitBox.material = createHitBoxMaterial(bone.name, scene)
-            hitBox.attachToBone(bone, scene.meshes[0])
-            hitBox.position = new Vector3(0, 0.02, 0)
-          })
-      })
-
-      scene.onPointerObservable.add(pointerObserver)
-
-      return () => {
-        scene.dispose()
-        engine.dispose()
-      }
-    }
-  }, [])
-
-  return <canvas id="render" style={{ width: "100%", height: "800px" }} ref={renderRef} />
+interface RndComponentProps {
+  fontSize: number
+  setFontSize: (size: number) => void
 }
 
-export default App
+const RndComponent: React.FC<RndComponentProps> = ({ fontSize, setFontSize }) => {
+  const [text_update, setText_update] = useRecoilState(Text_Switch)
+  const [updatedText, setUpdatedText] = useRecoilState(Long_Text)
+
+  const handleUpdate = () => {
+    setUpdatedText(updatedText)
+    setText_update(true)
+    console.log(text_update)
+  }
+
+  
+
+  return (
+    <Rnd
+      default={{ x: 400, y: 20, width: 320, height: 300 }}
+      style={{ backgroundColor: 'rgba(255, 255, 255, 0.65)', padding: '10px', borderRadius: '8px', paddingBottom: '50px' }}
+      enableResizing={{
+        bottom: true,
+        bottomLeft: true,
+        bottomRight: true,
+        left: true,
+        right: true,
+        top: true,
+        topLeft: true,
+        topRight: true,
+      }}
+      minWidth={320}
+      minHeight={300}
+    >
+      <div style={{ paddingTop: "40px" }} />
+      <div
+        style={{ height: '100%', display: 'flex', flexDirection: 'column' }}
+        onMouseDown={(e) => e.stopPropagation()}
+        onTouchStart={(e) => e.stopPropagation()}
+      >
+        <textarea
+          style={{
+            width: '100%',
+            height: '100%',
+            border: 'none',
+            outline: 'none',
+            resize: 'none',
+            backgroundColor: 'rgba(255, 255, 255, 1)',
+          }}
+          placeholder="文章を入力してください..."
+          value={updatedText}
+          onChange={e => setUpdatedText(e.target.value)}
+        />
+        <span style={{ marginRight: '10px' }}>フォントサイズ</span>
+        <div style={{ display: 'flex', alignItems: 'center', marginBottom: '10px' }}>
+          <input
+            type="number"
+            value={fontSize}
+            onChange={(e) => setFontSize(Number(e.target.value))}
+            style={{ width: '60px', marginRight: '10px' }}
+          />
+          <Slider
+            value={fontSize}
+            onChange={(_, newValue) => setFontSize(newValue as number)}
+            aria-labelledby="font-size-slider"
+            valueLabelDisplay="auto"
+            step={1}
+            min={10}
+            max={100}
+            style={{ flexGrow: 1 }}
+          />
+        </div>
+        <Button size='small' variant='outlined' style={{ alignSelf: 'flex-end' }} onClick={handleUpdate}>
+          Update
+        </Button>
+      </div>
+    </Rnd>
+  )
+}
+
+const BabylonScene = () => {
+  const [fontSize, setFontSize] = useState(22)
+  return (
+    <Box style={{ position: 'relative', width: '100%', height: '100%' }}>
+      <Page />
+      <RndComponent fontSize={fontSize} setFontSize={setFontSize} />
+    </Box>
+  )
+}
+
+export default BabylonScene
