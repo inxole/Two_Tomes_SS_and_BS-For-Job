@@ -1,4 +1,3 @@
-// ModelComponent.tsx
 import React, { useEffect, useReducer, useRef } from 'react'
 import { Engine, Scene, Vector3, HemisphericLight, ArcRotateCamera, DefaultRenderingPipeline, AxesViewer, SkeletonViewer, PointerInfo, PointerEventTypes, Mesh, DynamicTexture, Skeleton, VertexData, StandardMaterial, Color3, Bone, MeshBuilder, Matrix } from '@babylonjs/core'
 import { useRecoilState } from 'recoil'
@@ -12,8 +11,7 @@ function animationReducer(state: boolean, action: Action) {
         case 'TOGGLE':
             if (state) {
                 action.close()
-            }
-            else {
+            } else {
                 action.open()
             }
             return !state
@@ -22,18 +20,32 @@ function animationReducer(state: boolean, action: Action) {
     }
 }
 
-function toggleAnimation(pointerInfo: PointerInfo, dispatch: React.Dispatch<Action>, scene: Scene, skeleton: Skeleton) {
+function toggleAnimation1(pointerInfo: PointerInfo, dispatch: React.Dispatch<Action>, scene: Scene, skeleton: Skeleton) {
     if (pointerInfo.pickInfo !== null && pointerInfo.type === PointerEventTypes.POINTERDOWN) {
-        if (pointerInfo.pickInfo.hit && /^hitBox_/.test(pointerInfo.pickInfo.pickedMesh?.name || "")) {
+        if (pointerInfo.pickInfo.hit && /^hitBox_animation1_/.test(pointerInfo.pickInfo.pickedMesh?.name || "")) {
             dispatch({
                 type: "TOGGLE",
                 open: () => {
-                    scene.beginAnimation(skeleton, 0, 60, true, undefined, () => {
-                    })
+                    scene.beginAnimation(skeleton, 0, 60, true, undefined, () => { })
                 },
                 close: () => {
-                    scene.beginAnimation(skeleton, 60, 120, true, undefined, () => {
-                    })
+                    scene.beginAnimation(skeleton, 60, 120, true, undefined, () => { })
+                }
+            })
+        }
+    }
+}
+
+function toggleAnimation2(pointerInfo: PointerInfo, dispatch: React.Dispatch<Action>, scene: Scene, skeleton: Skeleton) {
+    if (pointerInfo.pickInfo !== null && pointerInfo.type === PointerEventTypes.POINTERDOWN) {
+        if (pointerInfo.pickInfo.hit && /^hitBox_animation2_/.test(pointerInfo.pickInfo.pickedMesh?.name || "")) {
+            dispatch({
+                type: "TOGGLE",
+                open: () => {
+                    scene.beginAnimation(skeleton, 0, 60, true, undefined, () => { })
+                },
+                close: () => {
+                    scene.beginAnimation(skeleton, 60, 120, true, undefined, () => { })
                 }
             })
         }
@@ -153,22 +165,22 @@ function createCamera(scene: Scene, canvas: HTMLCanvasElement) {
 
 function createHitBoxMaterial(boneName: string, scene: Scene): StandardMaterial {
     const material = new StandardMaterial(`hitBoxMat_${boneName}`, scene)
-    material.alpha = 0.0
+    material.alpha = 0.3
     material.diffuseColor = new Color3(0.5, 0.5, 1)
     return material
 }
 
-function createSkeleton(scene: Scene, name: string, targetMesh: Mesh) {
-    const skeleton = new Skeleton(name, "001", scene)
-    let parentBone = new Bone("rootBone", skeleton, null, Matrix.Translation(-0.11, 0, 0))
+function createSkeleton(scene: Scene, name: string, targetMesh: Mesh, z: number, animationName: string) {
+    const skeleton = new Skeleton(name, animationName, scene)
+    let parentBone = new Bone(`${animationName}_Bone`, skeleton, null, Matrix.Translation(-0.11, 0, z))
     const widthSubdivisions = 20
 
     for (let w = 0; w <= widthSubdivisions; w++) {
-        const boneName = `bone${w}`
+        const boneName = `${animationName}_bone${w}`
         parentBone = new Bone(boneName, skeleton, parentBone, Matrix.Translation(0.01, 0, 0))
 
         // 各ボーンにy軸回転アニメーションを適用
-        const boneAnimation = createYRotationAnimation(boneName)
+        const boneAnimation = createYRotationAnimation(animationName, boneName)
         parentBone.animations = [boneAnimation]
 
         // ヒットボックスを生成する部分
@@ -197,12 +209,11 @@ function CameraWork(scene: Scene, canvas: HTMLCanvasElement | null) {
     pipeline.depthOfField.focusDistance = 2000
 }
 
-
-
 const Page = () => {
     const isDebug = true
     const canvasRef = useRef<HTMLCanvasElement | null>(null)
-    const [, dispatch] = useReducer(animationReducer, false)
+    const [, setDispatch] = useReducer(animationReducer, false)
+    const [, setTestDispatch] = useReducer(animationReducer, false)
     const [text_update, setText_update] = useRecoilState(Text_Switch)
     const [updated_text] = useRecoilState(Long_Text)
 
@@ -215,10 +226,16 @@ const Page = () => {
         CameraWork(scene, canvas)
 
         const front_page = createPage(scene, "front_page", updated_text, 0, true)
-        const back_page = createPage(scene, "back_page", "may be change!", 0.0001, false)
-        const skeleton = createSkeleton(scene, "skeleton", front_page)
+        const back_page = createPage(scene, "back_page", "page_2", 0.0001, false)
+        const skeleton = createSkeleton(scene, "skeleton", front_page, 0, "animation1")
         front_page.skeleton = skeleton
         back_page.skeleton = skeleton
+
+        const test_front_page = createPage(scene, "front_page_2", "page_3", 0.01, true)
+        const test_back_page = createPage(scene, "back_page_2", "page_4", 0.0101, false)
+        const test_skeleton = createSkeleton(scene, "test_skeleton", test_front_page, 0.01, "animation2")
+        test_front_page.skeleton = test_skeleton
+        test_back_page.skeleton = test_skeleton
 
         const front_texture_info = front_page.material?.getActiveTextures()
         const front_texture = front_texture_info?.values().next().value as DynamicTexture
@@ -235,17 +252,25 @@ const Page = () => {
         if (isDebug) {
             const axesViewer = new AxesViewer(scene, 0.1)
             axesViewer.update(new Vector3(0, 0, 0), new Vector3(1, 0, 0), new Vector3(0, 1, 0), new Vector3(0, 0, 1))
-            const skeletonViewer = new SkeletonViewer(skeleton, front_page, scene, false, 3, {
+            const skeletonViewer_1 = new SkeletonViewer(skeleton, front_page, scene, false, 3, {
                 displayMode: SkeletonViewer.DISPLAY_SPHERE_AND_SPURS
             })
-            skeletonViewer.isEnabled = true
+            skeletonViewer_1.isEnabled = true
+            const skeletonViewer_2 = new SkeletonViewer(test_skeleton, test_front_page, scene, false, 3, {
+                displayMode: SkeletonViewer.DISPLAY_SPHERE_AND_SPURS
+            })
+            skeletonViewer_2.isEnabled = true
             scene.debugLayer.show({
                 embedMode: true
             })
             Inspector.Show(scene, {})
         }
+
         scene.onPointerObservable.add(
-            (pointerInfo) => toggleAnimation(pointerInfo, dispatch, scene, skeleton)
+            (pointerInfo) => {
+                toggleAnimation2(pointerInfo, setTestDispatch, scene, test_skeleton)
+                toggleAnimation1(pointerInfo, setDispatch, scene, skeleton)
+            }
         )
 
         engine.runRenderLoop(() => { scene.render() })

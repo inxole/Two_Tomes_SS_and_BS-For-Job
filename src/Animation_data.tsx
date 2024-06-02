@@ -25,10 +25,11 @@ const boneRotations: { [key: string]: { zero: number, one: number, two: number, 
     'bone20': { zero: 0.00, one: 0.02, two: 0.05, three: 0.02, four: 0.02, five: 0.02, six:  0.00 },
 }
 
-const createYRotationAnimation = (boneName: string) => {
-    const rotation = boneRotations[boneName] || { zero: 0.0, one: 0.0, two: 0.0, three: 0.0, four: 0.0, five: 0.0, six: 0.0 }
+const createYRotationAnimation = (skeletonName: string, boneName: string) => {
+    const rotation = boneRotations[boneName.replace(`${skeletonName}_`, '')] || { zero: 0.0, one: 0.0, two: 0.0, three: 0.0, four: 0.0, five: 0.0, six: 0.0 }
+    const animationName = `${skeletonName}_${boneName}Animation`
 
-    const animation = new Animation(`${boneName}Animation`, "rotation", 120, Animation.ANIMATIONTYPE_VECTOR3, Animation.ANIMATIONLOOPMODE_CONSTANT)
+    const animation = new Animation(animationName, "rotation", 120, Animation.ANIMATIONTYPE_VECTOR3, Animation.ANIMATIONLOOPMODE_CONSTANT)
 
     // キーフレームの設定
     const keys = [

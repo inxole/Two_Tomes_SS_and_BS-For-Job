@@ -1,4 +1,3 @@
-// BabylonScene.tsx
 import React, { useState } from 'react'
 import { Box, Button, Slider } from '@mui/material'
 import { Rnd } from 'react-rnd'
