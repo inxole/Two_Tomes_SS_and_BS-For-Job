@@ -20,34 +20,26 @@ function animationReducer(state: boolean, action: Action) {
     }
 }
 
-function toggleAnimation1(pointerInfo: PointerInfo, dispatch: React.Dispatch<Action>, scene: Scene, skeleton: Skeleton) {
-    if (pointerInfo.pickInfo !== null && pointerInfo.type === PointerEventTypes.POINTERDOWN) {
-        if (pointerInfo.pickInfo.hit && /^hitBox_animation1_/.test(pointerInfo.pickInfo.pickedMesh?.name || "")) {
-            dispatch({
-                type: "TOGGLE",
-                open: () => {
-                    scene.beginAnimation(skeleton, 0, 60, true, undefined, () => { })
-                },
-                close: () => {
-                    scene.beginAnimation(skeleton, 60, 120, true, undefined, () => { })
-                }
-            })
-        }
-    }
+type ToggleAnimationSetup = {
+    dispatch: React.Dispatch<Action>,
+    skeleton: Skeleton,
+    pickNamePattern: RegExp,
 }
 
-function toggleAnimation2(pointerInfo: PointerInfo, dispatch: React.Dispatch<Action>, scene: Scene, skeleton: Skeleton) {
+function ToggleAnimationHandler(pointerInfo: PointerInfo, scene: Scene, toggleAnimationSetups: ToggleAnimationSetup[]) {
     if (pointerInfo.pickInfo !== null && pointerInfo.type === PointerEventTypes.POINTERDOWN) {
-        if (pointerInfo.pickInfo.hit && /^hitBox_animation2_/.test(pointerInfo.pickInfo.pickedMesh?.name || "")) {
-            dispatch({
-                type: "TOGGLE",
-                open: () => {
-                    scene.beginAnimation(skeleton, 0, 60, true, undefined, () => { })
-                },
-                close: () => {
-                    scene.beginAnimation(skeleton, 60, 120, true, undefined, () => { })
-                }
-            })
+        for (const { dispatch, skeleton, pickNamePattern } of toggleAnimationSetups) {
+            if (pointerInfo.pickInfo.hit && pickNamePattern.test(pointerInfo.pickInfo.pickedMesh?.name || "")) {
+                dispatch({
+                    type: "TOGGLE",
+                    open: () => {
+                        scene.beginAnimation(skeleton, 0, 60, true, undefined, () => { })
+                    },
+                    close: () => {
+                        scene.beginAnimation(skeleton, 60, 120, true, undefined, () => { })
+                    }
+                })
+            }
         }
     }
 }
@@ -59,6 +51,7 @@ function createPageMesh(scene: Scene, name: string, z: number, isFront: boolean)
     const heightSubdivisions = 1
 
     const page = new Mesh(name, scene)
+    page.isPickable = false
     const positions = []
     const indices = []
     const normals = []
@@ -212,8 +205,8 @@ function CameraWork(scene: Scene, canvas: HTMLCanvasElement | null) {
 const Page = () => {
     const isDebug = true
     const canvasRef = useRef<HTMLCanvasElement | null>(null)
-    const [, setDispatch] = useReducer(animationReducer, false)
-    const [, setTestDispatch] = useReducer(animationReducer, false)
+    const [, setDispatch1] = useReducer(animationReducer, false)
+    const [, setDispatch2] = useReducer(animationReducer, false)
     const [text_update, setText_update] = useRecoilState(Text_Switch)
     const [updated_text] = useRecoilState(Long_Text)
 
@@ -227,15 +220,15 @@ const Page = () => {
 
         const front_page = createPage(scene, "front_page", updated_text, 0, true)
         const back_page = createPage(scene, "back_page", "page_2", 0.0001, false)
-        const skeleton = createSkeleton(scene, "skeleton", front_page, 0, "animation1")
-        front_page.skeleton = skeleton
-        back_page.skeleton = skeleton
+        const pageSkeleton1 = createSkeleton(scene, "skeleton", front_page, 0, "animation1")
+        front_page.skeleton = pageSkeleton1
+        back_page.skeleton = pageSkeleton1
 
-        const test_front_page = createPage(scene, "front_page_2", "page_3", 0.01, true)
-        const test_back_page = createPage(scene, "back_page_2", "page_4", 0.0101, false)
-        const test_skeleton = createSkeleton(scene, "test_skeleton", test_front_page, 0.01, "animation2")
-        test_front_page.skeleton = test_skeleton
-        test_back_page.skeleton = test_skeleton
+        const front_page2 = createPage(scene, "front_page_2", "page_3", 0.01, true)
+        const back_page2 = createPage(scene, "back_page_2", "page_4", 0.0101, false)
+        const pageSkeleton2 = createSkeleton(scene, "test_skeleton", front_page2, 0.01, "animation2")
+        front_page2.skeleton = pageSkeleton2
+        back_page2.skeleton = pageSkeleton2
 
         const front_texture_info = front_page.material?.getActiveTextures()
         const front_texture = front_texture_info?.values().next().value as DynamicTexture
@@ -252,11 +245,11 @@ const Page = () => {
         if (isDebug) {
             const axesViewer = new AxesViewer(scene, 0.1)
             axesViewer.update(new Vector3(0, 0, 0), new Vector3(1, 0, 0), new Vector3(0, 1, 0), new Vector3(0, 0, 1))
-            const skeletonViewer_1 = new SkeletonViewer(skeleton, front_page, scene, false, 3, {
+            const skeletonViewer_1 = new SkeletonViewer(pageSkeleton1, front_page, scene, false, 3, {
                 displayMode: SkeletonViewer.DISPLAY_SPHERE_AND_SPURS
             })
             skeletonViewer_1.isEnabled = true
-            const skeletonViewer_2 = new SkeletonViewer(test_skeleton, test_front_page, scene, false, 3, {
+            const skeletonViewer_2 = new SkeletonViewer(pageSkeleton2, front_page2, scene, false, 3, {
                 displayMode: SkeletonViewer.DISPLAY_SPHERE_AND_SPURS
             })
             skeletonViewer_2.isEnabled = true
@@ -267,10 +260,10 @@ const Page = () => {
         }
 
         scene.onPointerObservable.add(
-            (pointerInfo) => {
-                toggleAnimation2(pointerInfo, setTestDispatch, scene, test_skeleton)
-                toggleAnimation1(pointerInfo, setDispatch, scene, skeleton)
-            }
+            (pointerInfo) => ToggleAnimationHandler(pointerInfo, scene, [
+                    { dispatch: setDispatch1, skeleton: pageSkeleton1, pickNamePattern: /^hitBox_animation1_/ },
+                    { dispatch: setDispatch2, skeleton: pageSkeleton2, pickNamePattern: /^hitBox_animation2_/ }
+            ])
         )
 
         engine.runRenderLoop(() => { scene.render() })
