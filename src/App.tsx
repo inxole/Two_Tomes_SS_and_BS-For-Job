@@ -2,7 +2,7 @@ import React, { useState } from 'react'
 import { Box, Button, FormControl, FormControlLabel, FormLabel, Radio, RadioGroup, Slider } from '@mui/material'
 import { Rnd } from 'react-rnd'
 import { useRecoilState } from 'recoil'
-import Page from './Page'
+import Canvas from './Page'
 import { Long_Text, Pages_Number, Text_Switch } from './atom'
 
 interface RndComponentProps {
@@ -11,14 +11,13 @@ interface RndComponentProps {
 }
 
 const RndComponent: React.FC<RndComponentProps> = ({ fontSize, setFontSize }) => {
-  const [text_update, setText_update] = useRecoilState(Text_Switch)
+  const [, setText_update] = useRecoilState(Text_Switch)
   const [updatedText, setUpdatedText] = useRecoilState(Long_Text)
   const [pages_number, setPages_number] = useRecoilState(Pages_Number)
 
   const handleUpdate = () => {
     setUpdatedText(updatedText)
     setText_update(true)
-    console.log(text_update)
   }
 
   return (
@@ -102,7 +101,7 @@ const BabylonScene = () => {
   const [fontSize, setFontSize] = useState(22)
   return (
     <Box style={{ position: 'relative', width: '100%', height: '100%' }}>
-      <Page />
+      <Canvas />
       <RndComponent fontSize={fontSize} setFontSize={setFontSize} />
     </Box>
   )
