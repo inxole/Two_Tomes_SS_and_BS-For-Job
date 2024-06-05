@@ -1,9 +1,9 @@
-import React, { Reducer, useEffect, useReducer, useRef, useState } from 'react'
+import React, { Reducer, useEffect, useReducer, useRef } from 'react'
 import { Engine, Scene, Vector3, HemisphericLight, ArcRotateCamera, DefaultRenderingPipeline, AxesViewer, SkeletonViewer, PointerInfo, PointerEventTypes, Mesh, DynamicTexture, Skeleton, VertexData, StandardMaterial, Color3, Bone, MeshBuilder, Matrix } from '@babylonjs/core'
 import { useRecoilState } from 'recoil'
 import { Inspector } from '@babylonjs/inspector'
 import createYRotationAnimation from './Animation_data'
-import { Long_Text, Text_Switch } from './atom'
+import { Long_Text, Pages_Number, Text_Switch } from './atom'
 
 type Action = { type: 'TOGGLE', open: VoidFunction, close: VoidFunction }
 function animationReducer(state: boolean, action: Action) {
@@ -202,7 +202,7 @@ function CameraWork(scene: Scene, canvas: HTMLCanvasElement | null) {
     pipeline.depthOfField.focusDistance = 2000
 }
 
-const useMultipleReducers = (reducer: Reducer<boolean, any>, initialState: boolean, count: number) => {
+const useDynamicReducers = (reducer: Reducer<boolean, Action>, initialState: boolean, count: number) => {
     return Array.from({ length: count }, () => useReducer(reducer, initialState))
 }
 
@@ -210,9 +210,11 @@ const Page = () => {
     const isDebug = true
     const canvasRef = useRef<HTMLCanvasElement | null>(null)
     const [text_update, setText_update] = useRecoilState(Text_Switch)
-    const [updated_text] = useRecoilState(Long_Text)
-    const [pages_number] = useState(10)
-    const dispatchers = useMultipleReducers(animationReducer, false, pages_number).map(([_, dispatch]) => dispatch)
+    const [pages_number,] = useRecoilState(Pages_Number)
+    const [updated_text,] = useRecoilState(Long_Text)
+    const bone_number = 60
+
+    const dispatchers = useDynamicReducers(animationReducer, false, bone_number).map(([_, dispatch]) => dispatch)
 
     useEffect(() => {
         const canvas = canvasRef.current
@@ -222,33 +224,39 @@ const Page = () => {
         LightUp(scene)
         CameraWork(scene, canvas)
 
+        const front_pages: Mesh[] = []
+        const back_pages: Mesh[] = []
         const pageSkeletons: Skeleton[] = []
-        const frontPages: Mesh[] = []
-        const backPages: Mesh[] = []
 
+        // メッシュの作成
         for (let i = 0; i < pages_number; i++) {
-            const front_page_text = i === 0 ? updated_text : `page_${i * 2 + 1}`
-            const back_page_text = `page_${i * 2 + 2}`
-            const front_page = createPage(scene, `front_page_${i}`, front_page_text, i * 0.01, true)
-            const back_page = createPage(scene, `back_page_${i}`, back_page_text, i * 0.01 + 0.0001, false)
-            const pageSkeleton = createSkeleton(scene, `skeleton_${i}`, front_page, i * 0.01, `animation${i + 1}`)
-            front_page.skeleton = pageSkeleton
-            back_page.skeleton = pageSkeleton
+            const front_page = createPage(scene, `front_page_${i}`, i === 0 ? updated_text : `page_${2 * i + 1}`, i * 0.01, true)
+            const back_page = createPage(scene, `back_page_${i}`, `page_${2 * i + 2}`, i * 0.01 + 0.0001, false)
 
-            frontPages.push(front_page)
-            backPages.push(back_page)
+            front_pages.push(front_page)
+            back_pages.push(back_page)
+        }
+
+        // スケルトンの作成
+        for (let i = 0; i < bone_number; i++) {
+            const pageSkeleton = createSkeleton(scene, `skeleton_${i}`, front_pages[i], i * 0.01, `animation${i + 1}`)
             pageSkeletons.push(pageSkeleton)
         }
+
+        // メッシュにスケルトンを適用
+        for (let i = 0; i < pages_number; i++) {
+            front_pages[i].skeleton = pageSkeletons[i]
+            back_pages[i].skeleton = pageSkeletons[i]
+        }
+
+        const front_texture_info = front_pages[0].material?.getActiveTextures()
+        const front_texture = front_texture_info?.values().next().value as DynamicTexture
 
         if (text_update) {
             const text_size = 22
             const font = "bold " + text_size + "px monospace"
-            frontPages.forEach((front_page, i) => {
-                const front_texture_info = front_page.material?.getActiveTextures()
-                const front_texture = front_texture_info?.values().next().value as DynamicTexture
-                front_texture.clear()
-                front_texture.drawText(i === 0 ? updated_text : `page_${i * 2 + 1}`, 0, text_size, font, "#000000", "#ffffff", true)
-            })
+            front_texture.clear()
+            front_texture.drawText(updated_text, 0, text_size, font, "#000000", "#ffffff", true)
             setText_update(false)
             console.log(text_update)
         }
@@ -257,7 +265,7 @@ const Page = () => {
             const axesViewer = new AxesViewer(scene, 0.1)
             axesViewer.update(new Vector3(0, 0, 0), new Vector3(1, 0, 0), new Vector3(0, 1, 0), new Vector3(0, 0, 1))
             pageSkeletons.forEach((pageSkeleton, i) => {
-                const skeletonViewer = new SkeletonViewer(pageSkeleton, frontPages[i], scene, false, 3, {
+                const skeletonViewer = new SkeletonViewer(pageSkeleton, front_pages[i], scene, false, 3, {
                     displayMode: SkeletonViewer.DISPLAY_SPHERE_AND_SPURS
                 })
                 skeletonViewer.isEnabled = true
@@ -270,7 +278,7 @@ const Page = () => {
 
         scene.onPointerObservable.add(
             (pointerInfo) => ToggleAnimationHandler(pointerInfo, scene, pageSkeletons.map((pageSkeleton, i) => ({
-                dispatch: dispatchers[i % dispatchers.length],
+                dispatch: dispatchers[i],
                 skeleton: pageSkeleton,
                 pickNamePattern: new RegExp(`^hitBox_animation${i + 1}_`)
             })))
@@ -286,7 +294,7 @@ const Page = () => {
             engine.dispose()
             window.removeEventListener('resize', resize)
         }
-    }, [text_update])
+    }, [text_update, pages_number])
 
     return <canvas ref={canvasRef} style={{ width: '100%', height: '100%' }} />
 }
