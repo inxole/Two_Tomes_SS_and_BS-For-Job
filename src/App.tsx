@@ -84,9 +84,9 @@ const RndComponent: React.FC<RndComponentProps> = ({ fontSize, setFontSize }) =>
             defaultValue={pages_number.toString()}
             onChange={(event) => setPages_number(parseInt(event.target.value))}
           >
-            <FormControlLabel value='10' control={<Radio />} label='10' />
-            <FormControlLabel value='30' control={<Radio />} label='30' />
-            <FormControlLabel value='60' control={<Radio />} label='60' />
+            <FormControlLabel value='1' control={<Radio />} label='1' />
+            {/* <FormControlLabel value='30' control={<Radio />} label='30' /> */}
+            {/* <FormControlLabel value='60' control={<Radio />} label='60' /> */}
           </RadioGroup>
         </FormControl>
         <Button size='small' variant='outlined' style={{ alignSelf: 'flex-end' }} onClick={handleUpdate}>

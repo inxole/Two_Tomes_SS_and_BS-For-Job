@@ -1,5 +1,5 @@
-import React, { Reducer, useEffect, useReducer, useRef } from 'react'
-import { Engine, Scene, Vector3, AxesViewer, SkeletonViewer, PointerInfo, PointerEventTypes, Mesh, DynamicTexture, Skeleton } from '@babylonjs/core'
+import React, { Reducer, useEffect, useReducer, useRef, useState } from 'react'
+import { Engine, Scene, Vector3, AxesViewer, SkeletonViewer, PointerInfo, PointerEventTypes, Mesh, DynamicTexture, Skeleton, SceneLoader, AnimationGroup, BoneAxesViewer, IBoneWeightShaderOptions } from '@babylonjs/core'
 import { useRecoilState } from 'recoil'
 import { Inspector } from '@babylonjs/inspector'
 import { Long_Text, Pages_Number, Text_Switch } from './atom'
@@ -54,8 +54,11 @@ const Canvas = () => {
     const [text_update, setText_update] = useRecoilState(Text_Switch)
     const [meshes_amount,] = useRecoilState(Pages_Number)
     const [updated_text,] = useRecoilState(Long_Text)
-    const skeletons_amount = 60
+    const skeletons_amount = 1
     const dispatchers = useDynamicReducers(animationReducer, false, skeletons_amount).map(([_, dispatch]) => dispatch)
+
+    const [isAnimating, setIsAnimating] = useState(false)
+    const animationRef = useRef<AnimationGroup | null>(null)
 
     useEffect(() => {
         const canvas = canvasRef.current
@@ -93,6 +96,38 @@ const Canvas = () => {
             setText_update(false)
         }
 
+        SceneLoader.Append("./", "test_cube.glb", scene, function () {
+            let foundAnimation = scene.getAnimationGroupByName("test_Armature")
+            if (foundAnimation) {
+                animationRef.current = foundAnimation
+            }
+            const testCubeMesh = scene.getMeshByName("test_Cube") as Mesh
+            if (testCubeMesh && testCubeMesh.skeleton) {
+                const skeletonViewer = new SkeletonViewer(testCubeMesh.skeleton, testCubeMesh, scene, false, 1, {
+                    displayMode: SkeletonViewer.DISPLAY_SPHERE_AND_SPURS
+                })
+                skeletonViewer.isEnabled = true
+            }
+        })
+
+        // ウェイト付きシェーダーのテスト
+        // SceneLoader.Append("./", "test_cube.glb", scene, function () {
+        //     let foundAnimation = scene.getAnimationGroupByName("test_Armature")
+        //     if (foundAnimation) {
+        //         animationRef.current = foundAnimation
+        //     }
+        //     const testCubeMesh = scene.getMeshByName("test_Cube") as Mesh
+        //     scene.debugLayer.select(testCubeMesh)
+        //     var boneWeightShader = SkeletonViewer.CreateBoneWeightShader(testCubeMesh as IBoneWeightShaderOptions, scene)
+        //     boneWeightShader.setFloat("targetBoneIndex", 1)
+        //     testCubeMesh.material = boneWeightShader
+
+        //     var viewer = new SkeletonViewer(testCubeMesh.skeleton as Skeleton, testCubeMesh, scene, false, 1, {
+        //         displayMode: SkeletonViewer.DISPLAY_SPHERE_AND_SPURS
+        //     })
+        //     viewer.isEnabled = true
+        // })
+
         if (isDebug) {
             const axesViewer = new AxesViewer(scene, 0.1)
             axesViewer.update(new Vector3(0, 0, 0), new Vector3(1, 0, 0), new Vector3(0, 1, 0), new Vector3(0, 0, 1))
@@ -124,7 +159,18 @@ const Canvas = () => {
         }
     }, [text_update, meshes_amount])
 
-    return <canvas ref={canvasRef} style={{ width: '100%', height: '100%' }} />
+    const toggleAnimation = () => {
+        if (animationRef.current) {
+            if (isAnimating) {
+                animationRef.current.stop()
+            } else {
+                animationRef.current.start(true)
+            }
+            setIsAnimating(!isAnimating)
+        }
+    }
+
+    return <canvas ref={canvasRef} style={{ width: '100%', height: '100%' }} onClick={toggleAnimation} />
 }
 
 export default Canvas
