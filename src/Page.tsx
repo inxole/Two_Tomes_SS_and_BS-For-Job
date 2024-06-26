@@ -97,10 +97,13 @@ const Canvas = () => {
             setText_update(false)
         }
 
+        const mesh_BS: Mesh[] = []
+        const skeletons_BS: Skeleton[] = []
+
         SceneLoader.Append("./", "Tome_BS.glb", scene, function () {
-            let foundAnimation = scene.getAnimationGroupByName("1_BS_action_15");
+            let foundAnimation = scene.getAnimationGroupByName("1_BS_action_15")
             if (foundAnimation) {
-                animationRef.current = foundAnimation;
+                animationRef.current = foundAnimation
             }
 
             // メッシュの取得
@@ -117,15 +120,9 @@ const Canvas = () => {
 
                     // スケルトン「BS_Armature」を取得
                     const skeleton = scene.getSkeletonByName("BS_Armature")
-                    mergedMesh.skeleton = skeleton;
+                    mergedMesh.skeleton = skeleton
 
                     if (mergedMesh.skeleton && skeleton) {
-                        // スケルトンビューアーの作成
-                        const skeletonViewer = new SkeletonViewer(mergedMesh.skeleton, mergedMesh, scene, false, 4, {
-                            displayMode: SkeletonViewer.DISPLAY_SPHERE_AND_SPURS
-                        });
-                        skeletonViewer.isEnabled = true;
-
                         // メッシュとスケルトンの回転
                         const rotateTransform = Matrix.RotationY(Math.PI / 1)
                         mergedMesh.bakeTransformIntoVertices(rotateTransform)
@@ -136,14 +133,22 @@ const Canvas = () => {
                             const newMatrix = currentMatrix.multiply(rotateTransform)
                             bone.getLocalMatrix().copyFrom(newMatrix)
                         })
+
+                        // mergedMesh と skeleton を配列に追加
+                        mesh_BS.push(mergedMesh)
+                        skeletons_BS.push(skeleton)
                     }
+                    // mesh_BS 内のメッシュと skeletons_BS 内のスケルトンのスケルトンビューアーを作成
+                    mesh_BS.forEach((mesh, index) => {
+                        const skeleton = skeletons_BS[index]
+                        const skeletonViewer = new SkeletonViewer(skeleton, mesh, scene, false, 3, {
+                            displayMode: SkeletonViewer.DISPLAY_SPHERE_AND_SPURS
+                        })
+                        skeletonViewer.isEnabled = true
+                    })
                 }
             }
         })
-
-        // testCubeMesh.movePOV(0, 0, 0)//z,y,x
-        // testCubeMesh.rotate(new Vector3(0, 1, 0), Math.PI / 1)//最上位親ボーンを基点に回転
-        // testCubeMesh.scaling = new Vector3(2, 2, 2)
 
         const box_mesh = MeshBuilder.CreateBox("box", { size: 0.01 }, scene)
         box_mesh.position = new Vector3(0.003, 0, 0)
@@ -151,8 +156,6 @@ const Canvas = () => {
         back_pages[0].parent = box_mesh
 
         if (isDebug) {
-            // const axesViewer = new AxesViewer(scene, 0.1)
-            // axesViewer.update(new Vector3(0, 0, 0), new Vector3(1, 0, 0), new Vector3(0, 1, 0), new Vector3(0, 0, 1))
             pageSkeletons.forEach((pageSkeleton, i) => {
                 const skeletonViewer = new SkeletonViewer(pageSkeleton, front_pages[i], scene, false, 3, {
                     displayMode: SkeletonViewer.DISPLAY_SPHERE_AND_SPURS
