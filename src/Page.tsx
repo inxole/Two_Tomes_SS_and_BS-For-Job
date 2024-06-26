@@ -1,9 +1,10 @@
 import React, { Reducer, useEffect, useReducer, useRef, useState } from 'react'
-import { Engine, Scene, Vector3, AxesViewer, SkeletonViewer, PointerInfo, PointerEventTypes, Mesh, DynamicTexture, Skeleton, SceneLoader, AnimationGroup, BoneAxesViewer, IBoneWeightShaderOptions } from '@babylonjs/core'
+import { Engine, Scene, Vector3, AxesViewer, SkeletonViewer, PointerInfo, PointerEventTypes, Mesh, DynamicTexture, Skeleton, SceneLoader, AnimationGroup, MeshBuilder, IBoneWeightShaderOptions, StandardMaterial, Color3, Matrix } from '@babylonjs/core'
 import { useRecoilState } from 'recoil'
 import { Inspector } from '@babylonjs/inspector'
 import { Long_Text, Pages_Number, Text_Switch } from './atom'
-import { CameraWork, LightUp, createPage, createSkeleton } from './Canvas_Function'
+import { CameraWork, LightUp, createHitBoxMaterial, createPage, createSkeleton } from './Canvas_Function'
+import { bonesDeclaration } from '@babylonjs/core/Shaders/ShadersInclude/bonesDeclaration'
 
 type Action = { type: 'TOGGLE', open: VoidFunction, close: VoidFunction }
 function animationReducer(state: boolean, action: Action) {
@@ -96,41 +97,62 @@ const Canvas = () => {
             setText_update(false)
         }
 
-        SceneLoader.Append("./", "test_cube.glb", scene, function () {
-            let foundAnimation = scene.getAnimationGroupByName("test_Armature")
+        SceneLoader.Append("./", "Tome_BS.glb", scene, function () {
+            let foundAnimation = scene.getAnimationGroupByName("1_BS_action_15");
             if (foundAnimation) {
-                animationRef.current = foundAnimation
+                animationRef.current = foundAnimation;
             }
-            const testCubeMesh = scene.getMeshByName("test_Cube") as Mesh
-            if (testCubeMesh && testCubeMesh.skeleton) {
-                const skeletonViewer = new SkeletonViewer(testCubeMesh.skeleton, testCubeMesh, scene, false, 1, {
-                    displayMode: SkeletonViewer.DISPLAY_SPHERE_AND_SPURS
-                })
-                skeletonViewer.isEnabled = true
+
+            // メッシュの取得
+            const testCubeMesh_0 = scene.getMeshByName("Tome_BS_primitive0") as Mesh
+            const testCubeMesh_1 = scene.getMeshByName("Tome_BS_primitive1") as Mesh
+            const testCubeMesh_2 = scene.getMeshByName("Tome_BS_primitive2") as Mesh
+
+            if (testCubeMesh_0 && testCubeMesh_1 && testCubeMesh_2) {
+                // メッシュの統合
+                const mergedMesh = Mesh.MergeMeshes([testCubeMesh_0, testCubeMesh_1, testCubeMesh_2], true, true, undefined, false, true)
+                if (mergedMesh) {
+                    // 統合したメッシュの名前を設定
+                    mergedMesh.name = "Tome_BS"
+
+                    // スケルトン「BS_Armature」を取得
+                    const skeleton = scene.getSkeletonByName("BS_Armature")
+                    mergedMesh.skeleton = skeleton;
+
+                    if (mergedMesh.skeleton && skeleton) {
+                        // スケルトンビューアーの作成
+                        const skeletonViewer = new SkeletonViewer(mergedMesh.skeleton, mergedMesh, scene, false, 4, {
+                            displayMode: SkeletonViewer.DISPLAY_SPHERE_AND_SPURS
+                        });
+                        skeletonViewer.isEnabled = true;
+
+                        // メッシュとスケルトンの回転
+                        const rotateTransform = Matrix.RotationY(Math.PI / 1)
+                        mergedMesh.bakeTransformIntoVertices(rotateTransform)
+
+                        // スケルトンのボーンの回転
+                        skeleton.bones.forEach(bone => {
+                            const currentMatrix = bone.getLocalMatrix()
+                            const newMatrix = currentMatrix.multiply(rotateTransform)
+                            bone.getLocalMatrix().copyFrom(newMatrix)
+                        })
+                    }
+                }
             }
         })
 
-        // ウェイト付きシェーダーのテスト
-        // SceneLoader.Append("./", "test_cube.glb", scene, function () {
-        //     let foundAnimation = scene.getAnimationGroupByName("test_Armature")
-        //     if (foundAnimation) {
-        //         animationRef.current = foundAnimation
-        //     }
-        //     const testCubeMesh = scene.getMeshByName("test_Cube") as Mesh
-        //     scene.debugLayer.select(testCubeMesh)
-        //     var boneWeightShader = SkeletonViewer.CreateBoneWeightShader(testCubeMesh as IBoneWeightShaderOptions, scene)
-        //     boneWeightShader.setFloat("targetBoneIndex", 1)
-        //     testCubeMesh.material = boneWeightShader
+        // testCubeMesh.movePOV(0, 0, 0)//z,y,x
+        // testCubeMesh.rotate(new Vector3(0, 1, 0), Math.PI / 1)//最上位親ボーンを基点に回転
+        // testCubeMesh.scaling = new Vector3(2, 2, 2)
 
-        //     var viewer = new SkeletonViewer(testCubeMesh.skeleton as Skeleton, testCubeMesh, scene, false, 1, {
-        //         displayMode: SkeletonViewer.DISPLAY_SPHERE_AND_SPURS
-        //     })
-        //     viewer.isEnabled = true
-        // })
+        const box_mesh = MeshBuilder.CreateBox("box", { size: 0.01 }, scene)
+        box_mesh.position = new Vector3(0.003, 0, 0)
+        front_pages[0].parent = box_mesh
+        back_pages[0].parent = box_mesh
 
         if (isDebug) {
-            const axesViewer = new AxesViewer(scene, 0.1)
-            axesViewer.update(new Vector3(0, 0, 0), new Vector3(1, 0, 0), new Vector3(0, 1, 0), new Vector3(0, 0, 1))
+            // const axesViewer = new AxesViewer(scene, 0.1)
+            // axesViewer.update(new Vector3(0, 0, 0), new Vector3(1, 0, 0), new Vector3(0, 1, 0), new Vector3(0, 0, 1))
             pageSkeletons.forEach((pageSkeleton, i) => {
                 const skeletonViewer = new SkeletonViewer(pageSkeleton, front_pages[i], scene, false, 3, {
                     displayMode: SkeletonViewer.DISPLAY_SPHERE_AND_SPURS
