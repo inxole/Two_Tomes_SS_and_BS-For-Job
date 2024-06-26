@@ -1,10 +1,9 @@
-import React, { Reducer, useEffect, useReducer, useRef, useState } from 'react'
-import { Engine, Scene, Vector3, AxesViewer, SkeletonViewer, PointerInfo, PointerEventTypes, Mesh, DynamicTexture, Skeleton, SceneLoader, AnimationGroup, MeshBuilder, IBoneWeightShaderOptions, StandardMaterial, Color3, Matrix } from '@babylonjs/core'
+import React, { Reducer, useEffect, useReducer, useRef } from 'react'
+import { Engine, Scene, Vector3, SkeletonViewer, PointerInfo, PointerEventTypes, Mesh, DynamicTexture, Skeleton, SceneLoader, AnimationGroup, MeshBuilder, Matrix } from '@babylonjs/core'
 import { useRecoilState } from 'recoil'
 import { Inspector } from '@babylonjs/inspector'
 import { Long_Text, Pages_Number, Text_Switch } from './atom'
 import { CameraWork, LightUp, createHitBoxMaterial, createPage, createSkeleton } from './Canvas_Function'
-import { bonesDeclaration } from '@babylonjs/core/Shaders/ShadersInclude/bonesDeclaration'
 
 type Action = { type: 'TOGGLE', open: VoidFunction, close: VoidFunction }
 function animationReducer(state: boolean, action: Action) {
@@ -27,19 +26,37 @@ type ToggleAnimationSetup = {
     pickNamePattern: RegExp,
 }
 
-function ToggleAnimationHandler(pointerInfo: PointerInfo, scene: Scene, toggleAnimationSetups: ToggleAnimationSetup[]) {
+function ToggleAnimationHandler(pointerInfo: PointerInfo, scene: Scene, toggleAnimationSetups: ToggleAnimationSetup[], glb_animation: React.MutableRefObject<AnimationGroup | null>) {
     if (pointerInfo.pickInfo !== null && pointerInfo.type === PointerEventTypes.POINTERDOWN) {
         for (const { dispatch, skeleton, pickNamePattern } of toggleAnimationSetups) {
             if (pointerInfo.pickInfo.hit && pickNamePattern.test(pointerInfo.pickInfo.pickedMesh?.name || "")) {
-                dispatch({
-                    type: "TOGGLE",
-                    open: () => {
-                        scene.beginAnimation(skeleton, 0, 60, true, undefined, () => { })
-                    },
-                    close: () => {
-                        scene.beginAnimation(skeleton, 60, 120, true, undefined, () => { })
-                    }
-                })
+                if (pointerInfo.pickInfo.pickedMesh?.name.startsWith("hitBox_animation")) {
+                    dispatch({
+                        type: "TOGGLE",
+                        open: () => {
+                            scene.beginAnimation(skeleton, 0, 60, true, undefined, () => { })
+                            console.log("open")
+                        },
+                        close: () => {
+                            scene.beginAnimation(skeleton, 60, 120, true, undefined, () => { })
+                            console.log("close")
+                        }
+                    })
+                } else {
+                    dispatch({
+                        type: "TOGGLE",
+                        open: () => {
+                            if (glb_animation.current === null) return
+                            glb_animation.current.start(true)
+                            console.log("open_1")
+                        },
+                        close: () => {
+                            if (glb_animation.current === null) return
+                            glb_animation.current.stop()
+                            console.log("close_1")
+                        }
+                    })
+                }
             }
         }
     }
@@ -49,16 +66,32 @@ const useDynamicReducers = (reducer: Reducer<boolean, Action>, initialState: boo
     return Array.from({ length: count }, () => useReducer(reducer, initialState))
 }
 
+const isDebug = true
+const skeletons_amount = 1
+const front_pages: Mesh[] = []
+const back_pages: Mesh[] = []
+const pageSkeletons: Skeleton[] = []
+const mesh_BS: Mesh[] = []
+let mergedMesh: Mesh
+
+function GetMeshFromeGLB(scene: Scene, name: string) {
+    let mesh = scene.getMeshByName(name)
+    if (mesh === null) { throw new Error(`Mesh ${name} not found`) }
+    mesh_BS.push(mesh as Mesh)
+}
+
+function GetSkeletonFromeGLB(scene: Scene, mesh: Mesh, name: string) {
+    mesh.skeleton = scene.getSkeletonByName(name)
+}
+
 const Canvas = () => {
-    const isDebug = true
     const canvasRef = useRef<HTMLCanvasElement | null>(null)
     const [text_update, setText_update] = useRecoilState(Text_Switch)
     const [meshes_amount,] = useRecoilState(Pages_Number)
     const [updated_text,] = useRecoilState(Long_Text)
-    const skeletons_amount = 1
     const dispatchers = useDynamicReducers(animationReducer, false, skeletons_amount).map(([_, dispatch]) => dispatch)
+    const dispatcher1 = useReducer(animationReducer, false)
 
-    const [isAnimating, setIsAnimating] = useState(false)
     const animationRef = useRef<AnimationGroup | null>(null)
 
     useEffect(() => {
@@ -68,9 +101,6 @@ const Canvas = () => {
         LightUp(scene)
         CameraWork(scene, canvas)
 
-        const front_pages: Mesh[] = []
-        const back_pages: Mesh[] = []
-        const pageSkeletons: Skeleton[] = []
         for (let i = 0; i < meshes_amount; i++) {
             const front_page = createPage(scene, `front_page_${i}`, i === 0 ? updated_text : `page_${2 * i + 1}`, i * 0.01, true)
             const back_page = createPage(scene, `back_page_${i}`, `page_${2 * i + 2}`, i * 0.01 + 0.0001, false)
@@ -97,56 +127,49 @@ const Canvas = () => {
             setText_update(false)
         }
 
-        const mesh_BS: Mesh[] = []
-        const skeletons_BS: Skeleton[] = []
 
         SceneLoader.Append("./", "Tome_BS.glb", scene, function () {
-            let foundAnimation = scene.getAnimationGroupByName("1_BS_action_15")
-            if (foundAnimation) {
-                animationRef.current = foundAnimation
-            }
-
+            // animationRef.current = scene.getAnimationGroupByName("1_BS_action_15")
             // メッシュの取得
-            const testCubeMesh_0 = scene.getMeshByName("Tome_BS_primitive0") as Mesh
-            const testCubeMesh_1 = scene.getMeshByName("Tome_BS_primitive1") as Mesh
-            const testCubeMesh_2 = scene.getMeshByName("Tome_BS_primitive2") as Mesh
+            GetMeshFromeGLB(scene, "Tome_BS_primitive0")
+            GetMeshFromeGLB(scene, "Tome_BS_primitive1")
+            GetMeshFromeGLB(scene, "Tome_BS_primitive2")
+            // メッシュの統合
+            mergedMesh = Mesh.MergeMeshes(mesh_BS, true, true, undefined, false, true) as Mesh
 
-            if (testCubeMesh_0 && testCubeMesh_1 && testCubeMesh_2) {
-                // メッシュの統合
-                const mergedMesh = Mesh.MergeMeshes([testCubeMesh_0, testCubeMesh_1, testCubeMesh_2], true, true, undefined, false, true)
-                if (mergedMesh) {
-                    // 統合したメッシュの名前を設定
-                    mergedMesh.name = "Tome_BS"
+            if (!mergedMesh) return
 
-                    // スケルトン「BS_Armature」を取得
-                    const skeleton = scene.getSkeletonByName("BS_Armature")
-                    mergedMesh.skeleton = skeleton
+            // スケルトン「BS_Armature」を取得
 
-                    if (mergedMesh.skeleton && skeleton) {
-                        // メッシュとスケルトンの回転
-                        const rotateTransform = Matrix.RotationY(Math.PI / 1)
-                        mergedMesh.bakeTransformIntoVertices(rotateTransform)
+            GetSkeletonFromeGLB(scene, mergedMesh, "BS_Armature")
 
-                        // スケルトンのボーンの回転
-                        skeleton.bones.forEach(bone => {
-                            const currentMatrix = bone.getLocalMatrix()
-                            const newMatrix = currentMatrix.multiply(rotateTransform)
-                            bone.getLocalMatrix().copyFrom(newMatrix)
-                        })
+            // メッシュとスケルトンの回転
+            const rotateTransform = Matrix.RotationY(Math.PI / 1)
+            mergedMesh.bakeTransformIntoVertices(rotateTransform)
 
-                        // mergedMesh と skeleton を配列に追加
-                        mesh_BS.push(mergedMesh)
-                        skeletons_BS.push(skeleton)
-                    }
-                    // mesh_BS 内のメッシュと skeletons_BS 内のスケルトンのスケルトンビューアーを作成
-                    mesh_BS.forEach((mesh, index) => {
-                        const skeleton = skeletons_BS[index]
-                        const skeletonViewer = new SkeletonViewer(skeleton, mesh, scene, false, 3, {
-                            displayMode: SkeletonViewer.DISPLAY_SPHERE_AND_SPURS
-                        })
-                        skeletonViewer.isEnabled = true
-                    })
-                }
+            // スケルトンのボーンの回転
+            mergedMesh.skeleton?.bones.forEach(bone => {
+                const currentMatrix = bone.getLocalMatrix()
+                const newMatrix = currentMatrix.multiply(rotateTransform)
+                bone.getLocalMatrix().copyFrom(newMatrix)
+            })
+
+            mergedMesh.skeleton?.bones
+                .filter(bone => /^Bone(\.0?1[0-9]|\.00[1-9])?$/.test(bone.name))
+                .map(bone => {
+
+                    const test_hitBox = MeshBuilder.CreateBox(`test_hitBox_${bone.name}`, { width: 0.01, height: 0.01, depth: 0.2 }, scene)
+                    test_hitBox.material = createHitBoxMaterial(bone.name, scene)
+                    test_hitBox.attachToBone(bone, scene.meshes[0])
+                    test_hitBox.position = new Vector3(0, 0, 0)
+                })
+
+            // mesh_BS 内のメッシュと skeletons_BS 内のスケルトンのスケルトンビューアーを作成
+            if (mergedMesh.skeleton !== null) {
+                const skeletonViewer = new SkeletonViewer(mergedMesh.skeleton, mergedMesh, scene, false, 3, {
+                    displayMode: SkeletonViewer.DISPLAY_SPHERE_AND_SPURS
+                })
+                skeletonViewer.isEnabled = true
             }
         })
 
@@ -168,11 +191,21 @@ const Canvas = () => {
             Inspector.Show(scene, {})
         }
         scene.onPointerObservable.add(
-            (pointerInfo) => ToggleAnimationHandler(pointerInfo, scene, pageSkeletons.map((pageSkeleton, i) => ({
-                dispatch: dispatchers[i],
-                skeleton: pageSkeleton,
-                pickNamePattern: new RegExp(`^hitBox_animation${i + 1}_`)
-            })))
+            (pointerInfo) => ToggleAnimationHandler(pointerInfo, scene,
+                [
+                    ...pageSkeletons.map((pageSkeleton, i) => ({
+                        dispatch: dispatchers[i],
+                        skeleton: pageSkeleton,
+                        pickNamePattern: new RegExp(`^hitBox_animation${i + 1}_`)
+                    })),
+                    {
+                        dispatch: dispatcher1[1],
+                        skeleton: mergedMesh.skeleton as Skeleton,
+                        pickNamePattern: new RegExp(`^test_hitBox_`)
+                    }
+                ],
+                animationRef
+            )
         )
 
         engine.runRenderLoop(() => { scene.render() })
@@ -184,18 +217,7 @@ const Canvas = () => {
         }
     }, [text_update, meshes_amount])
 
-    const toggleAnimation = () => {
-        if (animationRef.current) {
-            if (isAnimating) {
-                animationRef.current.stop()
-            } else {
-                animationRef.current.start(true)
-            }
-            setIsAnimating(!isAnimating)
-        }
-    }
-
-    return <canvas ref={canvasRef} style={{ width: '100%', height: '100%' }} onClick={toggleAnimation} />
+    return <canvas ref={canvasRef} style={{ width: '100%', height: '100%' }} />
 }
 
 export default Canvas
