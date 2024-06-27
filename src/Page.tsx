@@ -1,5 +1,5 @@
 import React, { Reducer, useEffect, useReducer, useRef } from 'react'
-import { Engine, Scene, Vector3, SkeletonViewer, PointerInfo, PointerEventTypes, Mesh, DynamicTexture, Skeleton, SceneLoader, AnimationGroup, MeshBuilder, Matrix } from '@babylonjs/core'
+import { Engine, Scene, Vector3, SkeletonViewer, PointerInfo, PointerEventTypes, Mesh, DynamicTexture, Skeleton, SceneLoader, AnimationGroup, MeshBuilder, Matrix, Color3 } from '@babylonjs/core'
 import { useRecoilState } from 'recoil'
 import { Inspector } from '@babylonjs/inspector'
 import { Long_Text, Pages_Number, Text_Switch } from './atom'
@@ -68,9 +68,6 @@ const useDynamicReducers = (reducer: Reducer<boolean, Action>, initialState: boo
 
 const isDebug = true
 const skeletons_amount = 1
-const front_pages: Mesh[] = []
-const back_pages: Mesh[] = []
-const pageSkeletons: Skeleton[] = []
 const mesh_BS: Mesh[] = []
 let mergedMesh: Mesh
 
@@ -101,6 +98,10 @@ const Canvas = () => {
         LightUp(scene)
         CameraWork(scene, canvas)
 
+        const front_pages: Mesh[] = []
+        const back_pages: Mesh[] = []
+        const pageSkeletons: Skeleton[] = []
+
         for (let i = 0; i < meshes_amount; i++) {
             const front_page = createPage(scene, `front_page_${i}`, i === 0 ? updated_text : `page_${2 * i + 1}`, i * 0.01, true)
             const back_page = createPage(scene, `back_page_${i}`, `page_${2 * i + 2}`, i * 0.01 + 0.0001, false)
@@ -116,7 +117,6 @@ const Canvas = () => {
             front_pages[i].skeleton = pageSkeletons[i]
             back_pages[i].skeleton = pageSkeletons[i]
         }
-
         const front_texture_info = front_pages[0].material?.getActiveTextures()
         const front_texture = front_texture_info?.values().next().value as DynamicTexture
         if (text_update) {
@@ -127,27 +127,18 @@ const Canvas = () => {
             setText_update(false)
         }
 
-
         SceneLoader.Append("./", "Tome_BS.glb", scene, function () {
-            // animationRef.current = scene.getAnimationGroupByName("1_BS_action_15")
-            // メッシュの取得
+            animationRef.current = scene.getAnimationGroupByName("1_BS_action_15")
             GetMeshFromeGLB(scene, "Tome_BS_primitive0")
             GetMeshFromeGLB(scene, "Tome_BS_primitive1")
             GetMeshFromeGLB(scene, "Tome_BS_primitive2")
-            // メッシュの統合
             mergedMesh = Mesh.MergeMeshes(mesh_BS, true, true, undefined, false, true) as Mesh
+            mergedMesh.isPickable = false
 
             if (!mergedMesh) return
-
-            // スケルトン「BS_Armature」を取得
-
             GetSkeletonFromeGLB(scene, mergedMesh, "BS_Armature")
-
-            // メッシュとスケルトンの回転
             const rotateTransform = Matrix.RotationY(Math.PI / 1)
             mergedMesh.bakeTransformIntoVertices(rotateTransform)
-
-            // スケルトンのボーンの回転
             mergedMesh.skeleton?.bones.forEach(bone => {
                 const currentMatrix = bone.getLocalMatrix()
                 const newMatrix = currentMatrix.multiply(rotateTransform)
@@ -157,14 +148,11 @@ const Canvas = () => {
             mergedMesh.skeleton?.bones
                 .filter(bone => /^Bone(\.0?1[0-9]|\.00[1-9])?$/.test(bone.name))
                 .map(bone => {
-
-                    const test_hitBox = MeshBuilder.CreateBox(`test_hitBox_${bone.name}`, { width: 0.01, height: 0.01, depth: 0.2 }, scene)
-                    test_hitBox.material = createHitBoxMaterial(bone.name, scene)
+                    const test_hitBox = MeshBuilder.CreateBox(`test_hitBox_${bone.name}`, { width: 0.02, height: 0.02, depth: 0.2 }, scene)
+                    test_hitBox.material = createHitBoxMaterial(scene, bone.name, new Color3(0.7, 0.2, 0.7))
                     test_hitBox.attachToBone(bone, scene.meshes[0])
                     test_hitBox.position = new Vector3(0, 0, 0)
                 })
-
-            // mesh_BS 内のメッシュと skeletons_BS 内のスケルトンのスケルトンビューアーを作成
             if (mergedMesh.skeleton !== null) {
                 const skeletonViewer = new SkeletonViewer(mergedMesh.skeleton, mergedMesh, scene, false, 3, {
                     displayMode: SkeletonViewer.DISPLAY_SPHERE_AND_SPURS

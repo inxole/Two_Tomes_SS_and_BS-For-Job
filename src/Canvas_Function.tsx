@@ -113,10 +113,10 @@ export function createCamera(scene: Scene, canvas: HTMLCanvasElement) {
     return camera
 }
 
-export function createHitBoxMaterial(boneName: string, scene: Scene): StandardMaterial {
+export function createHitBoxMaterial(scene: Scene, boneName: string, diffuseColor: Color3): StandardMaterial {
     const material = new StandardMaterial(`hitBoxMat_${boneName}`, scene)
     material.alpha = 0.3
-    material.diffuseColor = new Color3(0.5, 0.5, 1)
+    material.diffuseColor = diffuseColor
     return material
 }
 
@@ -135,7 +135,7 @@ export function createSkeleton(scene: Scene, name: string, targetMesh: Mesh, z: 
 
         // ヒットボックスを生成する部分
         const hitBox = MeshBuilder.CreateBox(`hitBox_${boneName}`, { width: 0.01, height: 0.296, depth: 0.01 }, scene)
-        hitBox.material = createHitBoxMaterial(boneName, scene)
+        hitBox.material = createHitBoxMaterial(scene, boneName, new Color3(0.5, 0.5, 1))
         hitBox.position = new Vector3(0, 0, 0)  // 初期位置
         hitBox.attachToBone(parentBone, targetMesh)  // ページメッシュに対してボーンをアタッチ
     }
