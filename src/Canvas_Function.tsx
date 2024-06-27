@@ -1,4 +1,4 @@
-import { ArcRotateCamera, Bone, Color3, DefaultRenderingPipeline, DynamicTexture, HemisphericLight, Matrix, Mesh, MeshBuilder, Scene, Skeleton, StandardMaterial, Vector3, VertexData } from "@babylonjs/core"
+import { ArcRotateCamera, Bone, CSG, Color3, DefaultRenderingPipeline, DynamicTexture, HemisphericLight, Matrix, Mesh, MeshBuilder, Scene, Skeleton, StandardMaterial, Vector3, VertexData } from "@babylonjs/core"
 import createYRotationAnimation from "./Animation_data"
 
 function createPageMesh(scene: Scene, name: string, z: number, isFront: boolean) {
@@ -157,6 +157,35 @@ export function CameraWork(scene: Scene, canvas: HTMLCanvasElement | null) {
     pipeline.depthOfField.focalLength = 0.1
     pipeline.depthOfField.fStop = 1.4
     pipeline.depthOfField.focusDistance = 2000
+}
+
+// ヒットボックスを作成してアタッチする関数
+export function attachHitBox(bone: Bone, dimensions: { width: number, height: number, depth: number }, position: Vector3, scene: Scene, mesh: Mesh) {
+    const hitBoxName = `Tome_hitBox_${bone.name}`
+    const test_hitBox = MeshBuilder.CreateBox(hitBoxName, dimensions, scene)
+    test_hitBox.material = createHitBoxMaterial(scene, bone.name, new Color3(0.7, 0.2, 0.7))
+    test_hitBox.attachToBone(bone, mesh)
+    test_hitBox.position = position
+}
+
+// 縦に割った円柱を作成してアタッチする関数
+export function attachHalfCylinder(bone: Bone, radius: number, height: number, position: Vector3, scene: Scene, mesh: Mesh) {
+    const hitBoxName = `Tome_hitBox_${bone.name}`
+    const fullCylinder = MeshBuilder.CreateCylinder(hitBoxName, { diameter: radius * 1.15, height: height, tessellation: 24 }, scene)
+    fullCylinder.rotation = new Vector3(0, 0, Math.PI / 2)
+
+    const halfBox = MeshBuilder.CreateBox("halfBox", { width: height, height: height * 2, depth: radius * 1.5 }, scene)
+    halfBox.position = new Vector3(0, 0, -0.04)
+
+    const halfCylinder = CSG.FromMesh(fullCylinder).subtract(CSG.FromMesh(halfBox))
+    const hitBox = halfCylinder.toMesh(hitBoxName, null, scene)
+    hitBox.material = createHitBoxMaterial(scene, bone.name, new Color3(0.7, 0.2, 0.7))
+    hitBox.attachToBone(bone, mesh)
+    hitBox.position = position
+    hitBox.rotation = new Vector3(Math.PI / 4.9, Math.PI, Math.PI / 2)
+
+    fullCylinder.dispose()
+    halfBox.dispose()
 }
 
 export default createPageMesh

@@ -1,9 +1,9 @@
 import React, { Reducer, useEffect, useReducer, useRef } from 'react'
-import { Engine, Scene, Vector3, SkeletonViewer, PointerInfo, PointerEventTypes, Mesh, DynamicTexture, Skeleton, SceneLoader, AnimationGroup, MeshBuilder, Matrix, Color3 } from '@babylonjs/core'
+import { Engine, Scene, Vector3, SkeletonViewer, PointerInfo, PointerEventTypes, Mesh, DynamicTexture, Skeleton, SceneLoader, AnimationGroup, MeshBuilder, Matrix } from '@babylonjs/core'
 import { useRecoilState } from 'recoil'
 import { Inspector } from '@babylonjs/inspector'
 import { Long_Text, Pages_Number, Text_Switch } from './atom'
-import { CameraWork, LightUp, createHitBoxMaterial, createPage, createSkeleton } from './Canvas_Function'
+import { CameraWork, LightUp, attachHalfCylinder, attachHitBox, createPage, createSkeleton } from './Canvas_Function'
 
 type Action = { type: 'TOGGLE', open: VoidFunction, close: VoidFunction }
 function animationReducer(state: boolean, action: Action) {
@@ -146,12 +146,13 @@ const Canvas = () => {
             })
 
             mergedMesh.skeleton?.bones
-                .filter(bone => /^Bone(\.0?1[0-9]|\.00[1-9])?$/.test(bone.name))
-                .map(bone => {
-                    const test_hitBox = MeshBuilder.CreateBox(`test_hitBox_${bone.name}`, { width: 0.02, height: 0.02, depth: 0.2 }, scene)
-                    test_hitBox.material = createHitBoxMaterial(scene, bone.name, new Color3(0.7, 0.2, 0.7))
-                    test_hitBox.attachToBone(bone, scene.meshes[0])
-                    test_hitBox.position = new Vector3(0, 0, 0)
+                .filter(bone => ['Bone.003', 'Bone.008', 'Bone.014'].includes(bone.name))
+                .forEach(bone => {
+                    if (bone.name === 'Bone.008') {
+                        attachHalfCylinder(bone, 0.05, 0.32, new Vector3(0, 0.01, 0.012), scene, mergedMesh)
+                    } else {
+                        attachHitBox(bone, { width: 0.32, height: 0.23, depth: 0.02 }, new Vector3(0, -0.07, 0), scene, mergedMesh)
+                    }
                 })
             if (mergedMesh.skeleton !== null) {
                 const skeletonViewer = new SkeletonViewer(mergedMesh.skeleton, mergedMesh, scene, false, 3, {
@@ -189,7 +190,7 @@ const Canvas = () => {
                     {
                         dispatch: dispatcher1[1],
                         skeleton: mergedMesh.skeleton as Skeleton,
-                        pickNamePattern: new RegExp(`^test_hitBox_`)
+                        pickNamePattern: new RegExp(`^Tome_hitBox_`)
                     }
                 ],
                 animationRef
