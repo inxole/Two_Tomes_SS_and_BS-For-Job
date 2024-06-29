@@ -1,95 +1,25 @@
-import React, { Reducer, useEffect, useReducer, useRef } from 'react'
-import { Engine, Scene, Vector3, SkeletonViewer, PointerInfo, PointerEventTypes, Mesh, DynamicTexture, Skeleton, SceneLoader, AnimationGroup, MeshBuilder, Matrix } from '@babylonjs/core'
+import { useEffect, useReducer, useRef } from 'react'
 import { useRecoilState } from 'recoil'
 import { Inspector } from '@babylonjs/inspector'
+import { Engine, Scene, Vector3, SkeletonViewer, Mesh, DynamicTexture, Skeleton, SceneLoader, AnimationGroup, MeshBuilder, Matrix } from '@babylonjs/core'
 import { Long_Text, Pages_Number, Text_Switch } from './atom'
-import { CameraWork, LightUp, attachHalfCylinder, attachHitBox, createPage, createSkeleton } from './Canvas_Function'
-
-type Action = { type: 'TOGGLE', open: VoidFunction, close: VoidFunction }
-function animationReducer(state: boolean, action: Action) {
-    switch (action.type) {
-        case 'TOGGLE':
-            if (state) {
-                action.close()
-            } else {
-                action.open()
-            }
-            return !state
-        default:
-            throw new Error()
-    }
-}
-
-type ToggleAnimationSetup = {
-    dispatch: React.Dispatch<Action>,
-    skeleton: Skeleton,
-    pickNamePattern: RegExp,
-}
-
-function ToggleAnimationHandler(pointerInfo: PointerInfo, scene: Scene, toggleAnimationSetups: ToggleAnimationSetup[], glb_animation: React.MutableRefObject<AnimationGroup | null>) {
-    if (pointerInfo.pickInfo !== null && pointerInfo.type === PointerEventTypes.POINTERDOWN) {
-        for (const { dispatch, skeleton, pickNamePattern } of toggleAnimationSetups) {
-            if (pointerInfo.pickInfo.hit && pickNamePattern.test(pointerInfo.pickInfo.pickedMesh?.name || "")) {
-                if (pointerInfo.pickInfo.pickedMesh?.name.startsWith("hitBox_animation")) {
-                    dispatch({
-                        type: "TOGGLE",
-                        open: () => {
-                            scene.beginAnimation(skeleton, 0, 60, true, undefined, () => { })
-                            console.log("open")
-                        },
-                        close: () => {
-                            scene.beginAnimation(skeleton, 60, 120, true, undefined, () => { })
-                            console.log("close")
-                        }
-                    })
-                } else {
-                    dispatch({
-                        type: "TOGGLE",
-                        open: () => {
-                            if (glb_animation.current === null) return
-                            glb_animation.current.start(true)
-                            console.log("open_1")
-                        },
-                        close: () => {
-                            if (glb_animation.current === null) return
-                            glb_animation.current.stop()
-                            console.log("close_1")
-                        }
-                    })
-                }
-            }
-        }
-    }
-}
-
-const useDynamicReducers = (reducer: Reducer<boolean, Action>, initialState: boolean, count: number) => {
-    return Array.from({ length: count }, () => useReducer(reducer, initialState))
-}
+import { ToggleAnimationHandler, animationReducer, useDynamicReducers } from './Function_action'
+import LightUp, { CameraWork } from './Function_canvas'
+import attachHitBox, { GetMeshForGLB, GetSkeletonForGLB, attachHalfCylinder, mesh_BS } from './Function_glb'
+import { createPage, createSkeleton } from './Function_page'
 
 const isDebug = true
 const skeletons_amount = 1
-const mesh_BS: Mesh[] = []
 let mergedMesh: Mesh
-
-function GetMeshFromeGLB(scene: Scene, name: string) {
-    let mesh = scene.getMeshByName(name)
-    if (mesh === null) { throw new Error(`Mesh ${name} not found`) }
-    mesh_BS.push(mesh as Mesh)
-}
-
-function GetSkeletonFromeGLB(scene: Scene, mesh: Mesh, name: string) {
-    mesh.skeleton = scene.getSkeletonByName(name)
-}
 
 const Canvas = () => {
     const canvasRef = useRef<HTMLCanvasElement | null>(null)
+    const animationRef = useRef<AnimationGroup | null>(null)
+    const dispatchers = useDynamicReducers(animationReducer, false, skeletons_amount).map(([_, dispatch]) => dispatch)
+    const glb_dispatcher = useReducer(animationReducer, false)
     const [text_update, setText_update] = useRecoilState(Text_Switch)
     const [meshes_amount,] = useRecoilState(Pages_Number)
     const [updated_text,] = useRecoilState(Long_Text)
-    const dispatchers = useDynamicReducers(animationReducer, false, skeletons_amount).map(([_, dispatch]) => dispatch)
-    const dispatcher1 = useReducer(animationReducer, false)
-
-    const animationRef = useRef<AnimationGroup | null>(null)
 
     useEffect(() => {
         const canvas = canvasRef.current
@@ -129,14 +59,14 @@ const Canvas = () => {
 
         SceneLoader.Append("./", "Tome_BS.glb", scene, function () {
             animationRef.current = scene.getAnimationGroupByName("1_BS_action_15")
-            GetMeshFromeGLB(scene, "Tome_BS_primitive0")
-            GetMeshFromeGLB(scene, "Tome_BS_primitive1")
-            GetMeshFromeGLB(scene, "Tome_BS_primitive2")
+            GetMeshForGLB(scene, "Tome_BS_primitive0")
+            GetMeshForGLB(scene, "Tome_BS_primitive1")
+            GetMeshForGLB(scene, "Tome_BS_primitive2")
             mergedMesh = Mesh.MergeMeshes(mesh_BS, true, true, undefined, false, true) as Mesh
             mergedMesh.isPickable = false
 
             if (!mergedMesh) return
-            GetSkeletonFromeGLB(scene, mergedMesh, "BS_Armature")
+            GetSkeletonForGLB(scene, mergedMesh, "BS_Armature")
             const rotateTransform = Matrix.RotationY(Math.PI / 1)
             mergedMesh.bakeTransformIntoVertices(rotateTransform)
             mergedMesh.skeleton?.bones.forEach(bone => {
@@ -188,7 +118,7 @@ const Canvas = () => {
                         pickNamePattern: new RegExp(`^hitBox_animation${i + 1}_`)
                     })),
                     {
-                        dispatch: dispatcher1[1],
+                        dispatch: glb_dispatcher[1],
                         skeleton: mergedMesh.skeleton as Skeleton,
                         pickNamePattern: new RegExp(`^Tome_hitBox_`)
                     }
