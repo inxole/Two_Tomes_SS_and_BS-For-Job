@@ -2,27 +2,15 @@ import { Animation, Vector3 } from '@babylonjs/core'
 
 // ボーンごとの回転値を定義
 const boneRotations: { [key: string]: { zero: number, one: number, two: number, three: number, four: number, five: number, six: number } } = {
-    'bone0':  { zero: 0.00, one: 0.15, two: 0.20, three: 0.50, four: 1.00, five: 1.00, six:  1.80 },
-    'bone1':  { zero: 0.00, one: 0.05, two: 0.10, three: 0.25, four: 0.25, five: 0.50, six:  0.50 },
-    'bone2':  { zero: 0.00, one: 0.05, two: 0.10, three: 0.25, four: 0.25, five: 0.50, six:  0.50 },
-    'bone3':  { zero: 0.00, one: 0.02, two: 0.10, three: 0.10, four: 0.10, five: 0.10, six:  0.25 },
-    'bone4':  { zero: 0.00, one: 0.02, two: 0.10, three: 0.10, four: 0.10, five: 0.10, six:  0.25 },
-    'bone5':  { zero: 0.00, one: 0.02, two: 0.10, three: 0.10, four: 0.10, five: 0.10, six:  0.01 },
-    'bone6':  { zero: 0.00, one: 0.02, two: 0.10, three: 0.10, four: 0.10, five: 0.10, six:  0.01 },
-    'bone7':  { zero: 0.00, one: 0.02, two: 0.10, three: 0.10, four: 0.10, five: 0.10, six:  0.00 },
-    'bone8':  { zero: 0.00, one: 0.02, two: 0.10, three: 0.02, four: 0.02, five: 0.02, six:  0.00 },
-    'bone9':  { zero: 0.00, one: 0.02, two: 0.10, three: 0.02, four: 0.02, five: 0.02, six:  0.00 },
-    'bone10': { zero: 0.00, one: 0.02, two: 0.10, three: 0.02, four: 0.02, five: 0.02, six:  0.00 },
-    'bone11': { zero: 0.00, one: 0.02, two: 0.05, three: 0.02, four: 0.02, five: 0.02, six:  0.00 },
-    'bone12': { zero: 0.00, one: 0.02, two: 0.05, three: 0.02, four: 0.02, five: 0.02, six:  0.00 },
-    'bone13': { zero: 0.00, one: 0.02, two: 0.05, three: 0.02, four: 0.02, five: 0.02, six:  0.00 },
-    'bone14': { zero: 0.00, one: 0.02, two: 0.05, three: 0.02, four: 0.02, five: 0.02, six:  0.00 },
-    'bone15': { zero: 0.00, one: 0.02, two: 0.05, three: 0.02, four: 0.02, five: 0.02, six: -0.05 },
-    'bone16': { zero: 0.00, one: 0.02, two: 0.05, three: 0.02, four: 0.02, five: 0.02, six: -0.05 },
-    'bone17': { zero: 0.00, one: 0.02, two: 0.05, three: 0.02, four: 0.02, five: 0.02, six: -0.05 },
-    'bone18': { zero: 0.00, one: 0.02, two: 0.05, three: 0.02, four: 0.02, five: 0.02, six:  0.00 },
-    'bone19': { zero: 0.00, one: 0.02, two: 0.05, three: 0.02, four: 0.02, five: 0.02, six:  0.00 },
-    'bone20': { zero: 0.00, one: 0.02, two: 0.05, three: 0.02, four: 0.02, five: 0.02, six:  0.00 },
+    'bone0': { zero: 0.00, one: 0.15, two: 0.20, three: 0.50, four: 1.00, five: 1.00, six:  1.80 },
+    'bone1': { zero: 0.00, one: 0.05, two: 0.10, three: 0.25, four: 0.25, five: 0.50, six:  0.50 },
+    'bone2': { zero: 0.00, one: 0.05, two: 0.10, three: 0.25, four: 0.25, five: 0.50, six:  0.50 },
+    'bone3': { zero: 0.00, one: 0.02, two: 0.10, three: 0.10, four: 0.10, five: 0.10, six:  0.25 },
+    'bone4': { zero: 0.00, one: 0.02, two: 0.10, three: 0.10, four: 0.10, five: 0.10, six:  0.25 },
+    'bone5': { zero: 0.00, one: 0.10, two: 0.20, three: 0.20, four: 0.20, five: 0.10, six: -0.01 },
+    'bone6': { zero: 0.00, one: 0.10, two: 0.20, three: 0.20, four: 0.20, five: 0.10, six: -0.01 },
+    'bone7': { zero: 0.00, one: 0.10, two: 0.20, three: 0.20, four: 0.20, five: 0.10, six: -0.15 },
+    'bone8': { zero: 0.00, one: 0.10, two: 0.20, three: 0.20, four: 0.20, five: 0.10, six:  0.00 },
 }
 
 const createYRotationAnimation = (skeletonName: string, boneName: string) => {

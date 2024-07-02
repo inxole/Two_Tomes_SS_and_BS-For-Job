@@ -4,7 +4,7 @@ import createYRotationAnimation from "./Animation_data"
 function createPageMesh(scene: Scene, name: string, z: number, isFront: boolean) {
     const width = 0.2
     const height = 0.296
-    const widthSubdivisions = 10
+    const widthSubdivisions = 9
     const heightSubdivisions = 1
 
     const page = new Mesh(name, scene)
@@ -36,7 +36,7 @@ function createPageMesh(scene: Scene, name: string, z: number, isFront: boolean)
             if (w < 4) {
                 x += width * 0.05
             } else if (w < 7) {
-                x += width * 0.2
+                x += width * 0.24
             } else if (w === 7) {
                 x += width * 0.05
             } else {
@@ -113,7 +113,7 @@ export function createSkeleton(scene: Scene, name: string, targetMesh: Mesh, z: 
     const skeleton = new Skeleton(name, animationName, scene)
     let parentBone = new Bone(`${animationName}_Bone`, skeleton, null, Matrix.Translation(-0.11, 0, z))
     const widthSubdivisions = 10
-    const boneRatios = [1, 1, 1, 1, 1, 4, 4, 4, 1, 1.5, 1.5]
+    const boneRatios = [1, 1, 1, 1, 1, 4.8, 4.8, 4.8, 1, 1.5]
 
     for (let w = 0; w <= widthSubdivisions; w++) {
         const boneName = `${animationName}_bone${w}`
@@ -126,8 +126,8 @@ export function createSkeleton(scene: Scene, name: string, targetMesh: Mesh, z: 
         const hitBox = MeshBuilder.CreateBox(`hitBox_${boneName}`, { width: ratio * 0.01, height: 0.296, depth: 0.01 }, scene)
         hitBox.material = createHitBoxMaterial(scene, boneName, new Color3(0.5, 0.5, 1))
         if (boneName === 'animation1_bone5' || boneName === 'animation1_bone6' || boneName === 'animation1_bone7') {
-            hitBox.position = new Vector3(-0.015, 0, 0)
-        } else if (boneName === 'animation1_bone9' || boneName === 'animation1_bone10') {
+            hitBox.position = new Vector3(-0.019, 0, 0)
+        } else if (boneName === 'animation1_bone9') {
             hitBox.position = new Vector3(-0.0025, 0, 0)
         } else {
             hitBox.position = new Vector3(0, 0, 0)

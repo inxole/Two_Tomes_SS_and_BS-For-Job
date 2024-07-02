@@ -37,11 +37,9 @@ export function ToggleAnimationHandler(
                         type: "TOGGLE",
                         open: () => {
                             scene.beginAnimation(skeleton, 0, 60, true, undefined, () => { })
-                            console.log("open")
                         },
                         close: () => {
                             scene.beginAnimation(skeleton, 60, 120, true, undefined, () => { })
-                            console.log("close")
                         }
                     })
                 } else {
@@ -50,12 +48,10 @@ export function ToggleAnimationHandler(
                         open: () => {
                             if (glb_animation.current === null) return
                             glb_animation.current.start(true)
-                            console.log("open_1")
                         },
                         close: () => {
                             if (glb_animation.current === null) return
                             glb_animation.current.stop()
-                            console.log("close_1")
                         }
                     })
                 }
