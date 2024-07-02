@@ -1,10 +1,10 @@
-import {  Bone, Color3,  DynamicTexture, Matrix, Mesh, MeshBuilder, Scene, Skeleton, StandardMaterial, Vector3, VertexData } from "@babylonjs/core"
+import { Bone, Color3, DynamicTexture, Matrix, Mesh, MeshBuilder, Scene, Skeleton, StandardMaterial, Vector3, VertexData } from "@babylonjs/core"
 import createYRotationAnimation from "./Animation_data"
 
 function createPageMesh(scene: Scene, name: string, z: number, isFront: boolean) {
     const width = 0.2
     const height = 0.296
-    const widthSubdivisions = 20
+    const widthSubdivisions = 10
     const heightSubdivisions = 1
 
     const page = new Mesh(name, scene)
@@ -16,19 +16,32 @@ function createPageMesh(scene: Scene, name: string, z: number, isFront: boolean)
     const weights = []
     const influences = []
 
+    let x = -0.1
     for (let h = 0; h <= heightSubdivisions; h++) {
+        x = -0.1
         for (let w = 0; w <= widthSubdivisions; w++) {
-            const x = (w * width) / widthSubdivisions - width / 2
             const y = (h * height) / heightSubdivisions - height / 2
             positions.push(x, y, z)
             normals.push(0, 0, isFront ? -1 : 1)
-            uvs.push(w / widthSubdivisions, h / heightSubdivisions)
+            uvs.push((x + 0.1) / 0.2, h / heightSubdivisions)
 
-            const weight = w / widthSubdivisions
+            // ウェイトとインフルエンスの設定
+            const weight = (x + 0.1) / 0.2
             weights.push(weight, 1 - weight, 0, 0)
             const influence1 = Math.min(w, widthSubdivisions - 1)
             const influence2 = Math.min(w + 1, widthSubdivisions)
             influences.push(influence1, influence2, 0, 0)
+
+            // xの位置をjの値によって変更
+            if (w < 4) {
+                x += width * 0.05
+            } else if (w < 7) {
+                x += width * 0.2
+            } else if (w === 7) {
+                x += width * 0.05
+            } else {
+                x += width * 0.075
+            }
         }
     }
 
@@ -99,18 +112,26 @@ export function createPage(scene: Scene, name: string, text: string, z: number, 
 export function createSkeleton(scene: Scene, name: string, targetMesh: Mesh, z: number, animationName: string) {
     const skeleton = new Skeleton(name, animationName, scene)
     let parentBone = new Bone(`${animationName}_Bone`, skeleton, null, Matrix.Translation(-0.11, 0, z))
-    const widthSubdivisions = 20
+    const widthSubdivisions = 10
+    const boneRatios = [1, 1, 1, 1, 1, 4, 4, 4, 1, 1.5, 1.5]
 
     for (let w = 0; w <= widthSubdivisions; w++) {
         const boneName = `${animationName}_bone${w}`
-        parentBone = new Bone(boneName, skeleton, parentBone, Matrix.Translation(0.01, 0, 0))
+        const ratio = boneRatios[w]
+        parentBone = new Bone(boneName, skeleton, parentBone, Matrix.Translation(ratio * 0.01, 0, 0))
 
         const boneAnimation = createYRotationAnimation(animationName, boneName)
         parentBone.animations = [boneAnimation]
 
-        const hitBox = MeshBuilder.CreateBox(`hitBox_${boneName}`, { width: 0.01, height: 0.296, depth: 0.01 }, scene)
+        const hitBox = MeshBuilder.CreateBox(`hitBox_${boneName}`, { width: ratio * 0.01, height: 0.296, depth: 0.01 }, scene)
         hitBox.material = createHitBoxMaterial(scene, boneName, new Color3(0.5, 0.5, 1))
-        hitBox.position = new Vector3(0, 0, 0)
+        if (boneName === 'animation1_bone5' || boneName === 'animation1_bone6' || boneName === 'animation1_bone7') {
+            hitBox.position = new Vector3(-0.015, 0, 0)
+        } else if (boneName === 'animation1_bone9' || boneName === 'animation1_bone10') {
+            hitBox.position = new Vector3(-0.0025, 0, 0)
+        } else {
+            hitBox.position = new Vector3(0, 0, 0)
+        }
         hitBox.attachToBone(parentBone, targetMesh)
     }
     return skeleton

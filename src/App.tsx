@@ -3,7 +3,8 @@ import { Box, Button, FormControl, FormControlLabel, FormLabel, Radio, RadioGrou
 import { Rnd } from 'react-rnd'
 import { useRecoilState } from 'recoil'
 import { Long_Text, Pages_Number, Text_Switch } from './atom'
-import CanvasComponent from './Test'
+import CanvasComponent from './Page'
+// import Test from './Test'
 
 interface RndComponentProps {
   fontSize: number
@@ -102,6 +103,7 @@ const BabylonScene = () => {
   return (
     <Box style={{ position: 'relative', width: '100%', height: '100%' }}>
       <CanvasComponent />
+      {/* <Test /> */}
       <RndComponent fontSize={fontSize} setFontSize={setFontSize} />
     </Box>
   )
