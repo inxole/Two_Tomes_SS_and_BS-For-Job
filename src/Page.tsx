@@ -9,7 +9,7 @@ import attachHitBox, { GetMeshForGLB, GetSkeletonForGLB, attachHalfCylinder, mes
 import { createPage, createSkeleton } from './Function_page'
 
 const isDebug = true
-const skeletons_amount = 1
+const skeletons_amount = 60
 let mergedMesh: Mesh
 
 const initializeGLB = (
@@ -52,6 +52,17 @@ const initializeGLB = (
     })
 }
 
+const clearMeshesAndSkeletons = (scene: Scene) => {
+    // 既存のメッシュを削除
+    scene.meshes.filter(mesh => mesh.name.startsWith('front_page_') || mesh.name.startsWith('back_page_')).forEach(mesh => mesh.dispose())
+
+    // 既存のスケルトンを削除
+    scene.skeletons.filter(skeleton => skeleton.name.startsWith('skeleton_')).forEach(skeleton => skeleton.dispose())
+
+    // 既存のヒットボックスを削除
+    scene.meshes.filter(mesh => mesh.name.startsWith('hitBox_')).forEach(mesh => mesh.dispose())
+}
+
 const initializeScene = (
     canvas: HTMLCanvasElement,
     sceneRef: React.MutableRefObject<Scene | null>,
@@ -67,62 +78,7 @@ const initializeScene = (
     LightUp(scene)
     CameraWork(scene, canvas)
 
-    const front_pages: Mesh[] = []
-    const back_pages: Mesh[] = []
-    const pageSkeletons: Skeleton[] = []
-
-    for (let i = 0; i < meshes_amount; i++) {
-        const front_page = createPage(scene, `front_page_${i}`, i === 0 ? updated_text : `page_${2 * i + 1}`, i * 0.01, true)
-        const back_page = createPage(scene, `back_page_${i}`, `page_${2 * i + 2}`, i * 0.01 + 0.0001, false)
-
-        front_pages.push(front_page)
-        back_pages.push(back_page)
-    }
-    for (let i = 0; i < skeletons_amount; i++) {
-        const pageSkeleton = createSkeleton(scene, `skeleton_${i}`, front_pages[i], i * 0.01, `animation${i + 1}`)
-        pageSkeletons.push(pageSkeleton)
-    }
-    for (let i = 0; i < meshes_amount; i++) {
-        front_pages[i].skeleton = pageSkeletons[i]
-        back_pages[i].skeleton = pageSkeletons[i]
-    }
-
     initializeGLB(scene, animationRef)
-
-    const box_mesh = MeshBuilder.CreateBox("box", { size: 0.01 }, scene)
-    box_mesh.position = new Vector3(0.003, 0, 0)
-    front_pages[0].parent = box_mesh
-    back_pages[0].parent = box_mesh
-
-    if (isDebug) {
-        pageSkeletons.forEach((pageSkeleton, i) => {
-            const skeletonViewer = new SkeletonViewer(pageSkeleton, front_pages[i], scene, false, 3, {
-                displayMode: SkeletonViewer.DISPLAY_SPHERE_AND_SPURS
-            })
-            skeletonViewer.isEnabled = true
-        })
-        scene.debugLayer.show({
-            embedMode: true
-        })
-        Inspector.Show(scene, {})
-    }
-    scene.onPointerObservable.add(
-        (pointerInfo) => ToggleAnimationHandler(pointerInfo, scene,
-            [
-                ...pageSkeletons.map((pageSkeleton, i) => ({
-                    dispatch: dispatchers[i],
-                    skeleton: pageSkeleton,
-                    pickNamePattern: new RegExp(`^hitBox_animation${i + 1}_`)
-                })),
-                {
-                    dispatch: glb_dispatcher[1],
-                    skeleton: mergedMesh.skeleton as Skeleton,
-                    pickNamePattern: new RegExp(`^Tome_hitBox_`)
-                }
-            ],
-            animationRef
-        )
-    )
 
     engine.runRenderLoop(() => { scene.render() })
     const resize = () => { engine.resize() }
@@ -140,7 +96,7 @@ const CanvasComponent = () => {
     const dispatchers = useDynamicReducers(animationReducer, false, skeletons_amount).map(([_, dispatch]) => dispatch)
     const glb_dispatcher = useReducer(animationReducer, false)
     const [text_update, setText_update] = useRecoilState(Text_Switch)
-    const [meshes_amount,] = useRecoilState(Pages_Number)
+    const [meshes_amount, setMeshes_amount] = useRecoilState(Pages_Number)
     const [updated_text,] = useRecoilState(Long_Text)
 
     useEffect(() => {
@@ -149,6 +105,71 @@ const CanvasComponent = () => {
             return initializeScene(canvas, sceneRef, animationRef, dispatchers, glb_dispatcher, updated_text, meshes_amount)
         }
     }, [])
+
+    useEffect(() => {
+        const scene = sceneRef.current
+        if (scene) {
+            // メッシュとスケルトンをクリア
+            clearMeshesAndSkeletons(scene)
+
+            const front_pages: Mesh[] = []
+            const back_pages: Mesh[] = []
+            const pageSkeletons: Skeleton[] = []
+
+            for (let i = 0; i < meshes_amount; i++) {
+                const front_page = createPage(scene, `front_page_${i}`, i === 0 ? updated_text : `page_${2 * i + 1}`, i * 0.01, true)
+                const back_page = createPage(scene, `back_page_${i}`, `page_${2 * i + 2}`, i * 0.01 + 0.0001, false)
+
+                front_pages.push(front_page)
+                back_pages.push(back_page)
+            }
+
+            for (let i = 0; i < skeletons_amount; i++) {
+                const pageSkeleton = createSkeleton(scene, `skeleton_${i}`, front_pages[i], i * 0.01, `animation${i + 1}`)
+                pageSkeletons.push(pageSkeleton)
+            }
+
+            for (let i = 0; i < meshes_amount; i++) {
+                front_pages[i].skeleton = pageSkeletons[i]
+                back_pages[i].skeleton = pageSkeletons[i]
+            }
+
+            const box_mesh = MeshBuilder.CreateBox("box", { size: 0.01 }, scene)
+            box_mesh.position = new Vector3(0.003, 0, 0)
+            front_pages[0].parent = box_mesh
+            back_pages[0].parent = box_mesh
+
+            if (isDebug) {
+                pageSkeletons.forEach((pageSkeleton, i) => {
+                    const skeletonViewer = new SkeletonViewer(pageSkeleton, front_pages[i], scene, false, 3, {
+                        displayMode: SkeletonViewer.DISPLAY_SPHERE_AND_SPURS
+                    })
+                    skeletonViewer.isEnabled = true
+                })
+                scene.debugLayer.show({
+                    embedMode: true
+                })
+                Inspector.Show(scene, {})
+            }
+            scene.onPointerObservable.add(
+                (pointerInfo) => ToggleAnimationHandler(pointerInfo, scene,
+                    [
+                        ...pageSkeletons.map((pageSkeleton, i) => ({
+                            dispatch: dispatchers[i],
+                            skeleton: pageSkeleton,
+                            pickNamePattern: new RegExp(`^hitBox_animation${i + 1}_`)
+                        })),
+                        {
+                            dispatch: glb_dispatcher[1],
+                            skeleton: mergedMesh.skeleton as Skeleton,
+                            pickNamePattern: new RegExp(`^Tome_hitBox_`)
+                        }
+                    ],
+                    animationRef
+                )
+            )
+        }
+    }, [meshes_amount])
 
     useEffect(() => {
         const scene = sceneRef.current
@@ -163,7 +184,7 @@ const CanvasComponent = () => {
                 setText_update(false)
             }
         }
-    }, [text_update, meshes_amount])
+    }, [text_update])
 
     return <canvas ref={canvasRef} style={{ width: '100%', height: '100%' }} />
 }

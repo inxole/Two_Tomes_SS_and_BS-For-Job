@@ -125,9 +125,9 @@ export function createSkeleton(scene: Scene, name: string, targetMesh: Mesh, z: 
 
         const hitBox = MeshBuilder.CreateBox(`hitBox_${boneName}`, { width: ratio * 0.01, height: 0.296, depth: 0.01 }, scene)
         hitBox.material = createHitBoxMaterial(scene, boneName, new Color3(0.5, 0.5, 1))
-        if (boneName === 'animation1_bone5' || boneName === 'animation1_bone6' || boneName === 'animation1_bone7') {
+        if (boneName === `${animationName}_bone5` || boneName === `${animationName}_bone6` || boneName === `${animationName}_bone7`) {
             hitBox.position = new Vector3(-0.019, 0, 0)
-        } else if (boneName === 'animation1_bone9') {
+        } else if (boneName === `${animationName}_bone9`) {
             hitBox.position = new Vector3(-0.0025, 0, 0)
         } else {
             hitBox.position = new Vector3(0, 0, 0)

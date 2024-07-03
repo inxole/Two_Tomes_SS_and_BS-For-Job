@@ -4,7 +4,6 @@ import { Rnd } from 'react-rnd'
 import { useRecoilState } from 'recoil'
 import { Long_Text, Pages_Number, Text_Switch } from './atom'
 import CanvasComponent from './Page'
-// import Test from './Test'
 
 interface RndComponentProps {
   fontSize: number
@@ -85,9 +84,9 @@ const RndComponent: React.FC<RndComponentProps> = ({ fontSize, setFontSize }) =>
             defaultValue={pages_number.toString()}
             onChange={(event) => setPages_number(parseInt(event.target.value))}
           >
-            <FormControlLabel value='1' control={<Radio />} label='1' />
-            {/* <FormControlLabel value='30' control={<Radio />} label='30' /> */}
-            {/* <FormControlLabel value='60' control={<Radio />} label='60' /> */}
+            <FormControlLabel value='10' control={<Radio />} label='10' />
+            <FormControlLabel value='30' control={<Radio />} label='30' />
+            <FormControlLabel value='60' control={<Radio />} label='60' />
           </RadioGroup>
         </FormControl>
         <Button size='small' variant='outlined' style={{ alignSelf: 'flex-end' }} onClick={handleUpdate}>
@@ -103,7 +102,6 @@ const BabylonScene = () => {
   return (
     <Box style={{ position: 'relative', width: '100%', height: '100%' }}>
       <CanvasComponent />
-      {/* <Test /> */}
       <RndComponent fontSize={fontSize} setFontSize={setFontSize} />
     </Box>
   )
