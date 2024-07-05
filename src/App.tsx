@@ -1,8 +1,8 @@
 import React, { useState } from 'react'
-import { Box, Button, FormControl, FormControlLabel, FormLabel, Radio, RadioGroup, Slider } from '@mui/material'
+import { Box, Button, Slider } from '@mui/material'
 import { Rnd } from 'react-rnd'
 import { useRecoilState } from 'recoil'
-import { Long_Text, Pages_Number, Text_Switch } from './atom'
+import { Long_Text, Text_Switch } from './atom'
 import CanvasComponent from './Page'
 
 interface RndComponentProps {
@@ -13,7 +13,6 @@ interface RndComponentProps {
 const RndComponent: React.FC<RndComponentProps> = ({ fontSize, setFontSize }) => {
   const [, setText_update] = useRecoilState(Text_Switch)
   const [updatedText, setUpdatedText] = useRecoilState(Long_Text)
-  const [pages_number, setPages_number] = useRecoilState(Pages_Number)
 
   const handleUpdate = () => {
     setUpdatedText(updatedText)
@@ -75,20 +74,6 @@ const RndComponent: React.FC<RndComponentProps> = ({ fontSize, setFontSize }) =>
             style={{ flexGrow: 1 }}
           />
         </div>
-        <FormControl>
-          <FormLabel id='demo-row-radio-buttons-group-label'>ページ数</FormLabel>
-          <RadioGroup
-            row
-            aria-labelledby='demo-row-radio-buttons-group-label'
-            name='row-radio-buttons-group'
-            defaultValue={pages_number.toString()}
-            onChange={(event) => setPages_number(parseInt(event.target.value))}
-          >
-            <FormControlLabel value='10' control={<Radio />} label='10' />
-            <FormControlLabel value='30' control={<Radio />} label='30' />
-            <FormControlLabel value='60' control={<Radio />} label='60' />
-          </RadioGroup>
-        </FormControl>
         <Button size='small' variant='outlined' style={{ alignSelf: 'flex-end' }} onClick={handleUpdate}>
           Update
         </Button>
