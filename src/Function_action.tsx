@@ -27,7 +27,7 @@ export function ToggleAnimationHandler(
     pointerInfo: PointerInfo,
     scene: Scene,
     toggleAnimationSetups: ToggleAnimationSetup[],
-    glb_animation: React.MutableRefObject<AnimationGroup | null>
+    glb_animation: React.MutableRefObject<AnimationGroup | null>[]
 ) {
     if (pointerInfo.pickInfo !== null && pointerInfo.type === PointerEventTypes.POINTERDOWN) {
         for (const { dispatch, skeleton, pickNamePattern } of toggleAnimationSetups) {
@@ -46,12 +46,12 @@ export function ToggleAnimationHandler(
                     dispatch({
                         type: "TOGGLE",
                         open: () => {
-                            if (glb_animation.current === null) return
-                            glb_animation.current.start(true)
+                            if (glb_animation[1].current === null) return
+                            glb_animation[1].current.start(true)
                         },
                         close: () => {
-                            if (glb_animation.current === null) return
-                            glb_animation.current.stop()
+                            if (glb_animation[1].current === null) return
+                            glb_animation[1].current.stop()
                         }
                     })
                 }
