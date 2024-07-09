@@ -12,11 +12,8 @@ export type ToggleAnimationSetup = {
 export function animationReducer(state: boolean, action: Action): boolean {
     switch (action.type) {
         case 'TOGGLE':
-            if (state) {
-                action.close()
-            } else {
-                action.open()
-            }
+            if (state) { action.close() }
+            else { action.open() }
             return !state
         default:
             throw new Error()
@@ -35,24 +32,14 @@ export function ToggleAnimationHandler(
                 if (pointerInfo.pickInfo.pickedMesh?.name.startsWith("hitBox_animation")) {
                     dispatch({
                         type: "TOGGLE",
-                        open: () => {
-                            scene.beginAnimation(skeleton, 0, 60, true, undefined, () => { })
-                        },
-                        close: () => {
-                            scene.beginAnimation(skeleton, 60, 120, true, undefined, () => { })
-                        }
+                        open: () => { scene.beginAnimation(skeleton, 0, 60, true, undefined, () => { }) },
+                        close: () => { scene.beginAnimation(skeleton, 60, 120, true, undefined, () => { }) }
                     })
                 } else {
                     dispatch({
                         type: "TOGGLE",
-                        open: () => {
-                            if (glb_animation[1].current === null) return
-                            glb_animation[1].current.start(true)
-                        },
-                        close: () => {
-                            if (glb_animation[1].current === null) return
-                            glb_animation[1].current.stop()
-                        }
+                        open: () => { glb_animation[2].current?.start(true) },
+                        close: () => { glb_animation[2].current?.stop() }
                     })
                 }
             }

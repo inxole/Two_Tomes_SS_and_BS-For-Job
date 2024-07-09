@@ -85,12 +85,6 @@ function initializeGLB(
                     attachHitBox(bone, { width: 0.32, height: 0.23, depth: 0.013 }, new Vector3(0, -0.07, -0.003), scene, mergedMesh)
                 }
             })
-        if (mergedMesh.skeleton !== null) {
-            const skeletonViewer = new SkeletonViewer(mergedMesh.skeleton, mergedMesh, scene, false, 3, {
-                displayMode: SkeletonViewer.DISPLAY_SPHERE_AND_SPURS
-            })
-            skeletonViewer.isEnabled = true
-        }
     })
 }
 export default initializeGLB

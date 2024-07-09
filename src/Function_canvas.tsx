@@ -1,8 +1,9 @@
-import { AnimationGroup, ArcRotateCamera, DefaultRenderingPipeline, Engine, HemisphericLight, Mesh, MeshBuilder, Scene, Skeleton, SkeletonViewer, Vector3 } from "@babylonjs/core"
+import { AnimationGroup, ArcRotateCamera, DefaultRenderingPipeline, Engine, HemisphericLight, Mesh, Scene, Skeleton, Space, Vector3 } from "@babylonjs/core"
 import { Action, ToggleAnimationHandler } from "./Function_action"
 import initializeGLB, { mergedMesh } from "./Function_glb"
 import { createPage, createSkeleton } from "./Function_page"
 import { Inspector } from "@babylonjs/inspector"
+import applyRootBoneAnimation, { rootBoneAnimation } from "./Function_rootbone"
 
 export function LightUp(scene: Scene) {
     const light = new HemisphericLight('light1', new Vector3(1, 1, 0), scene)
@@ -52,7 +53,6 @@ export function initializeScene(
     const front_pages: Mesh[] = []
     const back_pages: Mesh[] = []
     const pageSkeletons: Skeleton[] = []
-    const parent_mesh: Mesh[] = []
 
     for (let i = 0; i < meshes_amount; i++) {
         const front_page = createPage(scene, `front_page_${i}`, i === 0 ? updated_text : `page_${2 * i + 1}`, i * 0.0002, true)
@@ -67,21 +67,16 @@ export function initializeScene(
         front_page.skeleton = pageSkeleton
         back_page.skeleton = pageSkeleton
 
-        const parent = MeshBuilder.CreatePlane(`parent_mesh_${i}`, { size: 0.001 }, scene)
-        parent.position = new Vector3(0.003, 0.015 - 0.0004 * i, 0)
-        front_page.parent = parent
-        back_page.parent = parent
+        const rootBone = pageSkeleton.bones[0]
+        const rootBonePosition = new Vector3(-0.1075, 0, -0.015 + 0.0006 * i)
+        rootBone.setPosition(rootBonePosition, Space.WORLD)
 
-        parent_mesh.push(parent)
+        if (i === 0) {
+            applyRootBoneAnimation(pageSkeleton, rootBoneAnimation['rootBone'])
+        }
     }
 
     if (isDebug) {
-        pageSkeletons.forEach((pageSkeleton, i) => {
-            const skeletonViewer = new SkeletonViewer(pageSkeleton, front_pages[i], scene, false, 3, {
-                displayMode: SkeletonViewer.DISPLAY_SPHERE_AND_SPURS
-            })
-            skeletonViewer.isEnabled = true
-        })
         scene.debugLayer.show({
             embedMode: true
         })

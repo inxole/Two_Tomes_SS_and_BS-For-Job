@@ -16,23 +16,18 @@ function createPageMesh(scene: Scene, name: string, z: number, isFront: boolean)
     const weights = []
     const influences = []
 
-    let x = -0.1
     for (let h = 0; h <= heightSubdivisions; h++) {
-        x = -0.1
+        let x = -0.1
         for (let w = 0; w <= widthSubdivisions; w++) {
             const y = (h * height) / heightSubdivisions - height / 2
             positions.push(x, y, z)
             normals.push(0, 0, isFront ? -1 : 1)
             uvs.push((x + 0.1) / 0.2, h / heightSubdivisions)
-
-            // ウェイトとインフルエンスの設定
             const weight = (x + 0.1) / 0.2
             weights.push(weight, 1 - weight, 0, 0)
             const influence1 = Math.min(w, widthSubdivisions - 1)
             const influence2 = Math.min(w + 1, widthSubdivisions)
             influences.push(influence1, influence2, 0, 0)
-
-            // xの位置をjの値によって変更
             if (w < 4) {
                 x += width * 0.05
             } else if (w < 7) {
@@ -74,12 +69,10 @@ export function createPageTexture(scene: Scene, text: string, isFront: boolean) 
     Texture.hasAlpha = true
     if (isFront) {
         Texture.drawText(text, 0, text_size, font, "#000000", "#ffffff", true)//基準点は左上
-    }
-    else {
+    } else {
         const context = Texture.getContext()
         context.fillStyle = "#ffffff"
         context.fillRect(0, 0, Texture.getSize().width, Texture.getSize().height)
-
         context.save()
         context.translate(345, 512 - text_size)//基準点は右下
         context.rotate(Math.PI / 1)
@@ -87,7 +80,6 @@ export function createPageTexture(scene: Scene, text: string, isFront: boolean) 
         context.font = font
         context.fillText(text, 0, 0)
         context.restore()
-
         Texture.update(false)
     }
     return Texture
@@ -139,7 +131,7 @@ export function createSkeleton(scene: Scene, name: string, targetMesh: Mesh, z: 
 
 export function createHitBoxMaterial(scene: Scene, boneName: string, diffuseColor: Color3): StandardMaterial {
     const material = new StandardMaterial(`hitBoxMat_${boneName}`, scene)
-    material.alpha = 0.3
+    material.alpha = 0
     material.diffuseColor = diffuseColor
     return material
 }
