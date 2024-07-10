@@ -3,8 +3,7 @@ import { Action, ToggleAnimationHandler } from "./Function_action"
 import initializeGLB, { mergedMesh } from "./Function_glb"
 import { createPage, createSkeleton } from "./Function_page"
 import { Inspector } from "@babylonjs/inspector"
-import { createRootBoneAnimationGroupReverse, rootBoneAnimation } from "./Function_rootbone"
-import createRootBoneAnimationGroup from "./Function_rootbone"
+import { addAnimationToGroup } from "./Function_rootbone"
 
 export function LightUp(scene: Scene) {
     const light = new HemisphericLight('light1', new Vector3(1, 1, 0), scene)
@@ -55,6 +54,10 @@ export function initializeScene(
     const back_pages: Mesh[] = []
     const pageSkeletons: Skeleton[] = []
 
+    // アニメーショングループを作成
+    const rootBoneAnimationGroup = new AnimationGroup("rootBoneAnimationGroup")
+    const rootBoneAnimationGroupReverse = new AnimationGroup("rootBoneAnimationGroupReverse")
+
     for (let i = 0; i < meshes_amount; i++) {
         const front_page = createPage(scene, `front_page_${i}`, i === 0 ? updated_text : `page_${2 * i + 1}`, i * 0.0002, true)
         const back_page = createPage(scene, `back_page_${i}`, `page_${2 * i + 2}`, i * 0.0002 + 0.0001, false)
@@ -72,10 +75,11 @@ export function initializeScene(
         const rootBonePosition = new Vector3(-0.1075, 0, -0.015 + 0.0006 * i)
         rootBone.setPosition(rootBonePosition, Space.WORLD)
 
-        if (i === 0) {
-            createRootBoneAnimationGroup(pageSkeleton, rootBoneAnimation['rootBone'])
-            createRootBoneAnimationGroupReverse(pageSkeleton, rootBoneAnimation['rootBone'])
-        }
+        const position_1 = new Vector3(-0.1075, 0, -0.015 + 0.0006 * i)
+        const position_2 = new Vector3(-0.115 + 0.00015 * i, 0, -0.015 + 0.0006 * i)
+
+        addAnimationToGroup(rootBoneAnimationGroup, pageSkeleton, position_1, position_2, i, false)
+        addAnimationToGroup(rootBoneAnimationGroupReverse, pageSkeleton, position_1, position_2, i, true)
     }
 
     if (isDebug) {
