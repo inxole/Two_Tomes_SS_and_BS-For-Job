@@ -3,7 +3,8 @@ import { Action, ToggleAnimationHandler } from "./Function_action"
 import initializeGLB, { mergedMesh } from "./Function_glb"
 import { createPage, createSkeleton } from "./Function_page"
 import { Inspector } from "@babylonjs/inspector"
-import applyRootBoneAnimation, { rootBoneAnimation } from "./Function_rootbone"
+import { createRootBoneAnimationGroupReverse, rootBoneAnimation } from "./Function_rootbone"
+import createRootBoneAnimationGroup from "./Function_rootbone"
 
 export function LightUp(scene: Scene) {
     const light = new HemisphericLight('light1', new Vector3(1, 1, 0), scene)
@@ -72,7 +73,8 @@ export function initializeScene(
         rootBone.setPosition(rootBonePosition, Space.WORLD)
 
         if (i === 0) {
-            applyRootBoneAnimation(pageSkeleton, rootBoneAnimation['rootBone'])
+            createRootBoneAnimationGroup(pageSkeleton, rootBoneAnimation['rootBone'])
+            createRootBoneAnimationGroupReverse(pageSkeleton, rootBoneAnimation['rootBone'])
         }
     }
 

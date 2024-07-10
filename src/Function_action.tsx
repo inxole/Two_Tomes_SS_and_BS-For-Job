@@ -38,8 +38,8 @@ export function ToggleAnimationHandler(
                 } else {
                     dispatch({
                         type: "TOGGLE",
-                        open: () => { glb_animation[2].current?.start(true) },
-                        close: () => { glb_animation[2].current?.stop() }
+                        open: () => { glb_animation[3].current?.start(true), glb_animation[1].current?.stop(), glb_animation[0].current?.start(true) },
+                        close: () => { glb_animation[3].current?.stop(), glb_animation[0].current?.stop(), glb_animation[1].current?.start(true) }
                     })
                 }
             }
