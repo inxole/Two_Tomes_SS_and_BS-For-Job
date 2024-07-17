@@ -41,8 +41,8 @@ export function initializeScene(
     dispatchers: React.Dispatch<Action>[],
     glb_dispatcher: [boolean, React.Dispatch<Action>],
     updated_text: string,
-    meshes_amount: number
 ) {
+    const meshes_amount = 50
     const engine = new Engine(canvas, true)
     const scene = new Scene(engine)
     sceneRef.current = scene
@@ -106,8 +106,8 @@ export function initializeScene(
         )
     )
 
-    engine.runRenderLoop(() => { scene.render() })
-    const resize = () => { engine.resize() }
+    engine.runRenderLoop(() => scene.render())
+    const resize = () => engine.resize()
     window.addEventListener('resize', resize)
     return () => {
         engine.dispose()

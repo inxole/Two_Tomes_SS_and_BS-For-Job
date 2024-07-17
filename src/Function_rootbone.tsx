@@ -1,5 +1,15 @@
 import { AnimationGroup, Skeleton, Vector3, Animation } from "@babylonjs/core"
 
+
+/**
+ * ルートボーンにアニメーションを追加する
+ * @param group アニメーショングループ
+ * @param skeleton スケルトン
+ * @param position_1 ポジション1
+ * @param position_2 ポジション2
+ * @param index インデックス
+ * @param reverse リバース
+ */
 export function addAnimationToGroup(group: AnimationGroup, skeleton: Skeleton, position_1: Vector3, position_2: Vector3, index: number, reverse: boolean) {
     const rootBone = skeleton.bones[0]
 

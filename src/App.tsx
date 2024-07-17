@@ -11,7 +11,7 @@ interface RndComponentProps {
 }
 
 function RndComponent(props: RndComponentProps) {
-  const { fontSize, setFontSize, currentCount, setCurrentCount } = props
+  const { fontSize, setFontSize } = props
   const [, setText_update] = useRecoilState(Text_Switch)
   const [updatedText, setUpdatedText] = useRecoilState(Long_Text)
 
