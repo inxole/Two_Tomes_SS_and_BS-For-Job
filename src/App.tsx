@@ -10,7 +10,8 @@ interface RndComponentProps {
   setFontSize: (size: number) => void
 }
 
-const RndComponent: React.FC<RndComponentProps> = ({ fontSize, setFontSize }) => {
+function RndComponent(props: RndComponentProps) {
+  const { fontSize, setFontSize, currentCount, setCurrentCount } = props
   const [, setText_update] = useRecoilState(Text_Switch)
   const [updatedText, setUpdatedText] = useRecoilState(Long_Text)
 
@@ -82,7 +83,7 @@ const RndComponent: React.FC<RndComponentProps> = ({ fontSize, setFontSize }) =>
   )
 }
 
-const BabylonScene = () => {
+function BabylonScene() {
   const [fontSize, setFontSize] = useState(22)
   return (
     <Box style={{ position: 'relative', width: '100%', height: '100%' }}>

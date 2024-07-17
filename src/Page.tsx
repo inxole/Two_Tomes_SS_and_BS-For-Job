@@ -5,7 +5,7 @@ import { Long_Text, Pages_Number, Text_Switch } from './atom'
 import { animationReducer, useDynamicReducers } from './Function_action'
 import { initializeScene } from './Function_canvas'
 
-const CanvasComponent = () => {
+function CanvasComponent() {
     const canvasRef = useRef<HTMLCanvasElement | null>(null)
     const sceneRef = useRef<Scene | null>(null)
     const animationRef = useRef<AnimationGroup | null>(null)

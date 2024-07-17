@@ -47,6 +47,6 @@ export function ToggleAnimationHandler(
     }
 }
 
-export const useDynamicReducers = (reducer: Reducer<boolean, Action>, initialState: boolean, count: number) => {
+export function useDynamicReducers(reducer: Reducer<boolean, Action>, initialState: boolean, count: number) {
     return Array.from({ length: count }, () => useReducer(reducer, initialState))
 }

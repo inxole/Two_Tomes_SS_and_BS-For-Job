@@ -13,7 +13,7 @@ const boneRotations: { [key: string]: { zero: number, one: number, two: number, 
     'bone8': { zero: 0.00, one: 0.10, two: 0.20, three: 0.20, four: 0.20, five: 0.10, six:  0.00 },
 }
 
-const createYRotationAnimation = (skeletonName: string, boneName: string) => {
+function createYRotationAnimation(skeletonName: string, boneName: string) {
     const rotation = boneRotations[boneName.replace(`${skeletonName}_`, '')] || { zero: 0.0, one: 0.0, two: 0.0, three: 0.0, four: 0.0, five: 0.0, six: 0.0 }
     const animationName = `${skeletonName}_${boneName}Animation`
 
