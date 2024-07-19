@@ -1,5 +1,5 @@
 import { AnimationGroup, ArcRotateCamera, DefaultRenderingPipeline, Engine, HemisphericLight, Mesh, Scene, Skeleton, Space, Vector3 } from "@babylonjs/core"
-import { Action, ToggleAnimationHandler } from "./Function_action"
+import { Action, PageState, ToggleAnimationHandler } from "./Function_action"
 import initializeGLB, { mergedMesh } from "./Function_glb"
 import { createPage, createSkeleton } from "./Function_page"
 import { Inspector } from "@babylonjs/inspector"
@@ -37,15 +37,16 @@ const isDebug = true
 export function initializeScene(
     canvas: HTMLCanvasElement,
     sceneRef: React.MutableRefObject<Scene | null>,
-    animationRefs: React.MutableRefObject<AnimationGroup | null>[],
+    skeletonRefs: React.MutableRefObject<Skeleton[] | null>,
     dispatchers: React.Dispatch<Action>[],
-    glb_dispatcher: [boolean, React.Dispatch<Action>],
+    glb_dispatcher: [PageState, React.Dispatch<Action>],
     updated_text: string,
 ) {
     const meshes_amount = 50
     const engine = new Engine(canvas, true)
     const scene = new Scene(engine)
     sceneRef.current = scene
+    let animationRefs: React.MutableRefObject<AnimationGroup | null>[] = []
     LightUp(scene)
     CameraWork(scene, canvas)
     initializeGLB(scene, animationRefs)
@@ -82,6 +83,12 @@ export function initializeScene(
         addAnimationToGroup(rootBoneAnimationGroupReverse, pageSkeleton, position_1, position_2, i, true)
     }
 
+    // pageSkeletonsの各要素を個別のrefオブジェクトに変換して代入
+    // skeletonRefs.forEach((ref, index) => {
+    //     ref.current = pageSkeletons[index]
+    // })
+    skeletonRefs.current = pageSkeletons
+
     if (isDebug) {
         scene.debugLayer.show({
             embedMode: true
@@ -102,7 +109,7 @@ export function initializeScene(
                     pickNamePattern: new RegExp(`^Tome_hitBox_`)
                 }
             ],
-            animationRefs
+            animationRefs,
         )
     )
 

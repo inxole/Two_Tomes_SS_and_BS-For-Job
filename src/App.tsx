@@ -1,17 +1,19 @@
-import React, { useState } from 'react'
+import { useState } from 'react'
 import { Box, Button, Slider } from '@mui/material'
 import { Rnd } from 'react-rnd'
 import { useRecoilState } from 'recoil'
-import { Long_Text, Text_Switch } from './atom'
+import { Long_Text, Text_Switch, BookMark } from './atom'
 import CanvasComponent from './Page'
 
 interface RndComponentProps {
   fontSize: number
   setFontSize: (size: number) => void
+  bookmark: number
+  setBookmark: (count: number) => void
 }
 
 function RndComponent(props: RndComponentProps) {
-  const { fontSize, setFontSize } = props
+  const { fontSize, setFontSize, bookmark, setBookmark } = props
   const [, setText_update] = useRecoilState(Text_Switch)
   const [updatedText, setUpdatedText] = useRecoilState(Long_Text)
 
@@ -75,6 +77,25 @@ function RndComponent(props: RndComponentProps) {
             style={{ flexGrow: 1 }}
           />
         </div>
+        <span style={{ marginRight: '10px' }}>開いているページ数</span>
+        <div style={{ display: 'flex', alignItems: 'center', marginBottom: '10px' }}>
+          <input
+            type='number'
+            value={bookmark}
+            onChange={(e) => setBookmark(Number(e.target.value))}
+            style={{ width: '60px', marginRight: '10px' }}
+          />
+          <Slider
+            value={bookmark}
+            onChange={(_, newValue) => setBookmark(newValue as number)}
+            aria-labelledby='page-count-slider'
+            valueLabelDisplay='auto'
+            step={1}
+            min={1}
+            max={50}
+            style={{ flexGrow: 1 }}
+          />
+        </div>
         <Button size='small' variant='outlined' style={{ alignSelf: 'flex-end' }} onClick={handleUpdate}>
           Update
         </Button>
@@ -85,10 +106,12 @@ function RndComponent(props: RndComponentProps) {
 
 function BabylonScene() {
   const [fontSize, setFontSize] = useState(22)
+  const [bookmark, setBookmark] = useRecoilState(BookMark)
+
   return (
     <Box style={{ position: 'relative', width: '100%', height: '100%' }}>
       <CanvasComponent />
-      <RndComponent fontSize={fontSize} setFontSize={setFontSize} />
+      <RndComponent fontSize={fontSize} setFontSize={setFontSize} bookmark={bookmark} setBookmark={setBookmark} />
     </Box>
   )
 }

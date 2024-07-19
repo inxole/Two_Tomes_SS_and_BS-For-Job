@@ -1,7 +1,8 @@
 import { AnimationGroup, PointerEventTypes, PointerInfo, Scene, Skeleton } from "@babylonjs/core"
 import { Reducer, useReducer } from "react"
 
-export type Action = { type: 'TOGGLE', open: VoidFunction, close: VoidFunction }
+export type Action = { type: string, open: VoidFunction, close: VoidFunction }
+export type PageState = { isOpen: boolean }
 
 export type ToggleAnimationSetup = {
     dispatch: React.Dispatch<Action>,
@@ -9,12 +10,18 @@ export type ToggleAnimationSetup = {
     pickNamePattern: RegExp,
 }
 
-export function animationReducer(state: boolean, action: Action): boolean {
+export function animationReducer(state: PageState, action: Action): PageState {
     switch (action.type) {
         case 'TOGGLE':
-            if (state) { action.close() }
+            if (state.isOpen) { action.close() }
             else { action.open() }
-            return !state
+            return { isOpen: !state.isOpen }
+        case 'OPEN':
+            if (!state.isOpen) { action.open() }
+            return { isOpen: true }
+        case 'CLOSE':
+            if (state.isOpen) { action.close() }
+            return { isOpen: false }
         default:
             throw new Error()
     }
@@ -47,6 +54,6 @@ export function ToggleAnimationHandler(
     }
 }
 
-export function useDynamicReducers(reducer: Reducer<boolean, Action>, initialState: boolean, count: number) {
+export function useDynamicReducers(reducer: Reducer<PageState, Action>, initialState: PageState, count: number) {
     return Array.from({ length: count }, () => useReducer(reducer, initialState))
 }
