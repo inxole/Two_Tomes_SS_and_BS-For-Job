@@ -63,7 +63,14 @@ function RndComponent(props: RndComponentProps) {
           <input
             type='number'
             value={fontSize}
-            onChange={(e) => setFontSize(Number(e.target.value))}
+            onChange={(e) => {
+              const newValue = Number(e.target.value)
+              if (newValue >= 10 && newValue <= 100) {
+                setFontSize(newValue)
+              }
+            }}
+            min={10}
+            max={100}
             style={{ width: '60px', marginRight: '10px' }}
           />
           <Slider
@@ -82,7 +89,14 @@ function RndComponent(props: RndComponentProps) {
           <input
             type='number'
             value={bookmark}
-            onChange={(e) => setBookmark(Number(e.target.value))}
+            onChange={(e) => {
+              const newValue = Number(e.target.value)
+              if (newValue >= 0 && newValue <= 50) {
+                setBookmark(newValue)
+              }
+            }}
+            min={0}
+            max={50}
             style={{ width: '60px', marginRight: '10px' }}
           />
           <Slider
@@ -91,7 +105,7 @@ function RndComponent(props: RndComponentProps) {
             aria-labelledby='page-count-slider'
             valueLabelDisplay='auto'
             step={1}
-            min={1}
+            min={0}
             max={50}
             style={{ flexGrow: 1 }}
           />

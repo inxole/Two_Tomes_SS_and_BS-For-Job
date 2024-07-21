@@ -54,8 +54,6 @@ export function initializeScene(
     const front_pages: Mesh[] = []
     const back_pages: Mesh[] = []
     const pageSkeletons: Skeleton[] = []
-
-    // アニメーショングループを作成
     const rootBoneAnimationGroup = new AnimationGroup("rootBoneAnimationGroup")
     const rootBoneAnimationGroupReverse = new AnimationGroup("rootBoneAnimationGroupReverse")
 
@@ -83,10 +81,6 @@ export function initializeScene(
         addAnimationToGroup(rootBoneAnimationGroupReverse, pageSkeleton, position_1, position_2, i, true)
     }
 
-    // pageSkeletonsの各要素を個別のrefオブジェクトに変換して代入
-    // skeletonRefs.forEach((ref, index) => {
-    //     ref.current = pageSkeletons[index]
-    // })
     skeletonRefs.current = pageSkeletons
 
     if (isDebug) {

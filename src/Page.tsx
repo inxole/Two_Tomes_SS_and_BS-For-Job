@@ -46,12 +46,8 @@ function CanvasComponent() {
     useEffect(() => {
         const scene = sceneRef.current
         if (!scene) return
-
-        console.log(skeletonRefs.current)// 初期状態のskeletonRefsを一度だけログに出力する
-
         dispatchers.forEach((dispatch, index) => {
-            if (index <= bookmark) {
-                console.log(index, "open")
+            if (index < bookmark) {
                 dispatch({
                     type: "OPEN",
                     open: () => {
@@ -62,7 +58,6 @@ function CanvasComponent() {
                     close: () => { }
                 })
             } else {
-                console.log(index, "close")
                 dispatch({
                     type: "CLOSE",
                     open: () => { },
