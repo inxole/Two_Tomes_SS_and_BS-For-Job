@@ -50,14 +50,22 @@ function CanvasComponent() {
         console.log(skeletonRefs.current)// 初期状態のskeletonRefsを一度だけログに出力する
 
         dispatchers.forEach((dispatch, index) => {
-            if (bookmark <= index) {
+            if (index <= bookmark) {
+                console.log(index, "open")
                 dispatch({
-                    type: "TOGGLE",
+                    type: "OPEN",
                     open: () => {
                         if (skeletonRefs.current && skeletonRefs.current[index]) {
                             scene.beginAnimation(skeletonRefs.current[index], 0, 60, true, undefined, () => { })
                         }
                     },
+                    close: () => { }
+                })
+            } else {
+                console.log(index, "close")
+                dispatch({
+                    type: "CLOSE",
+                    open: () => { },
                     close: () => {
                         if (skeletonRefs.current && skeletonRefs.current[index]) {
                             scene.beginAnimation(skeletonRefs.current[index], 60, 120, true, undefined, () => { })
