@@ -1,9 +1,8 @@
-import { AnimationGroup, ArcRotateCamera, DefaultRenderingPipeline, Engine, HemisphericLight, Mesh, Scene, Skeleton, Space, Vector3 } from "@babylonjs/core"
+import { AnimationGroup, ArcRotateCamera, DefaultRenderingPipeline, Engine, HemisphericLight, Mesh, MeshBuilder, Scene, Skeleton, Space, Vector3 } from "@babylonjs/core"
 import { Action, PageState, ToggleAnimationHandler } from "./Function_action"
 import initializeGLB, { mergedMesh } from "./Function_glb"
 import { createPage, createSkeleton } from "./Function_page"
 import { Inspector } from "@babylonjs/inspector"
-import { addAnimationToGroup } from "./Function_rootbone"
 
 export function LightUp(scene: Scene) {
     const light = new HemisphericLight('light1', new Vector3(1, 1, 0), scene)
@@ -54,8 +53,6 @@ export function initializeScene(
     const front_pages: Mesh[] = []
     const back_pages: Mesh[] = []
     const pageSkeletons: Skeleton[] = []
-    const rootBoneAnimationGroup = new AnimationGroup("rootBoneAnimationGroup")
-    const rootBoneAnimationGroupReverse = new AnimationGroup("rootBoneAnimationGroupReverse")
 
     for (let i = 0; i < meshes_amount; i++) {
         const front_page = createPage(scene, `front_page_${i}`, i === 0 ? updated_text : `page_${2 * i + 1}`, i * 0.0002, true)
@@ -73,15 +70,29 @@ export function initializeScene(
         const rootBone = pageSkeleton.bones[0]
         const rootBonePosition = new Vector3(-0.1075, 0, -0.015 + 0.0006 * i)
         rootBone.setPosition(rootBonePosition, Space.WORLD)
-
-        const position_1 = new Vector3(-0.1075, 0, -0.015 + 0.0006 * i)
-        const position_2 = new Vector3(-0.115 + 0.00015 * i, 0, -0.015 + 0.0006 * i)
-
-        addAnimationToGroup(rootBoneAnimationGroup, pageSkeleton, position_1, position_2, i, false)
-        addAnimationToGroup(rootBoneAnimationGroupReverse, pageSkeleton, position_1, position_2, i, true)
     }
 
     skeletonRefs.current = pageSkeletons
+
+    const control_mesh = MeshBuilder.CreateBox("control_mesh", { width: 0.01, height: 0.01, depth: 0.01 }, scene)
+    control_mesh.position = new Vector3(-0.0975, -0.0144, 0)
+    control_mesh.rotate(new Vector3(0, 0, 1), Math.PI / 12)
+    control_mesh.isVisible = false
+    front_pages.forEach(mesh => {
+        mesh.parent = control_mesh
+    })
+    back_pages.forEach(mesh => {
+        mesh.parent = control_mesh
+    })
+
+    // メッシュのローカル位置を調整する
+    const targetPosition = new Vector3(0, 0, 0)
+    front_pages.forEach(mesh => {
+        mesh.position = mesh.position.subtract(control_mesh.position).add(targetPosition)
+    })
+    back_pages.forEach(mesh => {
+        mesh.position = mesh.position.subtract(control_mesh.position).add(targetPosition)
+    })
 
     if (isDebug) {
         scene.debugLayer.show({
