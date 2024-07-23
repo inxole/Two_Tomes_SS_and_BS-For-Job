@@ -3,6 +3,7 @@ import { Action, PageState, ToggleAnimationHandler } from "./Function_action"
 import initializeGLB, { mergedMesh } from "./Function_glb"
 import { createPage, createSkeleton } from "./Function_page"
 import { Inspector } from "@babylonjs/inspector"
+import { createRotationAnimation } from "./Animation_data"
 
 export function LightUp(scene: Scene) {
     const light = new HemisphericLight('light1', new Vector3(1, 1, 0), scene)
@@ -40,6 +41,7 @@ export function initializeScene(
     dispatchers: React.Dispatch<Action>[],
     glb_dispatcher: [PageState, React.Dispatch<Action>],
     updated_text: string,
+    root_controller: React.MutableRefObject<Mesh | null>
 ) {
     const meshes_amount = 50
     const engine = new Engine(canvas, true)
@@ -74,10 +76,10 @@ export function initializeScene(
 
     skeletonRefs.current = pageSkeletons
 
-    const control_mesh = MeshBuilder.CreateBox("control_mesh", { width: 0.01, height: 0.01, depth: 0.01 }, scene)
-    control_mesh.position = new Vector3(-0.0975, -0.0144, 0)
-    control_mesh.rotate(new Vector3(0, 0, 1), Math.PI / 12)
-    control_mesh.isVisible = false
+    const control_mesh = MeshBuilder.CreateBox("Root", { width: 0.01, height: 0.01, depth: 0.01 }, scene)
+    root_controller.current = control_mesh
+    root_controller.current.position = new Vector3(-0.0975, -0.0144, 0)
+    root_controller.current.isVisible = false
     front_pages.forEach(mesh => {
         mesh.parent = control_mesh
     })
@@ -85,7 +87,7 @@ export function initializeScene(
         mesh.parent = control_mesh
     })
 
-    // メッシュのローカル位置を調整する
+    createRotationAnimation(root_controller)
     const targetPosition = new Vector3(0, 0, 0)
     front_pages.forEach(mesh => {
         mesh.position = mesh.position.subtract(control_mesh.position).add(targetPosition)

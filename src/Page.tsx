@@ -1,6 +1,6 @@
 import { useEffect, useRef, useReducer } from 'react'
 import { useRecoilState, useRecoilValue } from 'recoil'
-import { Scene, DynamicTexture, Skeleton } from '@babylonjs/core'
+import { Scene, DynamicTexture, Skeleton, Mesh, Vector3 } from '@babylonjs/core'
 import { BookMark, Long_Text, Text_Switch } from './atom'
 import { animationReducer, useDynamicReducers } from './Function_action'
 import initializeScene from './Function_canvas'
@@ -18,13 +18,14 @@ function CanvasComponent() {
     const dispatchers = useDynamicReducers(animationReducer, { isOpen: false }, pageAmount).map(([_, dispatch]) => dispatch)
     const glb_dispatcher = useReducer(animationReducer, { isOpen: false })
     const bookmark = useRecoilValue(BookMark)
+    const root_controller = useRef<Mesh | null>(null)
 
     // Initialize the scene
     useEffect(() => {
         const canvas = canvasRef.current
         if (!canvas) return
 
-        return initializeScene(canvas, sceneRef, skeletonRefs, dispatchers, glb_dispatcher, updated_text)
+        return initializeScene(canvas, sceneRef, skeletonRefs, dispatchers, glb_dispatcher, updated_text, root_controller)
     }, [])
 
     // Update the text on the front page

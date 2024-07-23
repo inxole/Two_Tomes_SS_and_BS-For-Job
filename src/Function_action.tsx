@@ -45,8 +45,14 @@ export function ToggleAnimationHandler(
                 } else {
                     dispatch({
                         type: "TOGGLE",
-                        open: () => { glb_animation[3].current?.start(true), glb_animation[1].current?.stop(), glb_animation[0].current?.start(true) },
-                        close: () => { glb_animation[3].current?.stop(), glb_animation[0].current?.stop(), glb_animation[1].current?.start(true) }
+                        open: () => {
+                            glb_animation[7].current?.start(true), glb_animation[9].current?.stop()
+                            glb_animation[0].current?.start(true), glb_animation[1].current?.stop()
+                        },
+                        close: () => {
+                            glb_animation[9].current?.start(true), glb_animation[7].current?.stop()
+                            glb_animation[1].current?.start(true), glb_animation[0].current?.stop()
+                        }
                     })
                 }
             }
