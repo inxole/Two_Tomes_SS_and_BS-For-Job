@@ -46,12 +46,16 @@ export function ToggleAnimationHandler(
                     dispatch({
                         type: "TOGGLE",
                         open: () => {
-                            glb_animation[7].current?.start(true), glb_animation[9].current?.stop()
+                            glb_animation[9].current?.start(true), glb_animation[11].current?.stop()
                             glb_animation[0].current?.start(true), glb_animation[1].current?.stop()
+                            setTimeout(() => { glb_animation[9]?.current?.stop() }, 1000)
+                            setTimeout(() => { glb_animation[10]?.current?.start(true) }, 1000)
                         },
                         close: () => {
-                            glb_animation[9].current?.start(true), glb_animation[7].current?.stop()
+                            glb_animation[11].current?.start(true), glb_animation[9].current?.stop()
                             glb_animation[1].current?.start(true), glb_animation[0].current?.stop()
+                            glb_animation[10].current?.stop()
+                            setTimeout(() => { glb_animation[11]?.current?.stop() }, 1000)
                         }
                     })
                 }
