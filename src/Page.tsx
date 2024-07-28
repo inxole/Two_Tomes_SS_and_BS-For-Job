@@ -21,7 +21,6 @@ function CanvasComponent() {
     const root_controller = useRef<Mesh | null>(null)
     const animationData = sceneRef.current?.animationGroups
     const previousBookmark = useRef(bookmark)
-    console.log(animationData)
     // Initialize the scene
     useEffect(() => {
         const canvas = canvasRef.current
@@ -75,48 +74,21 @@ function CanvasComponent() {
 
         if (animationData) {
             switch (true) {
-                case (bookmark === 0 && previousBookmark.current === 1)://済み
-                    animationData[0]?.stop()
-                    animationData[10]?.stop()
-                    animationData[1]?.play(true)
-                    animationData[11]?.play(true)
-                    animationData[8]?.play(true)
-                    setTimeout(() => { animationData[11]?.stop() }, 1000)
-                    break
                 case (bookmark > 0 && previousBookmark.current === 0):
-                    animationData[9]?.play(true)
-                    animationData[0]?.play(true)
-                    setTimeout(() => { animationData[9]?.stop() }, 1000)
-                    setTimeout(() => { animationData[10]?.start(true) }, 1000)
-                    break
-                case (bookmark < 11 && previousBookmark.current === 11):
-                    animationData[2]?.stop()
-                    animationData[13]?.stop()
-                    animationData[3]?.play(true)
-                    animationData[14]?.play(true)
-                    setTimeout(() => { animationData[14]?.stop() }, 1000)
-                    break
-
-                case (bookmark > 10 && previousBookmark.current === 10):
-                    animationData[12]?.play(true)
-                    animationData[2]?.play(true)
-                    setTimeout(() => { animationData[12]?.stop() }, 1000)
-                    setTimeout(() => { animationData[13]?.play(true) }, 1000)
-                    break
-
-                case (bookmark < 25 && previousBookmark.current === 25):
+                    animationData[0]?.start(true)
+                    animationData[3]?.start(true)
+                    animationData[1]?.stop()
                     animationData[5]?.stop()
-                    animationData[17]?.stop()
-                    animationData[6]?.play(true)
-                    animationData[18]?.play(true)
-                    setTimeout(() => { animationData[18]?.stop() }, 1000)
+                    setTimeout(() => { animationData[3]?.stop() }, 1000)
+                    setTimeout(() => { animationData[4]?.start(true) }, 1000)
                     break
-
-                case (bookmark > 25 && previousBookmark.current === 25):
-                    animationData[16]?.play(true)
-                    animationData[5]?.play(true)
-                    setTimeout(() => { animationData[16]?.stop() }, 1000)
-                    setTimeout(() => { animationData[17]?.play(true) }, 1000)
+                case (bookmark === 0 && previousBookmark.current === 1)://済み
+                    animationData[1]?.start(true)
+                    animationData[5]?.start(true)
+                    animationData[0]?.stop()
+                    animationData[3]?.stop()
+                    setTimeout(() => { animationData[5]?.stop() }, 1000)
+                    animationData[4]?.stop()
                     break
                 default:
                     break
