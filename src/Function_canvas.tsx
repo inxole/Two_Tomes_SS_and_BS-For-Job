@@ -3,7 +3,7 @@ import { Action, PageState, ToggleAnimationHandler } from "./Function_action"
 import initializeGLB, { mergedMesh } from "./Function_glb"
 import { createPage, createSkeleton } from "./Function_page"
 import { Inspector } from "@babylonjs/inspector"
-import { createRotationAnimation } from "./Animation_data"
+import { createRootAnimation } from "./Animation_data"
 
 export function LightUp(scene: Scene) {
     const light = new HemisphericLight('light1', new Vector3(1, 1, 0), scene)
@@ -87,7 +87,7 @@ export function initializeScene(
         mesh.parent = control_mesh
     })
 
-    createRotationAnimation(root_controller)
+    createRootAnimation(root_controller)
     const targetPosition = new Vector3(0, 0, 0)
     front_pages.forEach(mesh => {
         mesh.position = mesh.position.subtract(control_mesh.position).add(targetPosition)

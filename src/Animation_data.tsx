@@ -40,25 +40,51 @@ function createYRotationAnimation(skeletonName: string, boneName: string) {
     return animation
 }
 
-const Reverse_keys_0_90 = [{ frame: 0, value: 0 }, { frame: 10, value: 0 }, { frame: 70, value: Math.PI / 2 }]
-const Reverse_keys_90_0 = [{ frame: 0, value: Math.PI / 2 }, { frame: 50, value: 0 }]
+const Normal_keys_0_90 = [
+    { frame: 0, value: 0 },
+    { frame: 10, value: 0 },
+    { frame: 50, value: Math.PI / 2 }
+]
+const Reverse_keys_90_0 = [
+    { frame: 0, value: Math.PI / 2 },
+    { frame: 20, value: Math.PI / 2 },
+    { frame: 50, value: 0 }
+]
+
+const Position_keys_0_90 = [
+    { frame: 0, value: new Vector3(-0.0975, -0.0144, 0) },
+    { frame: 50, value: new Vector3(-0.101, -0.02, 0) }
+]
+const Position_keys_90_0 = [
+    { frame: 0, value: new Vector3(-0.101, -0.02, 0) },
+    { frame: 50, value: new Vector3(-0.0975, -0.0144, 0) }
+]
 
 /**
  * コントローラーにアニメーションを追加する
  * @param meshController アニメーショングループ
 */
-export function createRotationAnimation(meshController: React.MutableRefObject<Mesh | null>) {
-    const reverse_0_90 = new Animation("R_0_90", "rotation.z", 120, Animation.ANIMATIONTYPE_FLOAT, Animation.ANIMATIONLOOPMODE_CONSTANT)
+export function createRootAnimation(meshController: React.MutableRefObject<Mesh | null>) {
+    const normal_0_90 = new Animation("N_0_90", "rotation.z", 120, Animation.ANIMATIONTYPE_FLOAT, Animation.ANIMATIONLOOPMODE_CONSTANT)
     const reverse_90_0 = new Animation("R_90_0", "rotation.z", 120, Animation.ANIMATIONTYPE_FLOAT, Animation.ANIMATIONLOOPMODE_CONSTANT)
 
-    reverse_0_90.setKeys(Reverse_keys_0_90)
+    normal_0_90.setKeys(Normal_keys_0_90)
     reverse_90_0.setKeys(Reverse_keys_90_0)
 
-    const Zero_To_XC_Group = new AnimationGroup("R_0_90_Group")
-    const XC_To_Zero_Group = new AnimationGroup("R_90_0_Group")
+    const position_0_90 = new Animation("P_0_90", "position", 120, Animation.ANIMATIONTYPE_VECTOR3, Animation.ANIMATIONLOOPMODE_CONSTANT)
+    const position_90_0 = new Animation("P_90_0", "position", 120, Animation.ANIMATIONTYPE_VECTOR3, Animation.ANIMATIONLOOPMODE_CONSTANT)
 
-    Zero_To_XC_Group.addTargetedAnimation(reverse_0_90, meshController.current)
-    XC_To_Zero_Group.addTargetedAnimation(reverse_90_0, meshController.current)
+    position_0_90.setKeys(Position_keys_0_90)
+    position_90_0.setKeys(Position_keys_90_0)
+
+    const Zero_To_Ninety_Group = new AnimationGroup("N_0_90_Group")
+    const Ninety_To_Zero_Group = new AnimationGroup("R_90_0_Group")
+
+    Zero_To_Ninety_Group.addTargetedAnimation(normal_0_90, meshController.current)
+    Zero_To_Ninety_Group.addTargetedAnimation(position_0_90, meshController.current)
+
+    Ninety_To_Zero_Group.addTargetedAnimation(reverse_90_0, meshController.current)
+    Ninety_To_Zero_Group.addTargetedAnimation(position_90_0, meshController.current)
 }
 
 export default createYRotationAnimation
