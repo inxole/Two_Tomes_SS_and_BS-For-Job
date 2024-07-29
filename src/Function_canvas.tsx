@@ -55,6 +55,8 @@ export function initializeScene(
     const front_pages: Mesh[] = []
     const back_pages: Mesh[] = []
     const pageSkeletons: Skeleton[] = []
+    const N_Animation_Group = new AnimationGroup("N_Animation_Group")
+    const R_Animation_Group = new AnimationGroup("R_Animation_Group")
 
     for (let i = 0; i < meshes_amount; i++) {
         const front_page = createPage(scene, `front_page_${i}`, i === 0 ? updated_text : `page_${2 * i + 1}`, i * 0.0002, true)
@@ -63,7 +65,7 @@ export function initializeScene(
         front_pages.push(front_page)
         back_pages.push(back_page)
 
-        const pageSkeleton = createSkeleton(scene, `skeleton_${i}`, front_page, i * 0.0002, `animation${i + 1}`)
+        const pageSkeleton = createSkeleton(scene, `skeleton_${i}`, front_page, i * 0.0002, `animation${i + 1}`, N_Animation_Group, R_Animation_Group)
         pageSkeletons.push(pageSkeleton)
 
         front_page.skeleton = pageSkeleton
