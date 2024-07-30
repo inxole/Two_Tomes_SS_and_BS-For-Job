@@ -21,7 +21,7 @@ function CanvasComponent() {
     const root_controller = useRef<Mesh | null>(null)
     const animationData = sceneRef.current?.animationGroups
     const previousBookmark = useRef(bookmark)
-    
+
     // Initialize the scene
     useEffect(() => {
         const canvas = canvasRef.current
@@ -76,20 +76,20 @@ function CanvasComponent() {
         if (animationData) {
             switch (true) {
                 case (bookmark > 0 && previousBookmark.current === 0):
-                    animationData[2]?.start(true)
-                    animationData[5]?.start(true)
-                    animationData[3]?.stop()
-                    animationData[7]?.stop()
-                    setTimeout(() => { animationData[5]?.stop() }, 1000)
-                    setTimeout(() => { animationData[6]?.start(true) }, 1000)
-                    break
-                case (bookmark === 0 && previousBookmark.current === 1)://済み
-                    animationData[3]?.start(true)
+                    animationData[4]?.start(true)
                     animationData[7]?.start(true)
-                    animationData[2]?.stop()
                     animationData[5]?.stop()
+                    animationData[9]?.stop()
                     setTimeout(() => { animationData[7]?.stop() }, 1000)
-                    animationData[6]?.stop()
+                    setTimeout(() => { animationData[8]?.start(true) }, 1000)
+                    break
+                case (bookmark === 0 && previousBookmark.current === 1):
+                    animationData[5]?.start(true)
+                    animationData[9]?.start(true)
+                    animationData[4]?.stop()
+                    animationData[7]?.stop()
+                    setTimeout(() => { animationData[9]?.stop() }, 1000)
+                    animationData[8]?.stop()
                     break
                 default:
                     break

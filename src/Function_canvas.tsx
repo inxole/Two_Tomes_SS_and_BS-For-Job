@@ -4,6 +4,7 @@ import initializeGLB, { mergedMesh } from "./Function_glb"
 import { createPage, createSkeleton } from "./Function_page"
 import { Inspector } from "@babylonjs/inspector"
 import { createRootAnimation } from "./Animation_data"
+import { addAnimationGroup } from "./Function_rootbone"
 
 export function LightUp(scene: Scene) {
     const light = new HemisphericLight('light1', new Vector3(1, 1, 0), scene)
@@ -55,6 +56,8 @@ export function initializeScene(
     const front_pages: Mesh[] = []
     const back_pages: Mesh[] = []
     const pageSkeletons: Skeleton[] = []
+    const N_Controller = new AnimationGroup("N_Controller")
+    const R_Controller = new AnimationGroup("R_Controller")
     const N_Animation_Group = new AnimationGroup("N_Animation_Group")
     const R_Animation_Group = new AnimationGroup("R_Animation_Group")
 
@@ -74,6 +77,11 @@ export function initializeScene(
         const rootBone = pageSkeleton.bones[0]
         const rootBonePosition = new Vector3(-0.1075, 0, -0.015 + 0.0006 * i)
         rootBone.setPosition(rootBonePosition, Space.WORLD)
+
+        // インデックス i を使用して回転角度を計算
+        const rotationAngle = -(Math.PI / 720) * i
+        addAnimationGroup(N_Controller, rootBone, i, true, rotationAngle)
+        addAnimationGroup(R_Controller, rootBone, i, false, rotationAngle)
     }
 
     skeletonRefs.current = pageSkeletons

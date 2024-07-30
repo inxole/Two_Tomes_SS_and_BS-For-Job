@@ -1,14 +1,14 @@
 import { Vector3, Animation } from "@babylonjs/core"
 
 const subboneRotations: { [key: string]: { zero: number, one: number } } = {
-    'bone0': { zero: 0.00, one: -0.2 },
-    'bone1': { zero: 0.00, one: -0.50 },
-    'bone2': { zero: 0.00, one: -0.50 },
-    'bone3': { zero: 0.00, one: -0.25 },
-    'bone4': { zero: 0.00, one: -0.25 },
-    'bone5': { zero: 0.00, one: 0.01 },
-    'bone6': { zero: 0.00, one: 0.01 },
-    'bone7': { zero: 0.00, one: 0.15 },
+    'bone0': { zero: 0.00, one: -Math.PI / 12 },//15°
+    'bone1': { zero: 0.00, one: -Math.PI / 9 },//20°
+    'bone2': { zero: 0.00, one: -Math.PI / 9 },
+    'bone3': { zero: 0.00, one: -Math.PI / 18 },//10°
+    'bone4': { zero: 0.00, one: -Math.PI / 9 },
+    'bone5': { zero: 0.00, one: 0.00 },
+    'bone6': { zero: 0.00, one: 0.00 },
+    'bone7': { zero: 0.00, one: 0.00 },
     'bone8': { zero: 0.00, one: 0.00 },
 }
 
