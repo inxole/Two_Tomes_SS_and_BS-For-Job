@@ -56,9 +56,9 @@ export function initializeScene(
     const front_pages: Mesh[] = []
     const back_pages: Mesh[] = []
     const pageSkeletons: Skeleton[] = []
-    const N_Controller = new AnimationGroup("N_Controller")
+    const N_Controller = new AnimationGroup("N_Controller")//各ルートボーンの親の回転
     const R_Controller = new AnimationGroup("R_Controller")
-    const N_Animation_Group = new AnimationGroup("N_Animation_Group")
+    const N_Animation_Group = new AnimationGroup("N_Animation_Group")//各ルートボーンの回転
     const R_Animation_Group = new AnimationGroup("R_Animation_Group")
 
     for (let i = 0; i < meshes_amount; i++) {
@@ -78,8 +78,7 @@ export function initializeScene(
         const rootBonePosition = new Vector3(-0.1075, 0, -0.015 + 0.0006 * i)
         rootBone.setPosition(rootBonePosition, Space.WORLD)
 
-        // インデックス i を使用して回転角度を計算
-        const rotationAngle = -(Math.PI / 720) * i
+        const rotationAngle = -(Math.PI / 1260) * i//約0.1432度ずつ回転
         addAnimationGroup(N_Controller, rootBone, i, true, rotationAngle)
         addAnimationGroup(R_Controller, rootBone, i, false, rotationAngle)
     }
