@@ -1,7 +1,7 @@
 import { useEffect, useRef, useReducer } from 'react'
 import { useRecoilState, useRecoilValue } from 'recoil'
 import { Scene, DynamicTexture, Skeleton, Mesh } from '@babylonjs/core'
-import { BookMark, Long_Text, Text_Switch } from './atom'
+import { BookMark, CoverOpen, Long_Text, Text_Switch } from './atom'
 import { animationReducer, useDynamicReducers } from './Function_action'
 import initializeScene from './Function_canvas'
 
@@ -20,7 +20,7 @@ function CanvasComponent() {
     const bookmark = useRecoilValue(BookMark)
     const root_controller = useRef<Mesh | null>(null)
     const animationData = sceneRef.current?.animationGroups
-    const previousBookmark = useRef(bookmark)
+    const coverSwitch = useRecoilValue(CoverOpen)
 
     // Initialize the scene
     useEffect(() => {
@@ -72,10 +72,14 @@ function CanvasComponent() {
                 })
             }
         })
+    }, [bookmark])
 
+    useEffect(() => {
+        const scene = sceneRef.current
+        if (!scene) return
         if (animationData) {
             switch (true) {
-                case (bookmark > 0 && previousBookmark.current === 0):
+                case (coverSwitch):
                     animationData[4]?.start(true), animationData[5]?.stop()
                     animationData[7]?.start(true), animationData[9]?.stop()
                     setTimeout(() => { animationData[7]?.stop() }, 1000)
@@ -83,7 +87,7 @@ function CanvasComponent() {
                     animationData[0]?.start(true), animationData[1]?.stop()
                     animationData[2]?.start(true), animationData[3]?.stop()
                     break
-                case (bookmark === 0 && previousBookmark.current === 1):
+                case (!coverSwitch):
                     animationData[5]?.start(true), animationData[4]?.stop()
                     animationData[9]?.start(true), animationData[7]?.stop()
                     setTimeout(() => { animationData[9]?.stop() }, 1000)
@@ -95,8 +99,7 @@ function CanvasComponent() {
                     break
             }
         }
-        previousBookmark.current = bookmark
-    }, [bookmark])
+    }, [coverSwitch])
 
     return <canvas ref={canvasRef} style={{ width: '100%', height: '100%' }} />
 }

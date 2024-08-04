@@ -2,7 +2,7 @@ import { useState } from 'react'
 import { Box, Button, Slider } from '@mui/material'
 import { Rnd } from 'react-rnd'
 import { useRecoilState } from 'recoil'
-import { Long_Text, Text_Switch, BookMark } from './atom'
+import { Long_Text, Text_Switch, BookMark, CoverOpen } from './atom'
 import CanvasComponent from './Page'
 
 interface RndComponentProps {
@@ -10,10 +10,12 @@ interface RndComponentProps {
   setFontSize: (size: number) => void
   bookmark: number
   setBookmark: (count: number) => void
+  coverSwitch: boolean
+  setCoverSwitch: (state: boolean) => void
 }
 
 function RndComponent(props: RndComponentProps) {
-  const { fontSize, setFontSize, bookmark, setBookmark } = props
+  const { fontSize, setFontSize, bookmark, setBookmark, setCoverSwitch } = props
   const [, setText_update] = useRecoilState(Text_Switch)
   const [updatedText, setUpdatedText] = useRecoilState(Long_Text)
 
@@ -84,31 +86,49 @@ function RndComponent(props: RndComponentProps) {
             style={{ flexGrow: 1 }}
           />
         </div>
-        <span style={{ marginRight: '10px' }}>開いているページ数</span>
-        <div style={{ display: 'flex', alignItems: 'center', marginBottom: '10px' }}>
-          <input
-            type='number'
-            value={bookmark}
-            onChange={(e) => {
-              const newValue = Number(e.target.value)
-              if (newValue >= 0 && newValue <= 50) {
-                setBookmark(newValue)
-              }
-            }}
-            min={0}
-            max={50}
-            style={{ width: '60px', marginRight: '10px' }}
-          />
-          <Slider
-            value={bookmark}
-            onChange={(_, newValue) => setBookmark(newValue as number)}
-            aria-labelledby='page-count-slider'
-            valueLabelDisplay='auto'
-            step={1}
-            min={0}
-            max={50}
-            style={{ flexGrow: 1 }}
-          />
+        <div style={{ display: 'flex' }}>
+          <div style={{ display: 'flex', flexDirection: 'column', marginRight: '20px' }}>
+            <span>表紙</span>
+            <Button
+              size='small'
+              variant="contained"
+              color="primary"
+              onClick={() => setCoverSwitch(true)}
+              style={{ margin: '10px 0' }}
+            >
+              開く
+            </Button>
+            <Button
+              size='small'
+              variant="contained"
+              color="secondary"
+              onClick={() => setCoverSwitch(false)}
+              style={{ margin: '10px 0' }}
+            >
+              閉じる
+            </Button>
+          </div>
+          <div style={{ flexGrow: 1 }}>
+            <div style={{ display: 'flex', justifyContent: 'center', marginBottom: '10px' }}>
+              <span style={{ marginRight: '10px' }}>ページ管理</span>
+            </div>
+            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '10px' }}>
+              <span style={{ fontWeight: 'bold', fontSize: '16px', marginRight: '10px' }}>{bookmark === 0 ? "-" : bookmark * 2}</span>
+              <span style={{ fontWeight: 'bold', fontSize: '16px', marginLeft: '10px' }}>{bookmark === 50 ? "-" : bookmark * 2 + 1}</span>
+            </div>
+            <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', marginBottom: '10px' }}>
+              <Slider
+                value={bookmark}
+                onChange={(_, newValue) => setBookmark(newValue as number)}
+                aria-labelledby='page-count-slider'
+                valueLabelDisplay='auto'
+                step={1}
+                min={0}
+                max={50}
+                style={{ flexGrow: 1, marginLeft: '10px' }}
+              />
+            </div>
+          </div>
         </div>
         <Button size='small' variant='outlined' style={{ alignSelf: 'flex-end' }} onClick={handleUpdate}>
           Update
@@ -121,11 +141,15 @@ function RndComponent(props: RndComponentProps) {
 function BabylonScene() {
   const [fontSize, setFontSize] = useState(22)
   const [bookmark, setBookmark] = useRecoilState(BookMark)
+  const [coverSwitch, setCoverSwitch] = useRecoilState(CoverOpen)
 
   return (
     <Box style={{ position: 'relative', width: '100%', height: '100%' }}>
       <CanvasComponent />
-      <RndComponent fontSize={fontSize} setFontSize={setFontSize} bookmark={bookmark} setBookmark={setBookmark} />
+      <RndComponent
+        fontSize={fontSize} setFontSize={setFontSize}
+        bookmark={bookmark} setBookmark={setBookmark}
+        coverSwitch={coverSwitch} setCoverSwitch={setCoverSwitch} />
     </Box>
   )
 }
