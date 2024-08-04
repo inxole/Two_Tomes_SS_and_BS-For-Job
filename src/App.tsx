@@ -121,8 +121,8 @@ function RndComponent(props: RndComponentProps) {
               <span style={{ marginRight: '10px' }}>ページ管理</span>
             </div>
             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '10px' }}>
-              <span style={{ fontWeight: 'bold', fontSize: '16px', marginRight: '10px' }}>{bookmark === 0 ? "-" : bookmark * 2}</span>
-              <span style={{ fontWeight: 'bold', fontSize: '16px', marginLeft: '10px' }}>{bookmark === 50 ? "-" : bookmark * 2 + 1}</span>
+              <span style={{ fontWeight: 'bold', fontSize: '16px', marginRight: '10px' }}>{bookmark === 0 ? "表紙" : bookmark * 2}</span>
+              <span style={{ fontWeight: 'bold', fontSize: '16px', marginLeft: '10px' }}>{bookmark === 50 ? "背表紙" : bookmark * 2 + 1}</span>
             </div>
             <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', marginBottom: '10px' }}>
               <Slider

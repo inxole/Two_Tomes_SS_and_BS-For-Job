@@ -2,15 +2,15 @@ import { Animation, AnimationGroup, Mesh, Vector3 } from '@babylonjs/core'
 
 // ボーンごとの回転値を定義
 const boneRotations: { [key: string]: { zero: number, one: number, two: number, three: number, four: number, five: number, six: number } } = {
-    'bone0': { zero: 0.00, one: 0.15, two: 0.20, three: 0.50, four: 1.00, five: 1.00, six: 1.80 },
-    'bone1': { zero: 0.00, one: 0.05, two: 0.10, three: 0.25, four: 0.25, five: 0.50, six: 0.50 },
-    'bone2': { zero: 0.00, one: 0.05, two: 0.10, three: 0.25, four: 0.25, five: 0.50, six: 0.50 },
-    'bone3': { zero: 0.00, one: 0.02, two: 0.10, three: 0.10, four: 0.10, five: 0.10, six: 0.25 },
-    'bone4': { zero: 0.00, one: 0.02, two: 0.10, three: 0.10, four: 0.10, five: 0.10, six: 0.25 },
-    'bone5': { zero: 0.00, one: 0.10, two: 0.20, three: 0.20, four: 0.20, five: 0.10, six: -0.01 },
-    'bone6': { zero: 0.00, one: 0.10, two: 0.20, three: 0.20, four: 0.20, five: 0.10, six: -0.01 },
-    'bone7': { zero: 0.00, one: 0.10, two: 0.20, three: 0.20, four: 0.20, five: 0.10, six: -0.15 },
-    'bone8': { zero: 0.00, one: 0.10, two: 0.20, three: 0.20, four: 0.20, five: 0.10, six: 0.00 },
+    'bone0': { zero: -Math.PI /  12, one: -Math.PI / 24, two: -Math.PI / 36, three: -Math.PI / 12 , four: Math.PI / 36, five: Math.PI / 24, six:  Math.PI /  12 },
+    'bone1': { zero: -Math.PI /   9, one: -Math.PI / 10, two: -Math.PI / 18, three:  Math.PI / 180, four: Math.PI / 27, five: Math.PI / 12, six:  Math.PI /   6 },
+    'bone2': { zero: -Math.PI /   9, one: -Math.PI / 10, two: -Math.PI / 18, three:  Math.PI / 180, four: Math.PI / 27, five: Math.PI / 12, six:  Math.PI /   6 },
+    'bone3': { zero: -Math.PI /  18, one: -Math.PI / 15, two: -Math.PI / 36, three:  Math.PI / 90 , four: Math.PI / 36, five: Math.PI / 20, six:  Math.PI /  18 },
+    'bone4': { zero: -Math.PI / 7.2, one: -Math.PI / 15, two: -Math.PI / 36, three:  Math.PI / 90 , four: Math.PI / 36, five: Math.PI / 20, six:  Math.PI /  18 },
+    'bone5': { zero:              0, one:  Math.PI / 24, two:  Math.PI / 24, three:  Math.PI / 24 , four: Math.PI / 24, five: Math.PI / 24, six:  Math.PI / 360 },
+    'bone6': { zero:              0, one:  Math.PI / 24, two:  Math.PI / 24, three:  Math.PI / 24 , four: Math.PI / 24, five: Math.PI / 24, six:  Math.PI / 360 },
+    'bone7': { zero:              0, one:  Math.PI / 24, two:  Math.PI / 24, three:  Math.PI / 24 , four: Math.PI / 24, five: Math.PI / 24, six: -Math.PI /  60 },
+    'bone8': { zero:              0, one:             0, two:             0, three:              0, four:            0, five:            0, six:              0 },
 }
 
 function createYRotationAnimation(skeletonName: string, boneName: string) {
@@ -21,19 +21,19 @@ function createYRotationAnimation(skeletonName: string, boneName: string) {
 
     // キーフレームの設定
     const keys = [
-        { frame: 0, value: new Vector3(0, rotation.zero, 0) },
-        { frame: 10, value: new Vector3(0, rotation.one, 0) },
-        { frame: 20, value: new Vector3(0, rotation.two, 0) },
-        { frame: 30, value: new Vector3(0, rotation.three, 0) },
-        { frame: 40, value: new Vector3(0, rotation.four, 0) },
-        { frame: 50, value: new Vector3(0, rotation.five, 0) },
-        { frame: 60, value: new Vector3(0, rotation.six, 0) },
-        { frame: 70, value: new Vector3(0, rotation.five, 0) },
-        { frame: 80, value: new Vector3(0, rotation.four, 0) },
-        { frame: 90, value: new Vector3(0, rotation.three, 0) },
-        { frame: 100, value: new Vector3(0, rotation.two, 0) },
-        { frame: 110, value: new Vector3(0, rotation.one, 0) },
-        { frame: 120, value: new Vector3(0, rotation.zero, 0) },
+        { frame:   0, value: new Vector3(0, rotation.zero , 0) },
+        { frame:  10, value: new Vector3(0, rotation.one  , 0) },
+        { frame:  20, value: new Vector3(0, rotation.two  , 0) },
+        { frame:  30, value: new Vector3(0, rotation.three, 0) },
+        { frame:  40, value: new Vector3(0, rotation.four , 0) },
+        { frame:  50, value: new Vector3(0, rotation.five , 0) },
+        { frame:  60, value: new Vector3(0, rotation.six  , 0) },
+        { frame:  70, value: new Vector3(0, rotation.five , 0) },
+        { frame:  80, value: new Vector3(0, rotation.four , 0) },
+        { frame:  90, value: new Vector3(0, rotation.three, 0) },
+        { frame: 100, value: new Vector3(0, rotation.two  , 0) },
+        { frame: 110, value: new Vector3(0, rotation.one  , 0) },
+        { frame: 120, value: new Vector3(0, rotation.zero , 0) },
     ]
     animation.setKeys(keys)
 

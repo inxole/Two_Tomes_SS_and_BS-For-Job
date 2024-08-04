@@ -78,7 +78,7 @@ export function initializeScene(
         const rootBonePosition = new Vector3(-0.1075, 0, -0.015 + 0.0006 * i)
         rootBone.setPosition(rootBonePosition, Space.WORLD)
 
-        const rotationAngle = -(Math.PI / 1260) * i//約0.1432度ずつ回転
+        const rotationAngle = -(Math.PI / 1300) * i
         addAnimationGroup(N_Controller, rootBone, i, true, rotationAngle)
         addAnimationGroup(R_Controller, rootBone, i, false, rotationAngle)
     }
