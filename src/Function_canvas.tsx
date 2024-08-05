@@ -3,7 +3,8 @@ import { Action, PageState, ToggleAnimationHandler } from "./Function_action"
 import initializeGLB, { mergedMesh } from "./Function_glb"
 import { createPage, createSkeleton } from "./Function_page"
 import { Inspector } from "@babylonjs/inspector"
-import { createRotationAnimation } from "./Animation_data"
+import { createRootAnimation } from "./Animation_data"
+import { addAnimationGroup } from "./Function_rootbone"
 
 export function LightUp(scene: Scene) {
     const light = new HemisphericLight('light1', new Vector3(1, 1, 0), scene)
@@ -55,6 +56,10 @@ export function initializeScene(
     const front_pages: Mesh[] = []
     const back_pages: Mesh[] = []
     const pageSkeletons: Skeleton[] = []
+    const N_Controller = new AnimationGroup("N_Controller")//各ルートボーンの親の回転
+    const R_Controller = new AnimationGroup("R_Controller")
+    const N_Animation_Group = new AnimationGroup("N_Animation_Group")//各ルートボーンの回転
+    const R_Animation_Group = new AnimationGroup("R_Animation_Group")
 
     for (let i = 0; i < meshes_amount; i++) {
         const front_page = createPage(scene, `front_page_${i}`, i === 0 ? updated_text : `page_${2 * i + 1}`, i * 0.0002, true)
@@ -63,7 +68,7 @@ export function initializeScene(
         front_pages.push(front_page)
         back_pages.push(back_page)
 
-        const pageSkeleton = createSkeleton(scene, `skeleton_${i}`, front_page, i * 0.0002, `animation${i + 1}`)
+        const pageSkeleton = createSkeleton(scene, `skeleton_${i}`, front_page, i * 0.0002, `animation${i + 1}`, N_Animation_Group, R_Animation_Group)
         pageSkeletons.push(pageSkeleton)
 
         front_page.skeleton = pageSkeleton
@@ -72,13 +77,17 @@ export function initializeScene(
         const rootBone = pageSkeleton.bones[0]
         const rootBonePosition = new Vector3(-0.1075, 0, -0.015 + 0.0006 * i)
         rootBone.setPosition(rootBonePosition, Space.WORLD)
+
+        const rotationAngle = -(Math.PI / 1300) * i
+        addAnimationGroup(N_Controller, rootBone, i, true, rotationAngle)
+        addAnimationGroup(R_Controller, rootBone, i, false, rotationAngle)
     }
 
     skeletonRefs.current = pageSkeletons
 
     const control_mesh = MeshBuilder.CreateBox("Root", { width: 0.01, height: 0.01, depth: 0.01 }, scene)
     root_controller.current = control_mesh
-    root_controller.current.position = new Vector3(-0.0975, -0.0144, 0)
+    root_controller.current.position = new Vector3(-0.0975, -0.016, 0)
     root_controller.current.isVisible = false
     front_pages.forEach(mesh => {
         mesh.parent = control_mesh
@@ -87,7 +96,7 @@ export function initializeScene(
         mesh.parent = control_mesh
     })
 
-    createRotationAnimation(root_controller)
+    createRootAnimation(root_controller)
     const targetPosition = new Vector3(0, 0, 0)
     front_pages.forEach(mesh => {
         mesh.position = mesh.position.subtract(control_mesh.position).add(targetPosition)

@@ -1,5 +1,6 @@
-import { Bone, Color3, DynamicTexture, Matrix, Mesh, MeshBuilder, Scene, Skeleton, StandardMaterial, Vector3, VertexData } from "@babylonjs/core"
+import { Animation, AnimationGroup, Bone, Color3, DynamicTexture, Matrix, Mesh, MeshBuilder, Scene, Skeleton, StandardMaterial, Vector3, VertexData } from "@babylonjs/core"
 import createYRotationAnimation from "./Animation_data"
+import NormalAnimation, { ReverseAnimation } from "./Animation_sub_data"
 
 function createPageMesh(scene: Scene, name: string, z: number, isFront: boolean) {
     const width = 0.2
@@ -101,7 +102,10 @@ export function createPage(scene: Scene, name: string, text: string, z: number, 
     return page
 }
 
-export function createSkeleton(scene: Scene, name: string, targetMesh: Mesh, z: number, animationName: string) {
+const data_N: Animation[] = []
+const data_R: Animation[] = []
+
+export function createSkeleton(scene: Scene, name: string, targetMesh: Mesh, z: number, animationName: string, N: AnimationGroup, R: AnimationGroup) {
     const skeleton = new Skeleton(name, animationName, scene)
     let parentBone = new Bone(`${animationName}_Bone`, skeleton, null, Matrix.Translation(-0.11, 0, z))
     const widthSubdivisions = 10
@@ -113,6 +117,10 @@ export function createSkeleton(scene: Scene, name: string, targetMesh: Mesh, z: 
         parentBone = new Bone(boneName, skeleton, parentBone, Matrix.Translation(ratio * 0.01, 0, 0))
 
         const boneAnimation = createYRotationAnimation(animationName, boneName)
+        const N_Animation = NormalAnimation(animationName, boneName)
+        const R_Animation = ReverseAnimation(animationName, boneName)
+        data_N.push(N_Animation)
+        data_R.push(R_Animation)
         parentBone.animations = [boneAnimation]
 
         const hitBox = MeshBuilder.CreateBox(`hitBox_${boneName}`, { width: ratio * 0.01, height: 0.296, depth: 0.01 }, scene)
@@ -125,6 +133,9 @@ export function createSkeleton(scene: Scene, name: string, targetMesh: Mesh, z: 
             hitBox.position = new Vector3(0, 0, 0)
         }
         hitBox.attachToBone(parentBone, targetMesh)
+
+        N.addTargetedAnimation(data_N[w], parentBone)
+        R.addTargetedAnimation(data_R[w], parentBone)
     }
     return skeleton
 }

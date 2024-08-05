@@ -1,7 +1,7 @@
 import { useEffect, useRef, useReducer } from 'react'
 import { useRecoilState, useRecoilValue } from 'recoil'
 import { Scene, DynamicTexture, Skeleton, Mesh } from '@babylonjs/core'
-import { BookMark, Long_Text, Text_Switch } from './atom'
+import { BookMark, CoverOpen, Long_Text, Text_Switch } from './atom'
 import { animationReducer, useDynamicReducers } from './Function_action'
 import initializeScene from './Function_canvas'
 
@@ -20,8 +20,8 @@ function CanvasComponent() {
     const bookmark = useRecoilValue(BookMark)
     const root_controller = useRef<Mesh | null>(null)
     const animationData = sceneRef.current?.animationGroups
-    const previousBookmark = useRef(bookmark)
-    console.log(animationData)
+    const coverSwitch = useRecoilValue(CoverOpen)
+
     // Initialize the scene
     useEffect(() => {
         const canvas = canvasRef.current
@@ -72,58 +72,34 @@ function CanvasComponent() {
                 })
             }
         })
+    }, [bookmark])
 
+    useEffect(() => {
+        const scene = sceneRef.current
+        if (!scene) return
         if (animationData) {
             switch (true) {
-                case (bookmark === 0 && previousBookmark.current === 1)://済み
-                    animationData[0]?.stop()
-                    animationData[10]?.stop()
-                    animationData[1]?.play(true)
-                    animationData[11]?.play(true)
-                    animationData[8]?.play(true)
-                    setTimeout(() => { animationData[11]?.stop() }, 1000)
+                case (coverSwitch):
+                    animationData[4]?.start(true), animationData[5]?.stop()
+                    animationData[7]?.start(true), animationData[9]?.stop()
+                    setTimeout(() => { animationData[7]?.stop() }, 1000)
+                    setTimeout(() => { animationData[8]?.start(true) }, 1000)
+                    animationData[0]?.start(true), animationData[1]?.stop()
+                    animationData[2]?.start(true), animationData[3]?.stop()
                     break
-                case (bookmark > 0 && previousBookmark.current === 0):
-                    animationData[9]?.play(true)
-                    animationData[0]?.play(true)
+                case (!coverSwitch):
+                    animationData[5]?.start(true), animationData[4]?.stop()
+                    animationData[9]?.start(true), animationData[7]?.stop()
                     setTimeout(() => { animationData[9]?.stop() }, 1000)
-                    setTimeout(() => { animationData[10]?.start(true) }, 1000)
-                    break
-                case (bookmark < 11 && previousBookmark.current === 11):
-                    animationData[2]?.stop()
-                    animationData[13]?.stop()
-                    animationData[3]?.play(true)
-                    animationData[14]?.play(true)
-                    setTimeout(() => { animationData[14]?.stop() }, 1000)
-                    break
-
-                case (bookmark > 10 && previousBookmark.current === 10):
-                    animationData[12]?.play(true)
-                    animationData[2]?.play(true)
-                    setTimeout(() => { animationData[12]?.stop() }, 1000)
-                    setTimeout(() => { animationData[13]?.play(true) }, 1000)
-                    break
-
-                case (bookmark < 25 && previousBookmark.current === 25):
-                    animationData[5]?.stop()
-                    animationData[17]?.stop()
-                    animationData[6]?.play(true)
-                    animationData[18]?.play(true)
-                    setTimeout(() => { animationData[18]?.stop() }, 1000)
-                    break
-
-                case (bookmark > 25 && previousBookmark.current === 25):
-                    animationData[16]?.play(true)
-                    animationData[5]?.play(true)
-                    setTimeout(() => { animationData[16]?.stop() }, 1000)
-                    setTimeout(() => { animationData[17]?.play(true) }, 1000)
+                    animationData[8]?.stop()
+                    animationData[1]?.start(true), animationData[0]?.stop()
+                    animationData[3]?.start(true), animationData[2]?.stop()
                     break
                 default:
                     break
             }
         }
-        previousBookmark.current = bookmark
-    }, [bookmark])
+    }, [coverSwitch])
 
     return <canvas ref={canvasRef} style={{ width: '100%', height: '100%' }} />
 }
