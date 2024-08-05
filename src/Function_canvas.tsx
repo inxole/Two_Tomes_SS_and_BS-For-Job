@@ -87,7 +87,7 @@ export function initializeScene(
 
     const control_mesh = MeshBuilder.CreateBox("Root", { width: 0.01, height: 0.01, depth: 0.01 }, scene)
     root_controller.current = control_mesh
-    root_controller.current.position = new Vector3(-0.0975, -0.0144, 0)
+    root_controller.current.position = new Vector3(-0.0975, -0.016, 0)
     root_controller.current.isVisible = false
     front_pages.forEach(mesh => {
         mesh.parent = control_mesh

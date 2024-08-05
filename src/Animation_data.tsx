@@ -2,11 +2,11 @@ import { Animation, AnimationGroup, Mesh, Vector3 } from '@babylonjs/core'
 
 // ボーンごとの回転値を定義
 const boneRotations: { [key: string]: { zero: number, one: number, two: number, three: number, four: number, five: number, six: number } } = {
-    'bone0': { zero: -Math.PI /  12, one: -Math.PI / 24, two: -Math.PI / 36, three: -Math.PI / 12 , four: Math.PI / 36, five: Math.PI / 24, six:  Math.PI /  12 },
-    'bone1': { zero: -Math.PI /   9, one: -Math.PI / 10, two: -Math.PI / 18, three:  Math.PI / 180, four: Math.PI / 27, five: Math.PI / 12, six:  Math.PI /   6 },
-    'bone2': { zero: -Math.PI /   9, one: -Math.PI / 10, two: -Math.PI / 18, three:  Math.PI / 180, four: Math.PI / 27, five: Math.PI / 12, six:  Math.PI /   6 },
+    'bone0': { zero: -Math.PI /   9, one: -Math.PI / 24, two: -Math.PI / 36, three: -Math.PI / 12 , four: Math.PI / 36, five: Math.PI / 24, six:  Math.PI /  12 },
+    'bone1': { zero: -Math.PI / 7.5, one: -Math.PI / 10, two: -Math.PI / 18, three:  Math.PI / 180, four: Math.PI / 27, five: Math.PI / 12, six:  Math.PI /   6 },
+    'bone2': { zero: -Math.PI / 7.5, one: -Math.PI / 10, two: -Math.PI / 18, three:  Math.PI / 180, four: Math.PI / 27, five: Math.PI / 12, six:  Math.PI /   6 },
     'bone3': { zero: -Math.PI /  18, one: -Math.PI / 15, two: -Math.PI / 36, three:  Math.PI / 90 , four: Math.PI / 36, five: Math.PI / 20, six:  Math.PI /  18 },
-    'bone4': { zero: -Math.PI / 7.2, one: -Math.PI / 15, two: -Math.PI / 36, three:  Math.PI / 90 , four: Math.PI / 36, five: Math.PI / 20, six:  Math.PI /  18 },
+    'bone4': { zero: -Math.PI /  18, one: -Math.PI / 15, two: -Math.PI / 36, three:  Math.PI / 90 , four: Math.PI / 36, five: Math.PI / 20, six:  Math.PI /  18 },
     'bone5': { zero:              0, one:  Math.PI / 24, two:  Math.PI / 24, three:  Math.PI / 24 , four: Math.PI / 24, five: Math.PI / 24, six:  Math.PI / 360 },
     'bone6': { zero:              0, one:  Math.PI / 24, two:  Math.PI / 24, three:  Math.PI / 24 , four: Math.PI / 24, five: Math.PI / 24, six:  Math.PI / 360 },
     'bone7': { zero:              0, one:  Math.PI / 24, two:  Math.PI / 24, three:  Math.PI / 24 , four: Math.PI / 24, five: Math.PI / 24, six: -Math.PI /  60 },
