@@ -1,11 +1,12 @@
 import { AnimationGroup, Engine, Mesh, MeshBuilder, Scene, Skeleton, Space, Vector3 } from "@babylonjs/core"
-import { Action, PageState, ToggleAnimationHandler } from "./Function_action"
-import initializeGLB, { mergedMesh } from "./Function_glb"
-import { createPage, createSkeleton } from "./Function_page"
+import { Action, PageState, ToggleAnimationHandler } from "./Functions/Function_action"
+import initializeGLB, { mergedMesh } from "./Functions/Function_glb"
+import { createPage } from "./Functions/Function_page"
 import { Inspector } from "@babylonjs/inspector"
 import { createRootAnimation } from "./Animation_data"
-import { addAnimationGroup } from "./Function_rootbone"
-import LightUp, { CameraWork } from "./Function_canvas"
+import { addAnimationGroup } from "./Functions/Function_rootbone"
+import LightUp, { CameraWork } from "./Functions/Function_canvas"
+import createSkeleton from "./Functions/Function_skeleton"
 
 const isDebug = true
 export function initializeScene(

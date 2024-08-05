@@ -1,5 +1,5 @@
 import { AnimationGroup, Bone, CSG, Color3, Matrix, Mesh, MeshBuilder, Scene, SceneLoader, Vector3 } from "@babylonjs/core"
-import { createHitBoxMaterial } from "./Function_page"
+import { createHitBoxMaterial } from "./Function_skeleton"
 
 export function attachHitBox(bone: Bone, dimensions: { width: number, height: number, depth: number }, position: Vector3, scene: Scene, mesh: Mesh) {
     const hitBoxName = `Tome_hitBox_${bone.name}`
