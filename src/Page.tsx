@@ -3,7 +3,7 @@ import { useRecoilState, useRecoilValue } from 'recoil'
 import { Scene, DynamicTexture, Skeleton, Mesh } from '@babylonjs/core'
 import { BookMark, CoverOpen, Long_Text, Text_Switch } from './atom'
 import { animationReducer, useDynamicReducers } from './Function_action'
-import initializeScene from './Function_canvas'
+import { initializeScene } from './Babylon_Scene'
 
 const text_size = 22
 const pageAmount = 50

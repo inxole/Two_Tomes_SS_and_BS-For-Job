@@ -12,7 +12,6 @@
   "dependencies": {
     "@babylonjs/core": "^7.4.0",
     "@babylonjs/gui": "^7.7.0",
-    "@babylonjs/inspector": "^7.6.1",
     "@babylonjs/loaders": "^7.4.0",
     "@babylonjs/materials": "^7.7.0",
     "@babylonjs/post-processes": "^7.7.0",
@@ -22,17 +21,13 @@
     "@emotion/styled": "^11.11.5",
     "@mlc-ai/web-llm": "^0.2.41",
     "@mui/material": "^5.15.18",
-    "@react-three/drei": "^9.105.4",
-    "@react-three/fiber": "^8.16.2",
-    "gltfjsx": "^6.2.16",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
     "react-rnd": "^10.4.11",
-    "recoil": "^0.7.7",
-    "three": "^0.163.0",
-    "three-stdlib": "^2.29.6"
+    "recoil": "^0.7.7"
   },
   "devDependencies": {
+    "@babylonjs/inspector": "^7.6.1",
     "@types/react": "^18.2.79",
     "@types/react-dom": "^18.2.25",
     "@typescript-eslint/eslint-plugin": "^7.7.1",
