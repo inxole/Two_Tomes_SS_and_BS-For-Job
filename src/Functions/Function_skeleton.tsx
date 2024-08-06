@@ -1,6 +1,6 @@
 import { Animation, AnimationGroup, Bone, Color3, Matrix, Mesh, MeshBuilder, Scene, Skeleton, StandardMaterial, Vector3 } from "@babylonjs/core"
 import createYRotationAnimation from "../Animation_data"
-import NormalAnimation, { ReverseAnimation } from "../Animation_sub_data"
+import ForwardAnimation, { ReverseAnimation } from "../Animation_sub_data"
 
 const data_N: Animation[] = []
 const data_R: Animation[] = []
@@ -12,12 +12,12 @@ function createSkeleton(scene: Scene, name: string, targetMesh: Mesh, z: number,
     const boneRatios = [1, 1, 1, 1, 1, 4.8, 4.8, 4.8, 1, 1.5]
 
     for (let w = 0; w <= widthSubdivisions; w++) {
-        const boneName = `${animationName}_bone${w}`
+        const boneName = `${animationName}_bone${w.toString().padStart(2, '0')}`
         const ratio = boneRatios[w]
         parentBone = new Bone(boneName, skeleton, parentBone, Matrix.Translation(ratio * 0.01, 0, 0))
 
         const boneAnimation = createYRotationAnimation(animationName, boneName)
-        const N_Animation = NormalAnimation(animationName, boneName)
+        const N_Animation = ForwardAnimation(animationName, boneName)
         const R_Animation = ReverseAnimation(animationName, boneName)
         data_N.push(N_Animation)
         data_R.push(R_Animation)
@@ -25,9 +25,9 @@ function createSkeleton(scene: Scene, name: string, targetMesh: Mesh, z: number,
 
         const hitBox = MeshBuilder.CreateBox(`hitBox_${boneName}`, { width: ratio * 0.01, height: 0.296, depth: 0.01 }, scene)
         hitBox.material = createHitBoxMaterial(scene, boneName, new Color3(0.5, 0.5, 1))
-        if (boneName === `${animationName}_bone5` || boneName === `${animationName}_bone6` || boneName === `${animationName}_bone7`) {
+        if (boneName === `${animationName}_bone05` || boneName === `${animationName}_bone06` || boneName === `${animationName}_bone07`) {
             hitBox.position = new Vector3(-0.019, 0, 0)
-        } else if (boneName === `${animationName}_bone9`) {
+        } else if (boneName === `${animationName}_bone09`) {
             hitBox.position = new Vector3(-0.0025, 0, 0)
         } else {
             hitBox.position = new Vector3(0, 0, 0)

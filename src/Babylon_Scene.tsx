@@ -1,8 +1,8 @@
 import { AnimationGroup, Engine, Mesh, MeshBuilder, Scene, Skeleton, Space, Vector3 } from "@babylonjs/core"
+import { Inspector } from "@babylonjs/inspector"
 import { Action, PageState, ToggleAnimationHandler } from "./Functions/Function_action"
 import initializeGLB, { mergedMesh } from "./Functions/Function_glb"
 import { createPage } from "./Functions/Function_page"
-import { Inspector } from "@babylonjs/inspector"
 import { createRootAnimation } from "./Animation_data"
 import { addAnimationGroup } from "./Functions/Function_rootbone"
 import LightUp, { CameraWork } from "./Functions/Function_canvas"
@@ -36,13 +36,17 @@ export function initializeScene(
     const R_Animation_Group = new AnimationGroup("R_Animation_Group")
 
     for (let i = 0; i < meshes_amount; i++) {
-        const front_page = createPage(scene, `front_page_${i}`, i === 0 ? updated_text : `page_${2 * i + 1}`, i * 0.0002, true)
-        const back_page = createPage(scene, `back_page_${i}`, `page_${2 * i + 2}`, i * 0.0002 + 0.0001, false)
+        const front_name = `front_page_${i.toString().padStart(2, '0')}`
+        const back_name = `back_page_${i.toString().padStart(2, '0')}`
+        const front_page = createPage(scene, front_name, i === 0 ? updated_text : `page_${2 * i + 1}`, i * 0.0002, true)
+        const back_page = createPage(scene, back_name, `page_${2 * i + 2}`, i * 0.0002 + 0.0001, false)
 
         front_pages.push(front_page)
         back_pages.push(back_page)
 
-        const pageSkeleton = createSkeleton(scene, `skeleton_${i}`, front_page, i * 0.0002, `animation${i + 1}`, N_Animation_Group, R_Animation_Group)
+        const anime_name = `animation${(i + 1).toString().padStart(2, '0')}`
+        const skeleton_name = `skeleton_${i.toString().padStart(2, '0')}`
+        const pageSkeleton = createSkeleton(scene, skeleton_name, front_page, i * 0.0002, anime_name, N_Animation_Group, R_Animation_Group)
         pageSkeletons.push(pageSkeleton)
 
         front_page.skeleton = pageSkeleton
@@ -91,7 +95,7 @@ export function initializeScene(
                 ...pageSkeletons.map((pageSkeleton, i) => ({
                     dispatch: dispatchers[i],
                     skeleton: pageSkeleton,
-                    pickNamePattern: new RegExp(`^hitBox_animation${i + 1}_`)
+                    pickNamePattern: new RegExp(`^hitBox_animation${(i + 1).toString().padStart(2, '0')}_`)
                 })),
                 {
                     dispatch: glb_dispatcher[1],
