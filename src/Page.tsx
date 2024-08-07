@@ -21,13 +21,15 @@ function CanvasComponent() {
     const root_controller = useRef<Mesh | null>(null)
     const animationData = sceneRef.current?.animationGroups
     const coverSwitch = useRecoilValue(CoverOpen)
+    const [, setBookmark] = useRecoilState(BookMark)
+    const [, setCoverSwitch] = useRecoilState(CoverOpen)
 
     // Initialize the scene
     useEffect(() => {
         const canvas = canvasRef.current
         if (!canvas) return
 
-        return initializeScene(canvas, sceneRef, skeletonRefs, dispatchers, glb_dispatcher, updated_text, root_controller)
+        return initializeScene(canvas, sceneRef, skeletonRefs, dispatchers, glb_dispatcher, updated_text, root_controller, setBookmark, setCoverSwitch)
     }, [])
 
     // Update the text on the front page
@@ -74,6 +76,7 @@ function CanvasComponent() {
         })
     }, [bookmark])
 
+    // Switch Cover
     useEffect(() => {
         const scene = sceneRef.current
         if (!scene) return

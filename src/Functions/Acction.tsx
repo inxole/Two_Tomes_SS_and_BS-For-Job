@@ -44,7 +44,9 @@ export function ToggleAnimationHandler(
     pointerInfo: PointerInfo,
     scene: Scene,
     toggleAnimationSetups: ToggleAnimationSetup[],
-    glb_animation: React.MutableRefObject<AnimationGroup | null>[]
+    glb_animation: React.MutableRefObject<AnimationGroup | null>[],
+    setBookmark: React.Dispatch<React.SetStateAction<number>>,
+    setCoverSwitch: React.Dispatch<React.SetStateAction<boolean>>
 ) {
     if (pointerInfo.pickInfo !== null && pointerInfo.type === PointerEventTypes.POINTERDOWN) {
         for (const { dispatch, skeleton, pickNamePattern } of toggleAnimationSetups) {
@@ -52,8 +54,8 @@ export function ToggleAnimationHandler(
                 if (pointerInfo.pickInfo.pickedMesh?.name.startsWith("hitBox_animation")) {
                     dispatch({
                         type: "TOGGLE",
-                        open: () => { scene.beginAnimation(skeleton, 0, 60, true, undefined, () => { }) },
-                        close: () => { scene.beginAnimation(skeleton, 60, 120, true, undefined, () => { }) }
+                        open: () => { scene.beginAnimation(skeleton, 0, 60, true, undefined, () => { setBookmark((prev) => prev + 1) }) },
+                        close: () => { scene.beginAnimation(skeleton, 60, 120, true, undefined, () => { setBookmark((prev) => prev - 1) }) }
                     })
                 } else {
                     dispatch({
@@ -69,6 +71,8 @@ export function ToggleAnimationHandler(
                             //pagesをまとめて動かす&&切り替え
                             glb_animation[0].current?.start(true), glb_animation[1].current?.stop()
                             glb_animation[2].current?.start(true), glb_animation[3].current?.stop()
+
+                            setCoverSwitch(true)
                         },
                         close: () => {
                             //表紙を閉じる＆切り替え
@@ -81,6 +85,8 @@ export function ToggleAnimationHandler(
                             //pagesをまとめて動かす&&切り替え
                             glb_animation[1].current?.start(true), glb_animation[0].current?.stop()
                             glb_animation[3].current?.start(true), glb_animation[2].current?.stop()
+
+                            setCoverSwitch(false)
                         }
                     })
                 }

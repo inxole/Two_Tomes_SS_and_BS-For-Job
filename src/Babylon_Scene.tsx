@@ -16,7 +16,9 @@ export function initializeScene(
     dispatchers: React.Dispatch<Action>[],
     glb_dispatcher: [PageState, React.Dispatch<Action>],
     updated_text: string,
-    root_controller: React.MutableRefObject<Mesh | null>
+    root_controller: React.MutableRefObject<Mesh | null>,
+    setBookmark: React.Dispatch<React.SetStateAction<number>>,
+    setCoverSwitch: React.Dispatch<React.SetStateAction<boolean>>
 ) {
     const meshes_amount = 50
     const engine = new Engine(canvas, true)
@@ -104,6 +106,8 @@ export function initializeScene(
                 }
             ],
             animationRefs,
+            setBookmark,
+            setCoverSwitch
         )
     )
 
