@@ -70,7 +70,7 @@ const Position_keys_90_0 = [
  * @param mesh parent mesh for controller
 */
 export function createRootAnimation(mesh: React.MutableRefObject<Mesh | null>) {
-    const normal_0_90 = new Animation("N_0_90", "rotation.z", 120, Animation.ANIMATIONTYPE_FLOAT, Animation.ANIMATIONLOOPMODE_CONSTANT)
+    const normal_0_90 = new Animation("F_0_90", "rotation.z", 120, Animation.ANIMATIONTYPE_FLOAT, Animation.ANIMATIONLOOPMODE_CONSTANT)
     const reverse_90_0 = new Animation("R_90_0", "rotation.z", 120, Animation.ANIMATIONTYPE_FLOAT, Animation.ANIMATIONLOOPMODE_CONSTANT)
 
     normal_0_90.setKeys(Normal_keys_0_90)
@@ -82,7 +82,7 @@ export function createRootAnimation(mesh: React.MutableRefObject<Mesh | null>) {
     position_0_90.setKeys(Position_keys_0_90)
     position_90_0.setKeys(Position_keys_90_0)
 
-    const Zero_To_Ninety_Group = new AnimationGroup("N_0_90_Group")
+    const Zero_To_Ninety_Group = new AnimationGroup("F_0_90_Group")
     const Ninety_To_Zero_Group = new AnimationGroup("R_90_0_Group")
 
     Zero_To_Ninety_Group.addTargetedAnimation(normal_0_90, mesh.current)

@@ -1,6 +1,14 @@
 import { AnimationGroup, Bone, CSG, Color3, Matrix, Mesh, MeshBuilder, Scene, SceneLoader, Vector3 } from "@babylonjs/core"
 import { createHitBoxMaterial } from "./Function_skeleton"
 
+/**
+ * attach hit box to bone
+ * @param bone bone to attach
+ * @param dimensions size of hit box
+ * @param position location position
+ * @param scene add to scene
+ * @param mesh mesh to attach
+ */
 export function attachHitBox(bone: Bone, dimensions: { width: number, height: number, depth: number }, position: Vector3, scene: Scene, mesh: Mesh) {
     const hitBoxName = `Tome_hitBox_${bone.name}`
     const test_hitBox = MeshBuilder.CreateBox(hitBoxName, dimensions, scene)
@@ -9,6 +17,15 @@ export function attachHitBox(bone: Bone, dimensions: { width: number, height: nu
     test_hitBox.position = position
 }
 
+/**
+ * attach half cylinder to bone
+ * @param bone bone to attach
+ * @param radius radius of cylinder
+ * @param height height of cylinder
+ * @param position location position
+ * @param scene add to scene
+ * @param mesh mesh to attach
+ */
 export function attachHalfCylinder(bone: Bone, radius: number, height: number, position: Vector3, scene: Scene, mesh: Mesh) {
     const hitBoxName = `Tome_hitBox_${bone.name}`
     const fullCylinder = MeshBuilder.CreateCylinder(hitBoxName, { diameter: radius * 1.15, height: height, tessellation: 24 }, scene)
@@ -29,6 +46,12 @@ export function attachHalfCylinder(bone: Bone, radius: number, height: number, p
 }
 
 export const mesh_BS: Mesh[] = []
+
+/**
+ * Check the mesh
+ * @param scene add to scene
+ * @param name mesh name
+ */
 export function GetMeshForGLB(scene: Scene, name: string): void {
     let mesh = scene.getMeshByName(name)
     if (mesh === null) {
@@ -37,18 +60,26 @@ export function GetMeshForGLB(scene: Scene, name: string): void {
     mesh_BS.push(mesh as Mesh)
 }
 
-export function getMergedMesh(): Mesh | null {
-    if (mesh_BS.length === 0) {
-        throw new Error("No meshes available to merge")
-    }
-    return Mesh.MergeMeshes(mesh_BS, true, true, undefined, false, true) as Mesh
-}
-
+/**
+ * Check the skeleton
+ * @param scene add to scene
+ * @param mesh Mesh with skeleton information
+ * @param name skeleton name
+ */
 export function GetSkeletonForGLB(scene: Scene, mesh: Mesh, name: string) {
     mesh.skeleton = scene.getSkeletonByName(name)
+    if (mesh.skeleton === null) {
+        throw new Error(`Skeleton ${name} not found`)
+    }
 }
 
 export let mergedMesh: Mesh
+
+/**
+ * import GLB file
+ * @param scene add to scene
+ * @param animationRefs animation group reference
+ */
 function initializeGLB(
     scene: Scene,
     animationRefs: React.MutableRefObject<AnimationGroup | null>[],

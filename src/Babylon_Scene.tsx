@@ -5,8 +5,8 @@ import initializeGLB, { mergedMesh } from "./Functions/Function_glb"
 import { createPage } from "./Functions/Function_page"
 import { createRootAnimation } from "./Animation_data"
 import { addAnimationGroup } from "./Functions/Function_rootbone"
-import LightUp, { CameraWork } from "./Functions/Function_canvas"
-import createSkeleton from "./Functions/Function_skeleton"
+import { LightUp, CameraWork } from "./Functions/Function_canvas"
+import { createSkeleton } from "./Functions/Function_skeleton"
 
 const isDebug = true
 export function initializeScene(
@@ -30,9 +30,9 @@ export function initializeScene(
     const front_pages: Mesh[] = []
     const back_pages: Mesh[] = []
     const pageSkeletons: Skeleton[] = []
-    const N_Controller = new AnimationGroup("N_Controller")//各ルートボーンの親の回転
+    const F_Controller = new AnimationGroup("F_Controller")//各ルートボーンの親の回転
     const R_Controller = new AnimationGroup("R_Controller")
-    const N_Animation_Group = new AnimationGroup("N_Animation_Group")//各ルートボーンの回転
+    const F_Animation_Group = new AnimationGroup("F_Animation_Group")//各ルートボーンの回転
     const R_Animation_Group = new AnimationGroup("R_Animation_Group")
 
     for (let i = 0; i < meshes_amount; i++) {
@@ -46,7 +46,7 @@ export function initializeScene(
 
         const anime_name = `animation${(i + 1).toString().padStart(2, '0')}`
         const skeleton_name = `skeleton_${i.toString().padStart(2, '0')}`
-        const pageSkeleton = createSkeleton(scene, skeleton_name, front_page, i * 0.0002, anime_name, N_Animation_Group, R_Animation_Group)
+        const pageSkeleton = createSkeleton(scene, skeleton_name, front_page, i * 0.0002, anime_name, F_Animation_Group, R_Animation_Group)
         pageSkeletons.push(pageSkeleton)
 
         front_page.skeleton = pageSkeleton
@@ -57,7 +57,7 @@ export function initializeScene(
         rootBone.setPosition(rootBonePosition, Space.WORLD)
 
         const rotationAngle = -(Math.PI / 1300) * i
-        addAnimationGroup(N_Controller, rootBone, i, true, rotationAngle)
+        addAnimationGroup(F_Controller, rootBone, i, true, rotationAngle)
         addAnimationGroup(R_Controller, rootBone, i, false, rotationAngle)
     }
 

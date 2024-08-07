@@ -10,6 +10,12 @@ export type ToggleAnimationSetup = {
     pickNamePattern: RegExp,
 }
 
+/**
+ * animation reducer for page state
+ * @param state boolean
+ * @param action action trigger
+ * @returns state
+ */
 export function animationReducer(state: PageState, action: Action): PageState {
     switch (action.type) {
         case 'TOGGLE':
@@ -27,6 +33,13 @@ export function animationReducer(state: PageState, action: Action): PageState {
     }
 }
 
+/**
+ * mouse event handler for animation toggle
+ * @param pointerInfo on pointer event
+ * @param scene add to scene
+ * @param toggleAnimationSetups animation setup
+ * @param glb_animation animation group reference
+ */
 export function ToggleAnimationHandler(
     pointerInfo: PointerInfo,
     scene: Scene,

@@ -1,6 +1,14 @@
 import { Color3, DynamicTexture, Mesh, Scene, StandardMaterial, Vector3, VertexData } from "@babylonjs/core"
 
-function createPageMesh(scene: Scene, name: string, z: number, isFront: boolean) {
+/**
+ * create page mesh
+ * @param scene add to scene
+ * @param name mesh name
+ * @param z z position
+ * @param isFront front? or back?
+ * @returns page mesh
+ */
+export function createPageMesh(scene: Scene, name: string, z: number, isFront: boolean) {
     const width = 0.2
     const height = 0.296
     const widthSubdivisions = 9
@@ -61,6 +69,13 @@ function createPageMesh(scene: Scene, name: string, z: number, isFront: boolean)
     return page
 }
 
+/**
+ * create page texture
+ * @param scene add to scene
+ * @param text add text to texture
+ * @param isFront front? or back?
+ * @returns page texture
+ */
 export function createPageTexture(scene: Scene, text: string, isFront: boolean) {
     const text_size = 22
     const font = "bold " + text_size + "px monospace"
@@ -84,6 +99,12 @@ export function createPageTexture(scene: Scene, text: string, isFront: boolean) 
     return Texture
 }
 
+/**
+ * create page material
+ * @param scene add to scene
+ * @param texture add to material
+ * @returns page material
+ */
 export function createPageMaterial(scene: Scene, texture: DynamicTexture) {
     const material = new StandardMaterial("pageMat", scene)
     material.diffuseTexture = texture
@@ -92,6 +113,15 @@ export function createPageMaterial(scene: Scene, texture: DynamicTexture) {
     return material
 }
 
+/**
+ * create page mesh and texture and material
+ * @param scene add to scene
+ * @param name mesh name
+ * @param text mesh text
+ * @param z z position
+ * @param isFront front? or back?
+ * @returns page object
+ */
 export function createPage(scene: Scene, name: string, text: string, z: number, isFront: boolean) {
     const page = createPageMesh(scene, name, z, isFront)
     const texture = createPageTexture(scene, text, isFront)
@@ -99,5 +129,3 @@ export function createPage(scene: Scene, name: string, text: string, z: number, 
     page.rotation = new Vector3(Math.PI / 2, 0, 0)
     return page
 }
-
-export default createPageMesh
