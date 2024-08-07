@@ -1,12 +1,12 @@
 import { AnimationGroup, Engine, Mesh, MeshBuilder, Scene, Skeleton, Space, Vector3 } from "@babylonjs/core"
 import { Inspector } from "@babylonjs/inspector"
-import { Action, PageState, ToggleAnimationHandler } from "./Functions/Function_action"
-import initializeGLB, { mergedMesh } from "./Functions/Function_glb"
-import { createPage } from "./Functions/Function_page"
+import { Action, PageState, ToggleAnimationHandler } from "./Functions/Acction"
+import { LightUp, CameraWork } from "./Functions/Canvas"
+import { createPage } from "./Functions/Page_Mesh"
+import { createSkeleton } from "./Functions/Skeleton"
+import initializeGLB, { mergedMesh } from "./Functions/Tome_BS"
 import { createRootAnimation } from "./Animation_data"
-import { addAnimationGroup } from "./Functions/Function_rootbone"
-import { LightUp, CameraWork } from "./Functions/Function_canvas"
-import { createSkeleton } from "./Functions/Function_skeleton"
+import { ControllerAnimation } from "./Animation_sub_data"
 
 const isDebug = true
 export function initializeScene(
@@ -57,8 +57,8 @@ export function initializeScene(
         rootBone.setPosition(rootBonePosition, Space.WORLD)
 
         const rotationAngle = -(Math.PI / 1300) * i
-        addAnimationGroup(F_Controller, rootBone, i, true, rotationAngle)
-        addAnimationGroup(R_Controller, rootBone, i, false, rotationAngle)
+        ControllerAnimation(F_Controller, rootBone, i, true, rotationAngle)
+        ControllerAnimation(R_Controller, rootBone, i, false, rotationAngle)
     }
 
     skeletonRefs.current = pageSkeletons

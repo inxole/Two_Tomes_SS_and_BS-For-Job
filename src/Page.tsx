@@ -1,9 +1,9 @@
 import { useEffect, useRef, useReducer } from 'react'
+import { BookMark, CoverOpen, Long_Text, Text_Switch } from './atom'
 import { useRecoilState, useRecoilValue } from 'recoil'
 import { Scene, DynamicTexture, Skeleton, Mesh } from '@babylonjs/core'
-import { BookMark, CoverOpen, Long_Text, Text_Switch } from './atom'
-import { animationReducer, useDynamicReducers } from './Functions/Function_action'
 import { initializeScene } from './Babylon_Scene'
+import { animationReducer, useDynamicReducers } from './Functions/Acction'
 
 const text_size = 22
 const pageAmount = 50

@@ -1,5 +1,5 @@
 import { AnimationGroup, Bone, CSG, Color3, Matrix, Mesh, MeshBuilder, Scene, SceneLoader, Vector3 } from "@babylonjs/core"
-import { createHitBoxMaterial } from "./Function_skeleton"
+import { createHitBoxMaterial } from "./Skeleton"
 
 /**
  * attach hit box to bone

@@ -20,7 +20,7 @@ const boneRotations: { [key: string]: { zero: number, one: number, two: number, 
  * @param skeleton skeleton name
  * @param bone bone name
  */
-function createYRotationAnimation(skeleton: string, bone: string) {
+export function createYRotationAnimation(skeleton: string, bone: string) {
     const rotation = boneRotations[bone.replace(`${skeleton}_`, '')] || { zero: 0.0, one: 0.0, two: 0.0, three: 0.0, four: 0.0, five: 0.0, six: 0.0 }
     const animationName = `${skeleton}_${bone}Animation`
     const animation = new Animation(animationName, "rotation", 120, Animation.ANIMATIONTYPE_VECTOR3, Animation.ANIMATIONLOOPMODE_CONSTANT)
@@ -91,5 +91,3 @@ export function createRootAnimation(mesh: React.MutableRefObject<Mesh | null>) {
     Ninety_To_Zero_Group.addTargetedAnimation(reverse_90_0, mesh.current)
     Ninety_To_Zero_Group.addTargetedAnimation(position_90_0, mesh.current)
 }
-
-export default createYRotationAnimation

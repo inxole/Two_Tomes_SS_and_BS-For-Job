@@ -1,6 +1,6 @@
 import { Animation, AnimationGroup, Bone, Color3, Matrix, Mesh, MeshBuilder, Scene, Skeleton, StandardMaterial, Vector3 } from "@babylonjs/core"
-import createYRotationAnimation from "../Animation_data"
-import ForwardAnimation, { ReverseAnimation } from "../Animation_sub_data"
+import { createYRotationAnimation } from "../Animation_data"
+import { ForwardAnimation, ReverseAnimation } from "../Animation_sub_data"
 
 const data_F: Animation[] = []
 const data_R: Animation[] = []
