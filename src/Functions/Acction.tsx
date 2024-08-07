@@ -55,7 +55,7 @@ export function ToggleAnimationHandler(
                     dispatch({
                         type: "TOGGLE",
                         open: () => { scene.beginAnimation(skeleton, 0, 60, true, undefined, () => { setBookmark((prev) => prev + 1) }) },
-                        close: () => { scene.beginAnimation(skeleton, 60, 120, true, undefined, () => { setBookmark((prev) => prev - 1) }) }
+                        close: () => { scene.beginAnimation(skeleton, 60, 120, true, undefined, () => { }), setBookmark((prev) => prev - 1) }
                     })
                 } else {
                     dispatch({
