@@ -17,6 +17,7 @@ export function initializeScene(
     glb_dispatcher: [PageState, React.Dispatch<Action>],
     updated_text: string,
     root_controller: React.MutableRefObject<Mesh | null>,
+    bookmarkRef: React.MutableRefObject<number>,
     setBookmark: React.Dispatch<React.SetStateAction<number>>,
     setCoverSwitch: React.Dispatch<React.SetStateAction<boolean>>
 ) {
@@ -38,17 +39,13 @@ export function initializeScene(
     const R_Animation_Group = new AnimationGroup("R_Animation_Group")
 
     for (let i = 0; i < meshes_amount; i++) {
-        const front_name = `front_page_${i.toString().padStart(2, '0')}`
-        const back_name = `back_page_${i.toString().padStart(2, '0')}`
-        const front_page = createPage(scene, front_name, i === 0 ? updated_text : `page_${2 * i + 1}`, i * 0.0002, true)
-        const back_page = createPage(scene, back_name, `page_${2 * i + 2}`, i * 0.0002 + 0.0001, false)
+        const front_page = createPage(scene, `front_page_${i}`, i === 0 ? updated_text : `page_${2 * i + 1}`, i * 0.0002, true)
+        const back_page = createPage(scene, `back_page_${i}`, `page_${2 * i + 2}`, i * 0.0002 + 0.0001, false)
 
         front_pages.push(front_page)
         back_pages.push(back_page)
 
-        const anime_name = `animation${(i + 1).toString().padStart(2, '0')}`
-        const skeleton_name = `skeleton_${i.toString().padStart(2, '0')}`
-        const pageSkeleton = createSkeleton(scene, skeleton_name, front_page, i * 0.0002, anime_name, F_Animation_Group, R_Animation_Group)
+        const pageSkeleton = createSkeleton(scene, `skeleton_${i}`, front_page, i * 0.0002, `animation${i}`, F_Animation_Group, R_Animation_Group)
         pageSkeletons.push(pageSkeleton)
 
         front_page.skeleton = pageSkeleton
@@ -97,7 +94,7 @@ export function initializeScene(
                 ...pageSkeletons.map((pageSkeleton, i) => ({
                     dispatch: dispatchers[i],
                     skeleton: pageSkeleton,
-                    pickNamePattern: new RegExp(`^hitBox_animation${(i + 1).toString().padStart(2, '0')}_`)
+                    pickNamePattern: new RegExp(`^hitBox_animation${i}_`)
                 })),
                 {
                     dispatch: glb_dispatcher[1],
@@ -106,6 +103,7 @@ export function initializeScene(
                 }
             ],
             animationRefs,
+            bookmarkRef.current,
             setBookmark,
             setCoverSwitch
         )

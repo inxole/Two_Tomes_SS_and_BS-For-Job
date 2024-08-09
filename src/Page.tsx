@@ -17,19 +17,19 @@ function CanvasComponent() {
     const updated_text = useRecoilValue(Long_Text)
     const dispatchers = useDynamicReducers(animationReducer, { isOpen: false }, pageAmount).map(([_, dispatch]) => dispatch)
     const glb_dispatcher = useReducer(animationReducer, { isOpen: false })
-    const bookmark = useRecoilValue(BookMark)
     const root_controller = useRef<Mesh | null>(null)
     const animationData = sceneRef.current?.animationGroups
     const coverSwitch = useRecoilValue(CoverOpen)
-    const [, setBookmark] = useRecoilState(BookMark)
+    const [bookmark, setBookmark] = useRecoilState(BookMark)
     const [, setCoverSwitch] = useRecoilState(CoverOpen)
+    const bookmarkRef = useRef(bookmark)
 
     // Initialize the scene
     useEffect(() => {
         const canvas = canvasRef.current
         if (!canvas) return
 
-        return initializeScene(canvas, sceneRef, skeletonRefs, dispatchers, glb_dispatcher, updated_text, root_controller, setBookmark, setCoverSwitch)
+        return initializeScene(canvas, sceneRef, skeletonRefs, dispatchers, glb_dispatcher, updated_text, root_controller, bookmarkRef, setBookmark, setCoverSwitch)
     }, [])
 
     // Update the text on the front page
@@ -49,6 +49,7 @@ function CanvasComponent() {
 
     // Update bookmark
     useEffect(() => {
+        bookmarkRef.current = bookmark
         const scene = sceneRef.current
         if (!scene) return
         dispatchers.forEach((dispatch, index) => {
