@@ -53,13 +53,18 @@ export function ToggleAnimationHandler(
         for (const { dispatch, skeleton, pickNamePattern } of toggleAnimationSetups) {
             if (pointerInfo.pickInfo.hit && pickNamePattern.test(pointerInfo.pickInfo.pickedMesh?.name || "")) {
                 if (pointerInfo.pickInfo.pickedMesh?.name.startsWith(`hitBox_animation${bookmarkRef}`)) {
-                    console.log(bookmarkRef)
                     dispatch({
-                        type: "TOGGLE",
+                        type: "OPEN",
                         open: () => { scene.beginAnimation(skeleton, 0, 60, true, undefined, () => { setBookmark((prev) => prev + 1) }) },
+                        close: () => { }
+                    })
+                } else if (pointerInfo.pickInfo.pickedMesh?.name.startsWith(`hitBox_animation${bookmarkRef - 1}`)) {
+                    dispatch({
+                        type: "CLOSE",
+                        open: () => { },
                         close: () => { scene.beginAnimation(skeleton, 60, 120, true, undefined, () => { }), setBookmark((prev) => prev - 1) }
                     })
-                } else {
+                } else if (bookmarkRef === 0) {
                     dispatch({
                         type: "TOGGLE",
                         open: () => {
@@ -74,7 +79,9 @@ export function ToggleAnimationHandler(
                             glb_animation[0].current?.start(true), glb_animation[1].current?.stop()
                             glb_animation[2].current?.start(true), glb_animation[3].current?.stop()
 
-                            setCoverSwitch(true)
+                            glb_animation[2]?.current?.onAnimationEndObservable.addOnce(() => {
+                                setCoverSwitch(true)
+                            })
                         },
                         close: () => {
                             //Close/switch cover
@@ -91,7 +98,7 @@ export function ToggleAnimationHandler(
                             setCoverSwitch(false)
                         }
                     })
-                }
+                } else { return }
             }
         }
     }
