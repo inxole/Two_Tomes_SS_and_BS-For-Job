@@ -65,7 +65,7 @@ export function ToggleAnimationHandler(
                         open: () => { },
                         close: () => { scene.beginAnimation(skeleton, 60, 120, true, undefined, () => { }), setBookmark((prev) => prev - 1) }
                     })
-                } else if (bookmarkRef === 0 && !isAnimationPlaying) {
+                } else if (bookmarkRef === 0 && !isAnimationPlaying && !pointerInfo.pickInfo.pickedMesh?.name.startsWith(`hitBox_animation`)) {
                     dispatch({
                         type: "TOGGLE",
                         open: () => {
