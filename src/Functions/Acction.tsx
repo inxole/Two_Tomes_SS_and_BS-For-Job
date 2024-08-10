@@ -33,6 +33,7 @@ export function animationReducer(state: PageState, action: Action): PageState {
     }
 }
 
+let isAnimationPlaying = false
 /**
  * mouse event handler for animation toggle
  * @param pointerInfo on pointer event
@@ -64,10 +65,13 @@ export function ToggleAnimationHandler(
                         open: () => { },
                         close: () => { scene.beginAnimation(skeleton, 60, 120, true, undefined, () => { }), setBookmark((prev) => prev - 1) }
                     })
-                } else if (bookmarkRef === 0) {
+                } else if (bookmarkRef === 0 && !isAnimationPlaying) {
                     dispatch({
                         type: "TOGGLE",
                         open: () => {
+                            if (isAnimationPlaying) { return }
+                            isAnimationPlaying = true
+                            setCoverSwitch(true)
                             //Open/switch cover
                             glb_animation[4].current?.start(true), glb_animation[5].current?.stop()
                             glb_animation[7].current?.start(true), glb_animation[9].current?.stop()
@@ -79,11 +83,14 @@ export function ToggleAnimationHandler(
                             glb_animation[0].current?.start(true), glb_animation[1].current?.stop()
                             glb_animation[2].current?.start(true), glb_animation[3].current?.stop()
 
-                            glb_animation[2]?.current?.onAnimationEndObservable.addOnce(() => {
-                                setCoverSwitch(true)
+                            glb_animation[7]?.current?.onAnimationEndObservable.addOnce(() => {
+                                isAnimationPlaying = false
                             })
                         },
                         close: () => {
+                            if (isAnimationPlaying) { return }
+                            isAnimationPlaying = true
+                            setCoverSwitch(false)
                             //Close/switch cover
                             glb_animation[5].current?.start(true), glb_animation[4].current?.stop()
                             glb_animation[9].current?.start(true), glb_animation[7].current?.stop()
@@ -95,7 +102,9 @@ export function ToggleAnimationHandler(
                             glb_animation[1].current?.start(true), glb_animation[0].current?.stop()
                             glb_animation[3].current?.start(true), glb_animation[2].current?.stop()
 
-                            setCoverSwitch(false)
+                            glb_animation[9]?.current?.onAnimationEndObservable.addOnce(() => {
+                                isAnimationPlaying = false
+                            })
                         }
                     })
                 } else { return }

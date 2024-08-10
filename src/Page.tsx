@@ -19,9 +19,8 @@ function CanvasComponent() {
     const glb_dispatcher = useReducer(animationReducer, { isOpen: false })
     const root_controller = useRef<Mesh | null>(null)
     const animationData = sceneRef.current?.animationGroups
-    const coverSwitch = useRecoilValue(CoverOpen)
     const [bookmark, setBookmark] = useRecoilState(BookMark)
-    const [, setCoverSwitch] = useRecoilState(CoverOpen)
+    const [coverSwitch, setCoverSwitch] = useRecoilState(CoverOpen)
     const bookmarkRef = useRef(bookmark)
 
     // Initialize the scene
