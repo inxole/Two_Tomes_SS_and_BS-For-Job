@@ -1,10 +1,9 @@
 import { AnimationGroup, Engine, Mesh, MeshBuilder, Scene, Skeleton, Space, Vector3 } from "@babylonjs/core"
 import { Inspector } from "@babylonjs/inspector"
-import { Action, PageState, ToggleAnimationHandler } from "./Functions/Acction"
 import { LightUp, CameraWork } from "./Functions/Canvas"
 import { createPage } from "./Functions/Page_Mesh"
 import { createSkeleton } from "./Functions/Skeleton"
-import initializeGLB, { mergedMesh } from "./Functions/Tome_BS"
+import initializeGLB from "./Functions/Tome_BS"
 import { createRootAnimation } from "./Animation_data"
 import { ControllerAnimation } from "./Animation_sub_data"
 
@@ -13,19 +12,14 @@ export function initializeScene(
     canvas: HTMLCanvasElement,
     sceneRef: React.MutableRefObject<Scene | null>,
     skeletonRefs: React.MutableRefObject<Skeleton[] | null>,
-    dispatchers: React.Dispatch<Action>[],
-    glb_dispatcher: [PageState, React.Dispatch<Action>],
     updated_text: string,
     root_controller: React.MutableRefObject<Mesh | null>,
-    bookmarkRef: React.MutableRefObject<number>,
-    setBookmark: React.Dispatch<React.SetStateAction<number>>,
-    setCoverSwitch: React.Dispatch<React.SetStateAction<boolean>>
+    animationRefs: React.MutableRefObject<AnimationGroup | null>[]
 ) {
     const meshes_amount = 50
     const engine = new Engine(canvas, true)
     const scene = new Scene(engine)
     sceneRef.current = scene
-    let animationRefs: React.MutableRefObject<AnimationGroup | null>[] = []
     LightUp(scene)
     CameraWork(scene, canvas)
     initializeGLB(scene, animationRefs)
@@ -88,27 +82,6 @@ export function initializeScene(
         })
         Inspector.Show(scene, {})
     }
-    scene.onPointerObservable.add(
-        (pointerInfo) => ToggleAnimationHandler(pointerInfo, scene,
-            [
-                ...pageSkeletons.map((pageSkeleton, i) => ({
-                    dispatch: dispatchers[i],
-                    skeleton: pageSkeleton,
-                    pickNamePattern: new RegExp(`^hitBox_animation${i}_`)
-                })),
-                {
-                    dispatch: glb_dispatcher[1],
-                    skeleton: mergedMesh.skeleton as Skeleton,
-                    pickNamePattern: new RegExp(`^Tome_hitBox_`)
-                }
-            ],
-            animationRefs,
-            bookmarkRef.current,
-            setBookmark,
-            setCoverSwitch
-        )
-    )
-
     engine.runRenderLoop(() => scene.render())
     const resize = () => engine.resize()
     window.addEventListener('resize', resize)

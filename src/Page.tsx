@@ -1,9 +1,10 @@
-import { useEffect, useRef, useReducer } from 'react'
+import React, { useEffect, useRef, useReducer } from 'react'
 import { BookMark, CoverOpen, Long_Text, Text_Switch } from './atom'
 import { useRecoilState, useRecoilValue } from 'recoil'
-import { Scene, DynamicTexture, Skeleton, Mesh } from '@babylonjs/core'
+import { AnimationGroup, Scene, DynamicTexture, Skeleton, Mesh } from '@babylonjs/core'
 import { initializeScene } from './Babylon_Scene'
-import { animationReducer, useDynamicReducers } from './Functions/Acction'
+import { animationReducer, ToggleAnimationHandler, useDynamicReducers } from './Functions/Acction'
+import { mergedMesh } from './Functions/Tome_BS'
 
 const text_size = 22
 const pageAmount = 50
@@ -18,17 +19,18 @@ function CanvasComponent() {
     const dispatchers = useDynamicReducers(animationReducer, { isOpen: false }, pageAmount).map(([_, dispatch]) => dispatch)
     const glb_dispatcher = useReducer(animationReducer, { isOpen: false })
     const root_controller = useRef<Mesh | null>(null)
-    const animationData = sceneRef.current?.animationGroups
+    const animationData = sceneRef.current?.animationGroups as AnimationGroup[]
     const [bookmark, setBookmark] = useRecoilState(BookMark)
     const [coverSwitch, setCoverSwitch] = useRecoilState(CoverOpen)
     const bookmarkRef = useRef(bookmark)
+    const animationRefs: React.MutableRefObject<AnimationGroup | null>[] = []
 
     // Initialize the scene
     useEffect(() => {
         const canvas = canvasRef.current
         if (!canvas) return
 
-        return initializeScene(canvas, sceneRef, skeletonRefs, dispatchers, glb_dispatcher, updated_text, root_controller, bookmarkRef, setBookmark, setCoverSwitch)
+        return initializeScene(canvas, sceneRef, skeletonRefs, updated_text, root_controller, animationRefs)
     }, [])
 
     // Update the text on the front page
@@ -103,6 +105,33 @@ function CanvasComponent() {
             }
         }
     }, [coverSwitch])
+
+    // Move this code to a separate useEffect
+    useEffect(() => {
+        const scene = sceneRef.current
+        if (!scene) return
+
+        scene.onPointerObservable.add(
+            (pointerInfo) => ToggleAnimationHandler(pointerInfo, scene,
+                [
+                    ...skeletonRefs.current!.map((pageSkeleton, i) => ({
+                        dispatch: dispatchers[i],
+                        skeleton: pageSkeleton,
+                        pickNamePattern: new RegExp(`^hitBox_animation${i}_`)
+                    })),
+                    {
+                        dispatch: glb_dispatcher[1],
+                        skeleton: mergedMesh.skeleton as Skeleton,
+                        pickNamePattern: new RegExp(`^Tome_hitBox_`)
+                    }
+                ],
+                animationRefs,
+                bookmarkRef.current,
+                setBookmark,
+                setCoverSwitch
+            )
+        )
+    }, [setBookmark, setCoverSwitch])
 
     return <canvas ref={canvasRef} style={{ width: '100%', height: '100%' }} />
 }
