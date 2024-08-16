@@ -46,40 +46,47 @@ export function ToggleAnimationHandler(
     scene: Scene,
     toggleAnimationSetups: ToggleAnimationSetup[],
     glb_animation: React.MutableRefObject<AnimationGroup | null>[],
-    bookmarkRef: number,
-    setBookmark: React.Dispatch<React.SetStateAction<number>>,
-    setCoverSwitch: React.Dispatch<React.SetStateAction<boolean>>
+    bookmarkRef: React.MutableRefObject<number>,
+    coverSwitchRef: React.MutableRefObject<boolean>
 ) {
+    if (isAnimationPlaying) { return }
     if (pointerInfo.pickInfo !== null && pointerInfo.type === PointerEventTypes.POINTERDOWN) {
         for (const { dispatch, skeleton, pickNamePattern } of toggleAnimationSetups) {
             if (pointerInfo.pickInfo.hit && pickNamePattern.test(pointerInfo.pickInfo.pickedMesh?.name || "")) {
-                if (pointerInfo.pickInfo.pickedMesh?.name.startsWith(`hitBox_animation${bookmarkRef}`)) {
+                if (pointerInfo.pickInfo.pickedMesh?.name.startsWith(`hitBox_animation${bookmarkRef.current}`)) {
                     dispatch({
                         type: "OPEN",
-                        open: () => { scene.beginAnimation(skeleton, 0, 60, true, undefined, () => { setBookmark((prev) => prev + 1) }) },
+                        open: () => {
+                            scene.beginAnimation(skeleton, 0, 60, true, undefined, () => {
+                                bookmarkRef.current += 1
+                            })
+                        },
                         close: () => { }
                     })
-                } else if (pointerInfo.pickInfo.pickedMesh?.name.startsWith(`hitBox_animation${bookmarkRef - 1}`)) {
+                } else if (pointerInfo.pickInfo.pickedMesh?.name.startsWith(`hitBox_animation${bookmarkRef.current - 1}`)) {
                     dispatch({
                         type: "CLOSE",
                         open: () => { },
-                        close: () => { scene.beginAnimation(skeleton, 60, 120, true, undefined, () => { }), setBookmark((prev) => prev - 1) }
+                        close: () => {
+                            scene.beginAnimation(skeleton, 60, 120, true, undefined, () => { })
+                            bookmarkRef.current -= 1
+                        }
                     })
-                } else if (bookmarkRef === 0 && !isAnimationPlaying && !pointerInfo.pickInfo.pickedMesh?.name.startsWith(`hitBox_animation`)) {
+                } else if (bookmarkRef.current === 0 && !isAnimationPlaying && !pointerInfo.pickInfo.pickedMesh?.name.startsWith(`hitBox_animation`)) {
                     dispatch({
                         type: "TOGGLE",
                         open: () => {
-                            if (isAnimationPlaying) { return }
                             isAnimationPlaying = true
-                            setCoverSwitch(true)
-                            //Open/switch cover
+                            coverSwitchRef.current = true
+
+                            // Open/switch cover
                             glb_animation[4].current?.start(true), glb_animation[5].current?.stop()
                             glb_animation[7].current?.start(true), glb_animation[9].current?.stop()
 
-                            setTimeout(() => { glb_animation[7]?.current?.stop() }, 1000)//Repeat prevention
-                            setTimeout(() => { glb_animation[8]?.current?.start(true) }, 1000)//start holding
+                            setTimeout(() => { glb_animation[7]?.current?.stop() }, 1000) // Repeat prevention
+                            setTimeout(() => { glb_animation[8]?.current?.start(true) }, 1000) // Start holding
 
-                            //Move pages all at once and switch
+                            // Move pages all at once and switch
                             glb_animation[0].current?.start(true), glb_animation[1].current?.stop()
                             glb_animation[2].current?.start(true), glb_animation[3].current?.stop()
 
@@ -88,17 +95,17 @@ export function ToggleAnimationHandler(
                             })
                         },
                         close: () => {
-                            if (isAnimationPlaying) { return }
                             isAnimationPlaying = true
-                            setCoverSwitch(false)
-                            //Close/switch cover
+                            coverSwitchRef.current = false
+
+                            // Close/switch cover
                             glb_animation[5].current?.start(true), glb_animation[4].current?.stop()
                             glb_animation[9].current?.start(true), glb_animation[7].current?.stop()
 
-                            setTimeout(() => { glb_animation[9]?.current?.stop() }, 1000)//Repeat prevention
-                            glb_animation[8].current?.stop()//Stop holding
+                            setTimeout(() => { glb_animation[9]?.current?.stop() }, 1000) // Repeat prevention
+                            glb_animation[8].current?.stop() // Stop holding
 
-                            //Move pages all at once and switch
+                            // Move pages all at once and switch
                             glb_animation[1].current?.start(true), glb_animation[0].current?.stop()
                             glb_animation[3].current?.start(true), glb_animation[2].current?.stop()
 

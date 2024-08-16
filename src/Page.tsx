@@ -24,6 +24,7 @@ function CanvasComponent() {
     const [coverSwitch, setCoverSwitch] = useRecoilState(CoverOpen)
     const bookmarkRef = useRef(bookmark)
     const animationRefs: React.MutableRefObject<AnimationGroup | null>[] = []
+    const coverSwitchRef = useRef(false)
 
     // Initialize the scene
     useEffect(() => {
@@ -112,25 +113,35 @@ function CanvasComponent() {
         if (!scene) return
 
         scene.onPointerObservable.add(
-            (pointerInfo) => ToggleAnimationHandler(pointerInfo, scene,
-                [
-                    ...skeletonRefs.current!.map((pageSkeleton, i) => ({
-                        dispatch: dispatchers[i],
-                        skeleton: pageSkeleton,
-                        pickNamePattern: new RegExp(`^hitBox_animation${i}_`)
-                    })),
-                    {
-                        dispatch: glb_dispatcher[1],
-                        skeleton: mergedMesh.skeleton as Skeleton,
-                        pickNamePattern: new RegExp(`^Tome_hitBox_`)
-                    }
-                ],
-                animationRefs,
-                bookmarkRef.current,
-                setBookmark,
-                setCoverSwitch
-            )
+            (pointerInfo) => {
+                ToggleAnimationHandler(
+                    pointerInfo,
+                    scene,
+                    [
+                        ...skeletonRefs.current!.map((pageSkeleton, i) => ({
+                            dispatch: dispatchers[i],
+                            skeleton: pageSkeleton,
+                            pickNamePattern: new RegExp(`^hitBox_animation${i}_`)
+                        })),
+                        {
+                            dispatch: glb_dispatcher[1],
+                            skeleton: mergedMesh.skeleton as Skeleton,
+                            pickNamePattern: new RegExp(`^Tome_hitBox_`)
+                        }
+                    ],
+                    animationRefs,
+                    bookmarkRef,
+                    coverSwitchRef
+                )
+
+                setBookmark(bookmarkRef.current)
+                setCoverSwitch(coverSwitchRef.current)
+            }
         )
+
+        return () => {
+            scene.onPointerObservable.clear()
+        }
     }, [setBookmark, setCoverSwitch])
 
     return <canvas ref={canvasRef} style={{ width: '100%', height: '100%' }} />
