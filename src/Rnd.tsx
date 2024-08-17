@@ -1,13 +1,12 @@
 import { useState } from 'react'
 import { useRecoilState } from 'recoil'
-import { BookMark, CoverOpen, Long_Text, Text_Switch } from './atom'
+import { BookMark, Long_Text, Text_Switch } from './atom'
 import { Rnd } from 'react-rnd'
 import { Button, Slider } from '@mui/material'
 
 function RndComponent() {
   const [fontSize, setFontSize] = useState(22)
   const [bookmark, setBookmark] = useRecoilState(BookMark)
-  const [coverSwitch, setCoverSwitch] = useRecoilState(CoverOpen)
   const [, setText_update] = useRecoilState(Text_Switch)
   const [updatedText, setUpdatedText] = useRecoilState(Long_Text)
 

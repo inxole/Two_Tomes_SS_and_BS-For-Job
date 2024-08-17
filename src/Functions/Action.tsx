@@ -1,5 +1,6 @@
 import { AnimationGroup, PointerEventTypes, PointerInfo, Scene, Skeleton } from "@babylonjs/core"
 import { Reducer, useReducer } from "react"
+import { BookCover } from './Tome_BS'
 
 export type Action = { type: string, open: VoidFunction, close: VoidFunction }
 export type PageState = { isOpen: boolean }
@@ -38,16 +39,29 @@ let isAnimationPlaying = false
  * mouse event handler for animation toggle
  * @param pointerInfo on pointer event
  * @param scene add to scene
- * @param toggleAnimationSetups animation setup
  * @param animationData animation group reference
  */
 export function ToggleAnimationHandler(
     pointerInfo: PointerInfo,
     scene: Scene,
-    toggleAnimationSetups: ToggleAnimationSetup[],
+    dispatchers: React.Dispatch<Action>[],
+    glb_dispatcher: [PageState, React.Dispatch<Action>],
     bookmarkRef: React.MutableRefObject<number>,
     coverSwitchRef: React.MutableRefObject<boolean>
 ) {
+    const skeletonRefs = scene.skeletons as Skeleton[]
+    const toggleAnimationSetups: ToggleAnimationSetup[] = [
+        ...skeletonRefs.map((skeleton, index) => ({
+            dispatch: dispatchers[index],
+            skeleton: skeleton,
+            pickNamePattern: new RegExp(`^hitBox_animation${index}`)
+        })),
+        {
+            dispatch: glb_dispatcher[1],
+            skeleton: BookCover.skeleton as Skeleton,
+            pickNamePattern: new RegExp(`^Tome_hitBox`)
+        }
+    ];
     const animationData = scene.animationGroups as AnimationGroup[]
     if (isAnimationPlaying) { return }
     if (pointerInfo.pickInfo !== null && pointerInfo.type === PointerEventTypes.POINTERDOWN) {

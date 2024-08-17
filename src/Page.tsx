@@ -1,11 +1,9 @@
-import React, { useEffect, useRef, useReducer } from 'react'
+import { useEffect, useRef, useReducer } from 'react'
 import { BookMark, CoverOpen, Long_Text, Text_Switch } from './atom'
 import { useRecoilState, useRecoilValue } from 'recoil'
 import { AnimationGroup, Scene, DynamicTexture, Skeleton, Mesh } from '@babylonjs/core'
 import { initializeScene } from './Babylon_Scene'
-import { animationReducer, closePageAnimation, openPageAnimation, ToggleAnimationHandler, useDynamicReducers } from './Functions/Acction'
-import { BookCover } from './Functions/Tome_BS'
-import { AnimationDictionary } from './Functions/Acction'
+import { animationReducer, closePageAnimation, openPageAnimation, ToggleAnimationHandler, useDynamicReducers } from './Functions/Action'
 
 const text_size = 22
 const pageAmount = 50
@@ -104,18 +102,8 @@ function CanvasComponent() {
                 ToggleAnimationHandler(
                     pointerInfo,
                     scene,
-                    [
-                        ...skeletonRefs.current!.map((pageSkeleton, i) => ({
-                            dispatch: dispatchers[i],
-                            skeleton: pageSkeleton,
-                            pickNamePattern: new RegExp(`^hitBox_animation${i}_`)
-                        })),
-                        {
-                            dispatch: glb_dispatcher[1],
-                            skeleton: BookCover.skeleton as Skeleton,
-                            pickNamePattern: new RegExp(`^Tome_hitBox_`)
-                        }
-                    ],
+                    dispatchers,
+                    glb_dispatcher,
                     bookmarkRef,
                     coverSwitchRef
                 )
