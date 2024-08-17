@@ -73,7 +73,7 @@ export function GetSkeletonForGLB(scene: Scene, mesh: Mesh, name: string) {
     }
 }
 
-export let mergedMesh: Mesh
+export let BookCover: Mesh
 
 /**
  * import GLB file
@@ -82,38 +82,34 @@ export let mergedMesh: Mesh
  */
 function initializeGLB(
     scene: Scene,
-    animationRefs: React.MutableRefObject<AnimationGroup | null>[],
 ) {
     SceneLoader.Append("./", "Tome_BS.glb", scene, function () {
-        const animationGroups = scene.animationGroups
-        animationGroups.forEach((animationGroup, index) => {
-            animationRefs[index] = { current: animationGroup }
-        })
         GetMeshForGLB(scene, "Tome_BS_primitive0")
         GetMeshForGLB(scene, "Tome_BS_primitive1")
         GetMeshForGLB(scene, "Tome_BS_primitive2")
-        mergedMesh = Mesh.MergeMeshes(mesh_BS, true, true, undefined, false, true) as Mesh
-        mergedMesh.isPickable = false
+        BookCover = Mesh.MergeMeshes(mesh_BS, true, true, undefined, false, true) as Mesh
+        BookCover.name = "Tome_BS"
+        BookCover.isPickable = false
 
-        if (!mergedMesh) return
-        GetSkeletonForGLB(scene, mergedMesh, "BS_Armature")
+        if (!BookCover) return
+        GetSkeletonForGLB(scene, BookCover, "BS_Armature")
         const rotateTransform = Matrix.RotationY(Math.PI / 1)
-        mergedMesh.bakeTransformIntoVertices(rotateTransform)
-        mergedMesh.skeleton?.bones.forEach(bone => {
+        BookCover.bakeTransformIntoVertices(rotateTransform)
+        BookCover.skeleton?.bones.forEach(bone => {
             const currentMatrix = bone.getLocalMatrix()
             const newMatrix = currentMatrix.multiply(rotateTransform)
             bone.getLocalMatrix().copyFrom(newMatrix)
         })
 
-        mergedMesh.skeleton?.bones
+        BookCover.skeleton?.bones
             .filter(bone => ['Bone.003', 'Bone.008', 'Bone.014'].includes(bone.name))
             .forEach(bone => {
                 if (bone.name === 'Bone.003') {
-                    attachHitBox(bone, { width: 0.32, height: 0.23, depth: 0.013 }, new Vector3(0, -0.07, 0.003), scene, mergedMesh)
+                    attachHitBox(bone, { width: 0.32, height: 0.23, depth: 0.013 }, new Vector3(0, -0.07, 0.003), scene, BookCover)
                 } else if (bone.name === 'Bone.008') {
-                    attachHalfCylinder(bone, 0.05, 0.32, new Vector3(0, 0.01, 0.012), scene, mergedMesh)
+                    attachHalfCylinder(bone, 0.05, 0.32, new Vector3(0, 0.01, 0.012), scene, BookCover)
                 } else {
-                    attachHitBox(bone, { width: 0.32, height: 0.23, depth: 0.013 }, new Vector3(0, -0.07, -0.003), scene, mergedMesh)
+                    attachHitBox(bone, { width: 0.32, height: 0.23, depth: 0.013 }, new Vector3(0, -0.07, -0.003), scene, BookCover)
                 }
             })
     })

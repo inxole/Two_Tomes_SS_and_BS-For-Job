@@ -68,7 +68,7 @@ function RndComponent() {
           </div>
         </div>
         <div style={{ width: '330px', height: '200px', display: 'flex', paddingBottom: '5px' }}>
-          <div style={{ display: 'flex', flexDirection: 'column', marginTop: '5px', marginRight: '5px', border: '1px solid black', borderRadius: '8px', padding: '2px' }}>
+          {/* <div style={{ display: 'flex', flexDirection: 'column', marginTop: '5px', marginRight: '5px', border: '1px solid black', borderRadius: '8px', padding: '2px' }}>
             <span>表紙</span>
             <Button
               size='small' variant="contained" color="primary" style={{ margin: '5px 0' }}
@@ -80,7 +80,7 @@ function RndComponent() {
               onClick={() => setCoverSwitch(false)}
               disabled={!coverSwitch ? true : false}
             >閉じる</Button>
-          </div>
+          </div> */}
           <div style={{ flexGrow: 1, marginTop: '5px', marginLeft: '5px', border: '1px solid black', borderRadius: '8px', padding: '5px' }}>
             <div style={{ display: 'flex', justifyContent: 'center', marginBottom: '10px' }}>
               <span style={{ marginRight: '10px' }} />ページ管理
@@ -94,7 +94,7 @@ function RndComponent() {
                 value={bookmark}
                 aria-labelledby='page-count-slider' valueLabelDisplay='auto'
                 step={1} min={0} max={50}
-                disabled={!coverSwitch ? true : false}
+                // disabled={!coverSwitch ? true : false}
                 style={{ flexGrow: 1, marginLeft: '10px' }}
                 onChange={(_, newValue) => setBookmark(newValue as number)}
               />

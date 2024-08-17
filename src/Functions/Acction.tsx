@@ -39,16 +39,16 @@ let isAnimationPlaying = false
  * @param pointerInfo on pointer event
  * @param scene add to scene
  * @param toggleAnimationSetups animation setup
- * @param glb_animation animation group reference
+ * @param animationData animation group reference
  */
 export function ToggleAnimationHandler(
     pointerInfo: PointerInfo,
     scene: Scene,
     toggleAnimationSetups: ToggleAnimationSetup[],
-    glb_animation: React.MutableRefObject<AnimationGroup | null>[],
     bookmarkRef: React.MutableRefObject<number>,
     coverSwitchRef: React.MutableRefObject<boolean>
 ) {
+    const animationData = scene.animationGroups as AnimationGroup[]
     if (isAnimationPlaying) { return }
     if (pointerInfo.pickInfo !== null && pointerInfo.type === PointerEventTypes.POINTERDOWN) {
         for (const { dispatch, skeleton, pickNamePattern } of toggleAnimationSetups) {
@@ -79,18 +79,10 @@ export function ToggleAnimationHandler(
                             isAnimationPlaying = true
                             coverSwitchRef.current = true
 
-                            // Open/switch cover
-                            glb_animation[4].current?.start(true), glb_animation[5].current?.stop()
-                            glb_animation[7].current?.start(true), glb_animation[9].current?.stop()
+                            openPageAnimation(animationData)
 
-                            setTimeout(() => { glb_animation[7]?.current?.stop() }, 1000) // Repeat prevention
-                            setTimeout(() => { glb_animation[8]?.current?.start(true) }, 1000) // Start holding
-
-                            // Move pages all at once and switch
-                            glb_animation[0].current?.start(true), glb_animation[1].current?.stop()
-                            glb_animation[2].current?.start(true), glb_animation[3].current?.stop()
-
-                            glb_animation[7]?.current?.onAnimationEndObservable.addOnce(() => {
+                            const AD = AnimationDictionary
+                            animationData[AD.BS_action_0_90].onAnimationEndObservable.addOnce(() => {
                                 isAnimationPlaying = false
                             })
                         },
@@ -98,18 +90,10 @@ export function ToggleAnimationHandler(
                             isAnimationPlaying = true
                             coverSwitchRef.current = false
 
-                            // Close/switch cover
-                            glb_animation[5].current?.start(true), glb_animation[4].current?.stop()
-                            glb_animation[9].current?.start(true), glb_animation[7].current?.stop()
+                            closePageAnimation(animationData)
 
-                            setTimeout(() => { glb_animation[9]?.current?.stop() }, 1000) // Repeat prevention
-                            glb_animation[8].current?.stop() // Stop holding
-
-                            // Move pages all at once and switch
-                            glb_animation[1].current?.start(true), glb_animation[0].current?.stop()
-                            glb_animation[3].current?.start(true), glb_animation[2].current?.stop()
-
-                            glb_animation[9]?.current?.onAnimationEndObservable.addOnce(() => {
+                            const AD = AnimationDictionary
+                            animationData[AD.BS_action_back]?.onAnimationEndObservable.addOnce(() => {
                                 isAnimationPlaying = false
                             })
                         }
@@ -118,6 +102,39 @@ export function ToggleAnimationHandler(
             }
         }
     }
+}
+
+/**
+ * Open page animation
+ * @param animationData animation group reference
+ * @returns void
+ */
+export function openPageAnimation(animationData: AnimationGroup[]) {
+    const AD = AnimationDictionary
+    // Open/switch cover
+    animationData[AD.N_0_90_Group].start(true), animationData[AD.R_90_0_Group].stop()
+    animationData[AD.BS_action_0_90].start(true), animationData[AD.BS_action_back].stop()
+
+    setTimeout(() => { animationData[AD.BS_action_0_90].stop() }, 1000) // Repeat prevention
+    setTimeout(() => { animationData[AD.BS_stay_90].start(true) }, 1000) // Start holding
+
+    // Move pages all at once and switch
+    animationData[AD.N_Controller].start(true), animationData[AD.R_Controller].stop()
+    animationData[AD.N_Animation_Group].start(true), animationData[AD.R_Animation_Group].stop()
+}
+
+export function closePageAnimation(animationData: AnimationGroup[]) {
+    const AD = AnimationDictionary
+    // Close/switch cover
+    animationData[AD.R_90_0_Group].start(true), animationData[AD.N_0_90_Group].stop()
+    animationData[AD.BS_action_back].start(true), animationData[AD.BS_action_0_90].stop()
+
+    setTimeout(() => { animationData[AD.BS_action_back]?.stop() }, 1000) // Repeat prevention
+    animationData[AD.BS_stay_90].stop() // Stop holding
+
+    // Move pages all at once and switch
+    animationData[AD.R_Controller].start(true), animationData[AD.N_Controller].stop()
+    animationData[AD.R_Animation_Group].start(true), animationData[AD.N_Animation_Group].stop()
 }
 
 export function useDynamicReducers(reducer: Reducer<PageState, Action>, initialState: PageState, count: number) {
@@ -135,3 +152,17 @@ export function useDynamicReducers(reducer: Reducer<PageState, Action>, initialS
 // 7: Object { name: "001_BS_action_0_90", _from: 0, _to: 600, … }
 // 8: Object { name: "002_BS_stay_90", _from: 0, _to: 600, … }
 // 9: Object { name: "003_BS_action_back", _from: 0, _to: 600, … }
+
+
+export enum AnimationDictionary {
+    N_Controller = 0,
+    R_Controller = 1,
+    N_Animation_Group = 2,
+    R_Animation_Group = 3,
+    N_0_90_Group = 4,
+    R_90_0_Group = 5,
+    BS_Non_Action = 6,
+    BS_action_0_90 = 7,
+    BS_stay_90 = 8,
+    BS_action_back = 9,
+}

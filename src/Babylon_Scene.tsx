@@ -14,7 +14,6 @@ export function initializeScene(
     skeletonRefs: React.MutableRefObject<Skeleton[] | null>,
     updated_text: string,
     root_controller: React.MutableRefObject<Mesh | null>,
-    animationRefs: React.MutableRefObject<AnimationGroup | null>[]
 ) {
     const meshes_amount = 50
     const engine = new Engine(canvas, true)
@@ -22,7 +21,7 @@ export function initializeScene(
     sceneRef.current = scene
     LightUp(scene)
     CameraWork(scene, canvas)
-    initializeGLB(scene, animationRefs)
+    initializeGLB(scene)
 
     const front_pages: Mesh[] = []
     const back_pages: Mesh[] = []

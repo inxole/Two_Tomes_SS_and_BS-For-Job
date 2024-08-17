@@ -3,8 +3,9 @@ import { BookMark, CoverOpen, Long_Text, Text_Switch } from './atom'
 import { useRecoilState, useRecoilValue } from 'recoil'
 import { AnimationGroup, Scene, DynamicTexture, Skeleton, Mesh } from '@babylonjs/core'
 import { initializeScene } from './Babylon_Scene'
-import { animationReducer, ToggleAnimationHandler, useDynamicReducers } from './Functions/Acction'
-import { mergedMesh } from './Functions/Tome_BS'
+import { animationReducer, closePageAnimation, openPageAnimation, ToggleAnimationHandler, useDynamicReducers } from './Functions/Acction'
+import { BookCover } from './Functions/Tome_BS'
+import { AnimationDictionary } from './Functions/Acction'
 
 const text_size = 22
 const pageAmount = 50
@@ -23,7 +24,6 @@ function CanvasComponent() {
     const [bookmark, setBookmark] = useRecoilState(BookMark)
     const [coverSwitch, setCoverSwitch] = useRecoilState(CoverOpen)
     const bookmarkRef = useRef(bookmark)
-    const animationRefs: React.MutableRefObject<AnimationGroup | null>[] = []
     const coverSwitchRef = useRef(false)
 
     // Initialize the scene
@@ -31,7 +31,7 @@ function CanvasComponent() {
         const canvas = canvasRef.current
         if (!canvas) return
 
-        return initializeScene(canvas, sceneRef, skeletonRefs, updated_text, root_controller, animationRefs)
+        return initializeScene(canvas, sceneRef, skeletonRefs, updated_text, root_controller)
     }, [])
 
     // Update the text on the front page
@@ -55,7 +55,7 @@ function CanvasComponent() {
         const scene = sceneRef.current
         if (!scene) return
         dispatchers.forEach((dispatch, index) => {
-            if (index < bookmark) {
+            if (index < bookmark - 1) {
                 dispatch({
                     type: "OPEN",
                     open: () => {
@@ -77,38 +77,21 @@ function CanvasComponent() {
                 })
             }
         })
+
+        if (!animationData) return
+        if (bookmark > 0 && bookmark === 1) {
+            openPageAnimation(animationData)
+            console.debug("cover open")
+        } else if (bookmark < 0 && bookmark === 0) {
+            closePageAnimation(animationData)
+            console.debug("cover close")
+        }
+        //  else {}
     }, [bookmark])
 
+    // Preventing unnecessary triggers
     useEffect(() => {
         coverSwitchRef.current = coverSwitch
-    }, [coverSwitch])
-
-    // Switch Cover
-    useEffect(() => {
-        const scene = sceneRef.current
-        if (!scene) return
-        if (animationData) {
-            switch (true) {
-                case (coverSwitch):
-                    animationData[4]?.start(true), animationData[5]?.stop()
-                    animationData[7]?.start(true), animationData[9]?.stop()
-                    setTimeout(() => { animationData[7]?.stop() }, 1000)
-                    setTimeout(() => { animationData[8]?.start(true) }, 1000)
-                    animationData[0]?.start(true), animationData[1]?.stop()
-                    animationData[2]?.start(true), animationData[3]?.stop()
-                    break
-                case (!coverSwitch):
-                    animationData[5]?.start(true), animationData[4]?.stop()
-                    animationData[9]?.start(true), animationData[7]?.stop()
-                    setTimeout(() => { animationData[9]?.stop() }, 1000)
-                    animationData[8]?.stop()
-                    animationData[1]?.start(true), animationData[0]?.stop()
-                    animationData[3]?.start(true), animationData[2]?.stop()
-                    break
-                default:
-                    break
-            }
-        }
     }, [coverSwitch])
 
     // Move this code to a separate useEffect
@@ -129,11 +112,10 @@ function CanvasComponent() {
                         })),
                         {
                             dispatch: glb_dispatcher[1],
-                            skeleton: mergedMesh.skeleton as Skeleton,
+                            skeleton: BookCover.skeleton as Skeleton,
                             pickNamePattern: new RegExp(`^Tome_hitBox_`)
                         }
                     ],
-                    animationRefs,
                     bookmarkRef,
                     coverSwitchRef
                 )
