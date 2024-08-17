@@ -6,7 +6,7 @@ import { initializeScene } from './Babylon_Scene'
 import { animationReducer, closePageAnimation, openPageAnimation, ToggleAnimationHandler, useDynamicReducers } from './Functions/Action'
 
 const text_size = 22
-const pageAmount = 50
+const pageAmount = 51
 const font = "bold " + text_size + "px monospace"
 
 function CanvasComponent() {
@@ -47,41 +47,56 @@ function CanvasComponent() {
 
     // Update bookmark
     useEffect(() => {
-        bookmarkRef.current = bookmark
         const scene = sceneRef.current
         if (!scene) return
         dispatchers.forEach((dispatch, index) => {
-            if (index < bookmark - 1) {
+            // console.info("bookmark: ", bookmark, ", index: ", index)
+            if (index == 0) { // front cover toggle
+                if (bookmark >= 1) {
+
+                    dispatch({
+                        type: "OPEN",
+                        open: () => {
+                            openPageAnimation(animationData)
+                            console.debug("cover open")
+                        },
+                        close: () => { console.error("open cover error") }
+                    })
+                    return
+                }
+                else {
+                    dispatch({
+                        type: "CLOSE",
+                        open: () => { console.error("close cover fail") },
+                        close: () => {
+                            closePageAnimation(animationData)
+                            console.debug("cover close")
+                        }
+                    })
+                    return
+                }
+            }
+
+            if (index < bookmark) {
                 dispatch({
                     type: "OPEN",
                     open: () => {
-                        if (skeletonRefs.current && skeletonRefs.current[index]) {
-                            scene.beginAnimation(skeletonRefs.current[index], 0, 60, true, undefined, () => { })
-                        }
+                        pageFrontAnimation(scene, index - 1)
+                        console.debug(`page ${index} open`)
                     },
-                    close: () => { }
+                    close: () => { console.error(`page ${index} open fail`) }
                 })
             } else {
                 dispatch({
                     type: "CLOSE",
-                    open: () => { },
+                    open: () => { console.error(`page ${index} close fail`) },
                     close: () => {
-                        if (skeletonRefs.current && skeletonRefs.current[index]) {
-                            scene.beginAnimation(skeletonRefs.current[index], 60, 120, true, undefined, () => { })
-                        }
+                        pageBackAnimation(scene, index - 1)
+                        console.log(`page ${index} close`)
                     }
                 })
             }
         })
-
-        if (!animationData) return
-        if (bookmark > 0 && bookmark === 1) {
-            openPageAnimation(animationData)
-            console.debug("cover open")
-        } else if (bookmark < 0 && bookmark === 0) {
-            closePageAnimation(animationData)
-            console.debug("cover close")
-        }
     }, [bookmark])
 
     // Move this code to a separate useEffect
@@ -109,6 +124,18 @@ function CanvasComponent() {
     }, [setBookmark])
 
     return <canvas ref={canvasRef} style={{ width: '100%', height: '100%' }} />
+}
+
+function pageFrontAnimation(scene: Scene, index: number) {
+    const page = scene.skeletons.find((skeleton) => skeleton.name === 'skeleton_' + index)
+    if (!page) return
+    scene.beginAnimation(page, 0, 60, true, undefined, () => { })
+}
+
+function pageBackAnimation(scene: Scene, index: number) {
+    const page = scene.skeletons.find((skeleton) => skeleton.name === 'skeleton_' + index)
+    if (!page) return
+    scene.beginAnimation(page, 60, 120, true, undefined, () => { })
 }
 
 export default CanvasComponent
