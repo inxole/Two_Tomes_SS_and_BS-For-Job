@@ -79,6 +79,10 @@ function CanvasComponent() {
         })
     }, [bookmark])
 
+    useEffect(() => {
+        coverSwitchRef.current = coverSwitch
+    }, [coverSwitch])
+
     // Switch Cover
     useEffect(() => {
         const scene = sceneRef.current

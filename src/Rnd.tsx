@@ -1,19 +1,13 @@
-import { Button, Slider } from '@mui/material'
-import { Rnd } from 'react-rnd'
+import { useState } from 'react'
 import { useRecoilState } from 'recoil'
-import { Long_Text, Text_Switch } from './atom'
+import { BookMark, CoverOpen, Long_Text, Text_Switch } from './atom'
+import { Rnd } from 'react-rnd'
+import { Button, Slider } from '@mui/material'
 
-interface RndComponentProps {
-  fontSize: number
-  setFontSize: (size: number) => void
-  bookmark: number
-  setBookmark: (count: number) => void
-  coverSwitch: boolean
-  setCoverSwitch: (state: boolean) => void
-}
-
-function RndComponent(props: RndComponentProps) {
-  const { fontSize, setFontSize, bookmark, setBookmark, coverSwitch, setCoverSwitch } = props
+function RndComponent() {
+  const [fontSize, setFontSize] = useState(22)
+  const [bookmark, setBookmark] = useRecoilState(BookMark)
+  const [coverSwitch, setCoverSwitch] = useRecoilState(CoverOpen)
   const [, setText_update] = useRecoilState(Text_Switch)
   const [updatedText, setUpdatedText] = useRecoilState(Long_Text)
 
