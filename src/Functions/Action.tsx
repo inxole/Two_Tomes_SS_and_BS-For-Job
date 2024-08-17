@@ -47,7 +47,6 @@ export function ToggleAnimationHandler(
     dispatchers: React.Dispatch<Action>[],
     glb_dispatcher: [PageState, React.Dispatch<Action>],
     bookmarkRef: React.MutableRefObject<number>,
-    coverSwitchRef: React.MutableRefObject<boolean>
 ) {
     const skeletonRefs = scene.skeletons as Skeleton[]
     const toggleAnimationSetups: ToggleAnimationSetup[] = [
@@ -91,7 +90,6 @@ export function ToggleAnimationHandler(
                         type: "TOGGLE",
                         open: () => {
                             isAnimationPlaying = true
-                            coverSwitchRef.current = true
 
                             openPageAnimation(animationData)
 
@@ -102,7 +100,6 @@ export function ToggleAnimationHandler(
                         },
                         close: () => {
                             isAnimationPlaying = true
-                            coverSwitchRef.current = false
 
                             closePageAnimation(animationData)
 

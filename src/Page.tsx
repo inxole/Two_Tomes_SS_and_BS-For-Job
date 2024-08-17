@@ -1,5 +1,5 @@
 import { useEffect, useRef, useReducer } from 'react'
-import { BookMark, CoverOpen, Long_Text, Text_Switch } from './atom'
+import { BookMark, Long_Text, Text_Switch } from './atom'
 import { useRecoilState, useRecoilValue } from 'recoil'
 import { AnimationGroup, Scene, DynamicTexture, Skeleton, Mesh } from '@babylonjs/core'
 import { initializeScene } from './Babylon_Scene'
@@ -20,9 +20,7 @@ function CanvasComponent() {
     const root_controller = useRef<Mesh | null>(null)
     const animationData = sceneRef.current?.animationGroups as AnimationGroup[]
     const [bookmark, setBookmark] = useRecoilState(BookMark)
-    const [coverSwitch, setCoverSwitch] = useRecoilState(CoverOpen)
     const bookmarkRef = useRef(bookmark)
-    const coverSwitchRef = useRef(false)
 
     // Initialize the scene
     useEffect(() => {
@@ -84,13 +82,7 @@ function CanvasComponent() {
             closePageAnimation(animationData)
             console.debug("cover close")
         }
-        //  else {}
     }, [bookmark])
-
-    // Preventing unnecessary triggers
-    useEffect(() => {
-        coverSwitchRef.current = coverSwitch
-    }, [coverSwitch])
 
     // Move this code to a separate useEffect
     useEffect(() => {
@@ -105,18 +97,16 @@ function CanvasComponent() {
                     dispatchers,
                     glb_dispatcher,
                     bookmarkRef,
-                    coverSwitchRef
                 )
 
                 setBookmark(bookmarkRef.current)
-                setCoverSwitch(coverSwitchRef.current)
             }
         )
 
         return () => {
             scene.onPointerObservable.clear()
         }
-    }, [setBookmark, setCoverSwitch])
+    }, [setBookmark])
 
     return <canvas ref={canvasRef} style={{ width: '100%', height: '100%' }} />
 }

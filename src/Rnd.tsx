@@ -67,19 +67,6 @@ function RndComponent() {
           </div>
         </div>
         <div style={{ width: '330px', height: '200px', display: 'flex', paddingBottom: '5px' }}>
-          {/* <div style={{ display: 'flex', flexDirection: 'column', marginTop: '5px', marginRight: '5px', border: '1px solid black', borderRadius: '8px', padding: '2px' }}>
-            <span>表紙</span>
-            <Button
-              size='small' variant="contained" color="primary" style={{ margin: '5px 0' }}
-              disabled={coverSwitch ? true : false}
-              onClick={() => setCoverSwitch(true)}
-            >開く</Button>
-            <Button
-              size='small' variant="contained" color="primary" style={{ margin: '5px 0' }}
-              onClick={() => setCoverSwitch(false)}
-              disabled={!coverSwitch ? true : false}
-            >閉じる</Button>
-          </div> */}
           <div style={{ flexGrow: 1, marginTop: '5px', marginLeft: '5px', border: '1px solid black', borderRadius: '8px', padding: '5px' }}>
             <div style={{ display: 'flex', justifyContent: 'center', marginBottom: '10px' }}>
               <span style={{ marginRight: '10px' }} />ページ管理
