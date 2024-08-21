@@ -1,7 +1,7 @@
 import { useEffect, useRef, useReducer } from 'react'
 import { BookMark, Long_Text, Text_Switch } from './atom'
 import { useRecoilState, useRecoilValue } from 'recoil'
-import { AnimationGroup, Scene, DynamicTexture, Skeleton, Mesh } from '@babylonjs/core'
+import { AnimationGroup, Scene, DynamicTexture, Skeleton, Mesh, PointerEventTypes } from '@babylonjs/core'
 import { initializeScene } from './Babylon_Scene'
 import { animationReducer, closePageAnimation, openPageAnimation, ToggleAnimationHandler, useDynamicReducers } from './Functions/Action'
 
@@ -20,7 +20,7 @@ function CanvasComponent() {
     const root_controller = useRef<Mesh | null>(null)
     const animationData = sceneRef.current?.animationGroups as AnimationGroup[]
     const [bookmark, setBookmark] = useRecoilState(BookMark)
-    const bookmarkRef = useRef(bookmark)
+    const bookmarkRef = useRef(bookmark);
 
     // Initialize the scene
     useEffect(() => {
@@ -45,12 +45,16 @@ function CanvasComponent() {
 
     }, [text_update])
 
+    // useEffect(() => {
+    //     bookmarkRef.current = bookmark
+    // }, [bookmark])
+
     // Update bookmark
     useEffect(() => {
+        console.log("updated bookmark", bookmark)
         const scene = sceneRef.current
         if (!scene) return
         dispatchers.forEach((dispatch, index) => {
-            // console.info("bookmark: ", bookmark, ", index: ", index)
             if (index == 0) { // front cover toggle
                 if (bookmark >= 1) {
 
@@ -58,7 +62,7 @@ function CanvasComponent() {
                         type: "OPEN",
                         open: () => {
                             openPageAnimation(animationData)
-                            console.debug("cover open")
+                            console.log("open cover")
                         },
                         close: () => { console.error("open cover error") }
                     })
@@ -69,8 +73,8 @@ function CanvasComponent() {
                         type: "CLOSE",
                         open: () => { console.error("close cover fail") },
                         close: () => {
+                            console.log("close cover")
                             closePageAnimation(animationData)
-                            console.debug("cover close")
                         }
                     })
                     return
@@ -81,8 +85,8 @@ function CanvasComponent() {
                 dispatch({
                     type: "OPEN",
                     open: () => {
+                        console.log(`page ${index} open`)
                         pageFrontAnimation(scene, index - 1)
-                        console.debug(`page ${index} open`)
                     },
                     close: () => { console.error(`page ${index} open fail`) }
                 })
@@ -91,8 +95,8 @@ function CanvasComponent() {
                     type: "CLOSE",
                     open: () => { console.error(`page ${index} close fail`) },
                     close: () => {
-                        pageBackAnimation(scene, index - 1)
                         console.log(`page ${index} close`)
+                        pageBackAnimation(scene, index - 1)
                     }
                 })
             }
@@ -106,22 +110,22 @@ function CanvasComponent() {
 
         scene.onPointerObservable.add(
             (pointerInfo) => {
+                // console.log("toggle animation handler start")
+                if (!(pointerInfo.type === PointerEventTypes.POINTERDOWN)) { return }
                 ToggleAnimationHandler(
                     pointerInfo,
                     scene,
                     dispatchers,
-                    glb_dispatcher,
                     bookmarkRef,
+                    setBookmark,
                 )
-
-                setBookmark(bookmarkRef.current)
             }
         )
 
         return () => {
             scene.onPointerObservable.clear()
         }
-    }, [setBookmark])
+    }, [])
 
     return <canvas ref={canvasRef} style={{ width: '100%', height: '100%' }} />
 }

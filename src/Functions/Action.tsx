@@ -1,8 +1,10 @@
 import { AnimationGroup, PointerEventTypes, PointerInfo, Scene, Skeleton } from "@babylonjs/core"
 import { Reducer, useReducer } from "react"
 import { BookCover } from './Tome_BS'
+import { pagesOpenInfo } from "./Switch"
+import { SetterOrUpdater } from "recoil"
 
-export type Action = { type: string, open: VoidFunction, close: VoidFunction }
+export type Action = { type: string, open?: VoidFunction, close?: VoidFunction }
 export type PageState = { isOpen: boolean }
 
 export type ToggleAnimationSetup = {
@@ -20,14 +22,14 @@ export type ToggleAnimationSetup = {
 export function animationReducer(state: PageState, action: Action): PageState {
     switch (action.type) {
         case 'TOGGLE':
-            if (state.isOpen) { action.close() }
-            else { action.open() }
+            if (state.isOpen) { action.close ? action.close() : {} }
+            else { action.open ? action.open() : {} }
             return { isOpen: !state.isOpen }
         case 'OPEN':
-            if (!state.isOpen) { action.open() }
+            if (!state.isOpen) { action.open ? action.open() : {} }
             return { isOpen: true }
         case 'CLOSE':
-            if (state.isOpen) { action.close() }
+            if (state.isOpen) { action.close ? action.close() : {} }
             return { isOpen: false }
         default:
             throw new Error()
@@ -45,78 +47,61 @@ export function ToggleAnimationHandler(
     pointerInfo: PointerInfo,
     scene: Scene,
     dispatchers: React.Dispatch<Action>[],
-    glb_dispatcher: [PageState, React.Dispatch<Action>],
     bookmarkRef: React.MutableRefObject<number>,
+    setBookmark: SetterOrUpdater<number>,
 ) {
-    const skeletonRefs = scene.skeletons as Skeleton[]
-    const toggleAnimationSetups: ToggleAnimationSetup[] = [
-        ...skeletonRefs.map((skeleton, index) => ({
-            dispatch: dispatchers[index],
-            skeleton: skeleton,
-            pickNamePattern: new RegExp(`^hitBox_animation${index}`)
-        })),
-        {
-            dispatch: glb_dispatcher[1],
-            skeleton: BookCover.skeleton as Skeleton,
-            pickNamePattern: new RegExp(`^Tome_hitBox`)
-        }
-    ];
+    const bookmark = bookmarkRef.current
+    let newBookmark: number | undefined = undefined
     const animationData = scene.animationGroups as AnimationGroup[]
     if (!pointerInfo.pickInfo) { return }
-    if (isAnimationPlaying) { return }
-    if (!(pointerInfo.type === PointerEventTypes.POINTERDOWN)) { return }
     if (!pointerInfo.pickInfo.hit) { return }
-
-        for (const { dispatch, skeleton, pickNamePattern } of toggleAnimationSetups) {
-        const name = pointerInfo.pickInfo.pickedMesh?.name || ""
-        if (name == "") { return }
-        if (pickNamePattern.test(name || "")) {
-            if (name.startsWith(`hitBox_animation${bookmarkRef.current}`)) {
-                    dispatch({
-                        type: "OPEN",
-                        open: () => {
-                            scene.beginAnimation(skeleton, 0, 60, true, undefined, () => {
-                                bookmarkRef.current += 1
-                            })
-                        },
-                        close: () => { }
-                    })
-            } else if (name.startsWith(`hitBox_animation${bookmarkRef.current - 1}`)) {
-                    dispatch({
-                        type: "CLOSE",
-                        open: () => { },
-                        close: () => {
-                            scene.beginAnimation(skeleton, 60, 120, true, undefined, () => { })
-                            bookmarkRef.current -= 1
-                        }
-                    })
-            } else if (bookmarkRef.current === 0 && !isAnimationPlaying && !name.startsWith(`hitBox_animation`)) {
-                    dispatch({
-                        type: "TOGGLE",
-                        open: () => {
-                            isAnimationPlaying = true
-
-                            openPageAnimation(animationData)
-
-                            const AD = AnimationDictionary
-                            animationData[AD.BS_action_0_90].onAnimationEndObservable.addOnce(() => {
-                                isAnimationPlaying = false
-                            })
-                        },
-                        close: () => {
-                            isAnimationPlaying = true
-
-                            closePageAnimation(animationData)
-
-                            const AD = AnimationDictionary
-                            animationData[AD.BS_action_back]?.onAnimationEndObservable.addOnce(() => {
-                                isAnimationPlaying = false
-                            })
-                        }
-                    })
-            }
+    const name = pointerInfo.pickInfo.pickedMesh?.name || ""
+    if (name == "") { return }
+    const prefix = "animation"
+    const splitted = name.split('_')[1]
+    const cuttedNumber = splitted.substring(prefix.length)
+    const hitBoxNumber: number = parseInt(cuttedNumber)
+    const test = name + "->" + splitted + "->" + cuttedNumber
+    setBookmark(previous => {
+        if (previous == hitBoxNumber + 1) {
+            console.log(test, "increment", previous, "->", previous + 1); return previous + 1
+        } else if (previous == hitBoxNumber + 2) {
+            console.log(test, "decrement", previous, "->", previous - 1); return previous - 1
+        } else {
+            console.log(test, "no need change", previous, "->", previous); return previous
         }
-    }
+    })
+
+    dispatchers.forEach(dispatch => {
+        if (false && bookmark === 0 && !isAnimationPlaying && !name.startsWith(`hitBox_animation`)) {
+            dispatch({
+                type: "TOGGLE",
+                open: () => {
+                    isAnimationPlaying = true
+
+                    openPageAnimation(animationData)
+
+                    const AD = AnimationDictionary
+                    animationData[AD.BS_action_0_90].onAnimationEndObservable.addOnce(() => {
+                        isAnimationPlaying = false
+                    })
+                    console.log("toggle", "open", bookmark)
+                },
+                close: () => {
+                    isAnimationPlaying = true
+
+                    closePageAnimation(animationData)
+
+                    const AD = AnimationDictionary
+                    animationData[AD.BS_action_back]?.onAnimationEndObservable.addOnce(() => {
+                        isAnimationPlaying = false
+                    })
+                    console.log("toggle", "close", bookmark)
+                }
+            })
+        }
+    })
+    return newBookmark
 }
 
 /**
