@@ -62,11 +62,16 @@ export function ToggleAnimationHandler(
         }
     ];
     const animationData = scene.animationGroups as AnimationGroup[]
+    if (!pointerInfo.pickInfo) { return }
     if (isAnimationPlaying) { return }
-    if (pointerInfo.pickInfo !== null && pointerInfo.type === PointerEventTypes.POINTERDOWN) {
+    if (!(pointerInfo.type === PointerEventTypes.POINTERDOWN)) { return }
+    if (!pointerInfo.pickInfo.hit) { return }
+
         for (const { dispatch, skeleton, pickNamePattern } of toggleAnimationSetups) {
-            if (pointerInfo.pickInfo.hit && pickNamePattern.test(pointerInfo.pickInfo.pickedMesh?.name || "")) {
-                if (pointerInfo.pickInfo.pickedMesh?.name.startsWith(`hitBox_animation${bookmarkRef.current}`)) {
+        const name = pointerInfo.pickInfo.pickedMesh?.name || ""
+        if (name == "") { return }
+        if (pickNamePattern.test(name || "")) {
+            if (name.startsWith(`hitBox_animation${bookmarkRef.current}`)) {
                     dispatch({
                         type: "OPEN",
                         open: () => {
@@ -76,7 +81,7 @@ export function ToggleAnimationHandler(
                         },
                         close: () => { }
                     })
-                } else if (pointerInfo.pickInfo.pickedMesh?.name.startsWith(`hitBox_animation${bookmarkRef.current - 1}`)) {
+            } else if (name.startsWith(`hitBox_animation${bookmarkRef.current - 1}`)) {
                     dispatch({
                         type: "CLOSE",
                         open: () => { },
@@ -85,7 +90,7 @@ export function ToggleAnimationHandler(
                             bookmarkRef.current -= 1
                         }
                     })
-                } else if (bookmarkRef.current === 0 && !isAnimationPlaying && !pointerInfo.pickInfo.pickedMesh?.name.startsWith(`hitBox_animation`)) {
+            } else if (bookmarkRef.current === 0 && !isAnimationPlaying && !name.startsWith(`hitBox_animation`)) {
                     dispatch({
                         type: "TOGGLE",
                         open: () => {
@@ -109,7 +114,6 @@ export function ToggleAnimationHandler(
                             })
                         }
                     })
-                } else { return }
             }
         }
     }
