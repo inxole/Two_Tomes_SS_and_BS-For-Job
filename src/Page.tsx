@@ -1,4 +1,4 @@
-import { useEffect, useRef, useReducer } from 'react'
+import { useEffect, useRef } from 'react'
 import { BookMark, Long_Text, Text_Switch } from './atom'
 import { useRecoilState, useRecoilValue } from 'recoil'
 import { AnimationGroup, Scene, DynamicTexture, Skeleton, Mesh, PointerEventTypes } from '@babylonjs/core'
@@ -16,11 +16,9 @@ function CanvasComponent() {
     const [text_update, setText_update] = useRecoilState(Text_Switch)
     const updated_text = useRecoilValue(Long_Text)
     const dispatchers = useDynamicReducers(animationReducer, { isOpen: false }, pageAmount).map(([_, dispatch]) => dispatch)
-    const glb_dispatcher = useReducer(animationReducer, { isOpen: false })
     const root_controller = useRef<Mesh | null>(null)
     const animationData = sceneRef.current?.animationGroups as AnimationGroup[]
     const [bookmark, setBookmark] = useRecoilState(BookMark)
-    const bookmarkRef = useRef(bookmark);
 
     // Initialize the scene
     useEffect(() => {
@@ -45,10 +43,6 @@ function CanvasComponent() {
 
     }, [text_update])
 
-    // useEffect(() => {
-    //     bookmarkRef.current = bookmark
-    // }, [bookmark])
-
     // Update bookmark
     useEffect(() => {
         console.log("updated bookmark", bookmark)
@@ -62,7 +56,6 @@ function CanvasComponent() {
                         type: "OPEN",
                         open: () => {
                             openPageAnimation(animationData)
-                            console.log("open cover")
                         },
                         close: () => { console.error("open cover error") }
                     })
@@ -73,7 +66,6 @@ function CanvasComponent() {
                         type: "CLOSE",
                         open: () => { console.error("close cover fail") },
                         close: () => {
-                            console.log("close cover")
                             closePageAnimation(animationData)
                         }
                     })
@@ -85,7 +77,6 @@ function CanvasComponent() {
                 dispatch({
                     type: "OPEN",
                     open: () => {
-                        console.log(`page ${index} open`)
                         pageFrontAnimation(scene, index - 1)
                     },
                     close: () => { console.error(`page ${index} open fail`) }
@@ -95,7 +86,6 @@ function CanvasComponent() {
                     type: "CLOSE",
                     open: () => { console.error(`page ${index} close fail`) },
                     close: () => {
-                        console.log(`page ${index} close`)
                         pageBackAnimation(scene, index - 1)
                     }
                 })
@@ -110,13 +100,9 @@ function CanvasComponent() {
 
         scene.onPointerObservable.add(
             (pointerInfo) => {
-                // console.log("toggle animation handler start")
                 if (!(pointerInfo.type === PointerEventTypes.POINTERDOWN)) { return }
                 ToggleAnimationHandler(
                     pointerInfo,
-                    scene,
-                    dispatchers,
-                    bookmarkRef,
                     setBookmark,
                 )
             }

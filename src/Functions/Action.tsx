@@ -1,7 +1,5 @@
-import { AnimationGroup, PointerEventTypes, PointerInfo, Scene, Skeleton } from "@babylonjs/core"
+import { AnimationGroup, PointerInfo, Skeleton } from "@babylonjs/core"
 import { Reducer, useReducer } from "react"
-import { BookCover } from './Tome_BS'
-import { pagesOpenInfo } from "./Switch"
 import { SetterOrUpdater } from "recoil"
 
 export type Action = { type: string, open?: VoidFunction, close?: VoidFunction }
@@ -36,7 +34,6 @@ export function animationReducer(state: PageState, action: Action): PageState {
     }
 }
 
-let isAnimationPlaying = false
 /**
  * mouse event handler for animation toggle
  * @param pointerInfo on pointer event
@@ -45,14 +42,8 @@ let isAnimationPlaying = false
  */
 export function ToggleAnimationHandler(
     pointerInfo: PointerInfo,
-    scene: Scene,
-    dispatchers: React.Dispatch<Action>[],
-    bookmarkRef: React.MutableRefObject<number>,
     setBookmark: SetterOrUpdater<number>,
 ) {
-    const bookmark = bookmarkRef.current
-    let newBookmark: number | undefined = undefined
-    const animationData = scene.animationGroups as AnimationGroup[]
     if (!pointerInfo.pickInfo) { return }
     if (!pointerInfo.pickInfo.hit) { return }
     const name = pointerInfo.pickInfo.pickedMesh?.name || ""
@@ -67,41 +58,16 @@ export function ToggleAnimationHandler(
             console.log(test, "increment", previous, "->", previous + 1); return previous + 1
         } else if (previous == hitBoxNumber + 2) {
             console.log(test, "decrement", previous, "->", previous - 1); return previous - 1
+        } else if (previous === 0) {
+            console.log("open")
+            return previous + 1
+        } else if (previous === 1) {
+            console.log("close")
+            return previous - 1
         } else {
             console.log(test, "no need change", previous, "->", previous); return previous
         }
     })
-
-    dispatchers.forEach(dispatch => {
-        if (false && bookmark === 0 && !isAnimationPlaying && !name.startsWith(`hitBox_animation`)) {
-            dispatch({
-                type: "TOGGLE",
-                open: () => {
-                    isAnimationPlaying = true
-
-                    openPageAnimation(animationData)
-
-                    const AD = AnimationDictionary
-                    animationData[AD.BS_action_0_90].onAnimationEndObservable.addOnce(() => {
-                        isAnimationPlaying = false
-                    })
-                    console.log("toggle", "open", bookmark)
-                },
-                close: () => {
-                    isAnimationPlaying = true
-
-                    closePageAnimation(animationData)
-
-                    const AD = AnimationDictionary
-                    animationData[AD.BS_action_back]?.onAnimationEndObservable.addOnce(() => {
-                        isAnimationPlaying = false
-                    })
-                    console.log("toggle", "close", bookmark)
-                }
-            })
-        }
-    })
-    return newBookmark
 }
 
 /**
