@@ -1,5 +1,5 @@
 import { useEffect, useRef } from 'react'
-import { BookMark, Long_Text, Text_Switch } from './atom'
+import { BookMark, CoverSwitch, Long_Text, Text_Switch } from './atom'
 import { useRecoilState, useRecoilValue } from 'recoil'
 import { AnimationGroup, Scene, DynamicTexture, Skeleton, Mesh, PointerEventTypes } from '@babylonjs/core'
 import { initializeScene } from './Babylon_Scene'
@@ -19,6 +19,7 @@ function CanvasComponent() {
     const root_controller = useRef<Mesh | null>(null)
     const animationData = sceneRef.current?.animationGroups as AnimationGroup[]
     const [bookmark, setBookmark] = useRecoilState(BookMark)
+    const coverCheck = useRecoilValue(CoverSwitch)
 
     // Initialize the scene
     useEffect(() => {
@@ -111,6 +112,24 @@ function CanvasComponent() {
             scene.onPointerObservable.clear()
         }
     }, [])
+
+    useEffect(() => {
+        const scene = sceneRef.current
+        if (!scene) return
+        if (coverCheck) {
+            scene.meshes.forEach(mesh => {
+                if (mesh.name.includes('hitBox')) {
+                    mesh.isPickable = false
+                }
+            })
+        } else {
+            scene.meshes.forEach(mesh => {
+                if (mesh.name.includes('hitBox')) {
+                    mesh.isPickable = true
+                }
+            })
+        }
+    }, [coverCheck])
 
     return <canvas ref={canvasRef} style={{ width: '100%', height: '100%' }} />
 }

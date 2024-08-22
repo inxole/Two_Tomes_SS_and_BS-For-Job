@@ -1,6 +1,6 @@
 import { useEffect, useRef, useState } from 'react'
 import { useRecoilState } from 'recoil'
-import { BookMark, Long_Text, Text_Switch } from './atom'
+import { BookMark, CoverSwitch, Long_Text, Text_Switch } from './atom'
 import { Rnd } from 'react-rnd'
 import { Button, Slider } from '@mui/material'
 
@@ -62,7 +62,7 @@ function BackIndexDisplay(props: IndexDisplayProps) {
 
 function PageSlider() {
   const [bookmark, setBookmark] = useRecoilState(BookMark)
-  const [isSliderDisabled, setIsSliderDisabled] = useState(false)
+  const [isSliderDisabled, setIsSliderDisabled] = useRecoilState(CoverSwitch)
   const prevBookmarkRef = useRef(bookmark)
 
   useEffect(() => {
