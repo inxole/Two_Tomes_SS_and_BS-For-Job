@@ -52,20 +52,17 @@ export function ToggleAnimationHandler(
     const splitted = name.split('_')[1]
     const cuttedNumber = splitted.substring(prefix.length)
     const hitBoxNumber: number = parseInt(cuttedNumber)
-    const test = name + "->" + splitted + "->" + cuttedNumber
     setBookmark(previous => {
         if (previous == hitBoxNumber + 1) {
-            console.log(test, "increment", previous, "->", previous + 1); return previous + 1
+            return previous + 1
         } else if (previous == hitBoxNumber + 2) {
-            console.log(test, "decrement", previous, "->", previous - 1); return previous - 1
+            return previous - 1
         } else if (previous === 0) {
-            console.log("open")
             return previous + 1
         } else if (previous === 1) {
-            console.log("close")
             return previous - 1
         } else {
-            console.log(test, "no need change", previous, "->", previous); return previous
+            return previous
         }
     })
 }

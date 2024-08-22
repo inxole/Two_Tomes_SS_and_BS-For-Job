@@ -45,7 +45,6 @@ function CanvasComponent() {
 
     // Update bookmark
     useEffect(() => {
-        console.log("updated bookmark", bookmark)
         const scene = sceneRef.current
         if (!scene) return
         dispatchers.forEach((dispatch, index) => {

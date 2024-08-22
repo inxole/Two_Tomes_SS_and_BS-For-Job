@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import { useRecoilState } from 'recoil'
 import { BookMark, Long_Text, Text_Switch } from './atom'
 import { Rnd } from 'react-rnd'
@@ -62,6 +62,22 @@ function BackIndexDisplay(props: IndexDisplayProps) {
 
 function PageSlider() {
   const [bookmark, setBookmark] = useRecoilState(BookMark)
+  const [isSliderDisabled, setIsSliderDisabled] = useState(false)
+  const prevBookmarkRef = useRef(bookmark)
+
+  useEffect(() => {
+    const prevBookmark = prevBookmarkRef.current
+
+    if (bookmark <= 1 && prevBookmark <= 1) {
+      setIsSliderDisabled(true)
+      const timer = setTimeout(() => {
+        setIsSliderDisabled(false)
+      }, 1001)
+      return () => clearTimeout(timer)
+    }
+    prevBookmarkRef.current = bookmark
+  }, [bookmark])
+
   return (
     <div style={{ flexGrow: 1, marginTop: '5px', marginLeft: '5px' }}>
       <div style={{ display: 'flex', justifyContent: 'center', marginBottom: '10px' }}>
@@ -78,6 +94,7 @@ function PageSlider() {
           step={1} min={0} max={51}
           style={{ flexGrow: 1, marginLeft: '10px' }}
           onChange={(_, newValue) => setBookmark(newValue as number)}
+          disabled={isSliderDisabled}
         />
       </div>
     </div>
