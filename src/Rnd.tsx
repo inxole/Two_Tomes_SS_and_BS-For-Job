@@ -56,7 +56,7 @@ function BackIndexDisplay(props: IndexDisplayProps) {
   const bookmark = index
   let label = ''
   if (bookmark === 0) label = '表紙'
-  else if (bookmark === 51) label = '裏表紙'
+  else if (bookmark === 51) label = '背表紙'
   else label = `${bookmark * 2 - 1} ページ`
   return <span style={{ fontWeight: 'bold', fontSize: '16px' }} >{label}</span>
 }
@@ -96,6 +96,13 @@ function PageSlider() {
           style={{ flexGrow: 1 }}
           onChange={(_, newValue) => setBookmark(newValue as number)}
           disabled={bookmark === 0 ? true : isSliderDisabled}
+          valueLabelFormat={() => (
+            <span>
+              <span style={{ marginRight: '8px' }}>{bookmark === 1 ? '表紙' : bookmark * 2 - 2}</span>
+              |
+              <span style={{ marginLeft: '8px' }}>{bookmark === 51 ? '背表紙' : bookmark * 2 - 1}</span>
+            </span>
+          )}
         />
       </div>
     </div>
@@ -104,6 +111,18 @@ function PageSlider() {
 
 function CoverState() {
   const [bookmark, setBookmark] = useRecoilState(BookMark)
+
+  const decreaseBookmark = () => {
+    let currentBookmark = bookmark
+    const intervalId = setInterval(() => {
+      if (currentBookmark > 0) {
+        currentBookmark -= 1
+        setBookmark(currentBookmark)
+      } else {
+        clearInterval(intervalId)
+      }
+    }, 20)
+  }
 
   return (
     <div style={{ display: 'flex', flexDirection: 'column', marginTop: '5px', marginRight: '5px', marginBottom: '2px', paddingRight: '5px', borderRight: '1px solid black' }}>
@@ -116,7 +135,7 @@ function CoverState() {
       <Button
         size='small' variant="contained" color="primary" style={{ margin: '2px ' }}
         disabled={bookmark === 0 ? true : false}
-        onClick={() => setBookmark(0)}
+        onClick={decreaseBookmark}
       >閉じる</Button>
     </div>
   )
