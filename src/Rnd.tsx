@@ -9,7 +9,7 @@ function RndComponent() {
   return (
     <Rnd
       default={{ x: 400, y: 20, width: 350, height: 480 }}
-      style={{ backgroundColor: 'rgba(255, 255, 255, 0.65)', padding: '10px', borderRadius: '8px', paddingBottom: '5px', paddingTop: '40px' }}
+      style={{ backgroundColor: 'rgba(255, 255, 255, 0.65)', borderRadius: '8px', paddingLeft: '4px', paddingBottom: '4px', paddingTop: '40px' }}
       enableResizing={{
         bottom: true, bottomLeft: true, bottomRight: true,
         left: true, right: true,
@@ -25,10 +25,11 @@ function RndComponent() {
         <div style={{ width: '330px', height: '200px', display: 'flex', ...BorderStyle }}>
           <TextInput />
         </div>
-        <div style={{ width: '330px', height: '200px', display: 'flex', ...BorderStyle }}>
+        <div style={{ width: '330px', height: '100px', display: 'flex', ...BorderStyle }}>
           <FontSizeSlider />
         </div>
-        <div style={{ width: '330px', height: '200px', display: 'flex', ...BorderStyle }}>
+        <div style={{ width: '330px', height: '100px', display: 'flex', ...BorderStyle }}>
+          <CoverState />
           <PageSlider />
         </div>
       </div>
@@ -47,7 +48,7 @@ function FrontIndexDisplay(props: IndexDisplayProps) {
   if (bookmark === 0) label = '表紙'
   else if (bookmark === -1) label = '-'
   else label = `${bookmark * 2} ページ`
-  return <span style={{ fontWeight: 'bold', fontSize: '16px', marginRight: '10px' }} >{label}</span>
+  return <span style={{ fontWeight: 'bold', fontSize: '16px' }} >{label}</span>
 }
 
 function BackIndexDisplay(props: IndexDisplayProps) {
@@ -57,7 +58,7 @@ function BackIndexDisplay(props: IndexDisplayProps) {
   if (bookmark === 0) label = '表紙'
   else if (bookmark === 51) label = '裏表紙'
   else label = `${bookmark * 2 - 1} ページ`
-  return <span style={{ fontWeight: 'bold', fontSize: '16px', marginRight: '10px' }} >{label}</span>
+  return <span style={{ fontWeight: 'bold', fontSize: '16px' }} >{label}</span>
 }
 
 function PageSlider() {
@@ -79,9 +80,9 @@ function PageSlider() {
   }, [bookmark])
 
   return (
-    <div style={{ flexGrow: 1, marginTop: '5px', marginLeft: '5px' }}>
+    <div style={{ flexGrow: 1, marginLeft: '10px' }}>
       <div style={{ display: 'flex', justifyContent: 'center', marginBottom: '10px' }}>
-        <span style={{ marginRight: '10px' }} />ページ管理
+        <span />ページ管理
       </div>
       <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '10px' }}>
         <FrontIndexDisplay index={bookmark} />
@@ -91,12 +92,32 @@ function PageSlider() {
         <Slider
           value={bookmark}
           aria-labelledby='page-count-slider' valueLabelDisplay='auto'
-          step={1} min={0} max={51}
-          style={{ flexGrow: 1, marginLeft: '10px' }}
+          step={1} min={1} max={51}
+          style={{ flexGrow: 1 }}
           onChange={(_, newValue) => setBookmark(newValue as number)}
-          disabled={isSliderDisabled}
+          disabled={bookmark === 0 ? true : isSliderDisabled}
         />
       </div>
+    </div>
+  )
+}
+
+function CoverState() {
+  const [bookmark, setBookmark] = useRecoilState(BookMark)
+
+  return (
+    <div style={{ display: 'flex', flexDirection: 'column', marginTop: '5px', marginRight: '5px', marginBottom: '2px', paddingRight: '5px', borderRight: '1px solid black' }}>
+      <span style={{ display: 'flex', justifyContent: 'center', paddingBottom: '5px' }}>表紙</span>
+      <Button
+        size='small' variant="contained" color="primary" style={{ marginLeft: '2px', marginRight: '2px', marginBottom: '2px' }}
+        disabled={bookmark === 0 ? false : true}
+        onClick={() => setBookmark(1)}
+      >開く</Button>
+      <Button
+        size='small' variant="contained" color="primary" style={{ margin: '2px ' }}
+        disabled={bookmark === 0 ? true : false}
+        onClick={() => setBookmark(0)}
+      >閉じる</Button>
     </div>
   )
 }
@@ -106,7 +127,7 @@ function FontSizeSlider() {
   return (
 
     <div style={{ width: '324px', height: '120px', marginTop: '5px', marginBottom: '5px' }}>
-      <span style={{ marginRight: '10px' }}>フォントサイズ</span>
+      <span >フォントサイズ</span>
       <div style={{ display: 'flex', alignItems: 'center', marginBottom: '10px' }}>
         <input
           type='number'
@@ -118,7 +139,7 @@ function FontSizeSlider() {
             }
           }}
           min={10} max={100}
-          style={{ width: '60px', marginRight: '10px' }}
+          style={{ width: '60px' }}
         />
         <Slider
           value={fontSize} aria-labelledby='font-size-slider' valueLabelDisplay='auto'
@@ -141,7 +162,7 @@ function TextInput() {
   }
 
   return (
-    <div style={{ display: 'flex', flexDirection: 'column', width: '100%' }}>
+    <div style={{ display: 'flex', flexDirection: 'column', width: '100%', resize: '-moz-initial' }}>
       <textarea
         style={{
           width: '100%', height: '100%',
