@@ -1,8 +1,9 @@
-import { useEffect, useRef, useState } from 'react'
+import React, { useEffect, useRef, useState } from 'react'
 import { useRecoilState } from 'recoil'
 import { BookMark, CoverSwitch, Long_Text, Text_Switch } from './atom'
 import { Rnd } from 'react-rnd'
 import { Button, Slider } from '@mui/material'
+import StarIcon from '@mui/icons-material/Star'
 
 function RndComponent() {
 
@@ -61,6 +62,63 @@ function BackIndexDisplay(props: IndexDisplayProps) {
   return <span style={{ fontWeight: 'bold', fontSize: '16px' }} >{label}</span>
 }
 
+function AutoOpenToBookmark() {
+  const [bookmark, setBookmark] = useRecoilState(BookMark)
+  const [inputValue, setInputValue] = useState('1')
+  const [, setIsSliderDisabled] = useRecoilState(CoverSwitch)
+
+  const handleInputChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    const value = parseInt(event.target.value, 10)
+    if (value >= 1 && value <= 51) {
+      setInputValue(`${value}`)
+    }
+  }
+
+  const handleButtonClick = () => {
+    const target = parseInt(inputValue, 10)
+    if (target >= 1 && target <= 51) {
+      let currentBookmark = bookmark
+      const step = () => {
+        if (currentBookmark < target) {
+          currentBookmark++
+        } else if (currentBookmark > target) {
+          currentBookmark--
+        }
+        setBookmark(currentBookmark)
+        if (currentBookmark !== target) {
+          if (bookmark === 0 && currentBookmark === 1) {
+            setTimeout(() => {
+              setBookmark(1)
+              setIsSliderDisabled(false)
+              currentBookmark = 1
+              step()
+            }, 1002)
+          } else {
+            setTimeout(step, 20)
+          }
+        }
+      }
+      step()
+    }
+  }
+
+  return (
+    <div style={{ display: 'flex', justifyContent: 'center' }}>
+      <div style={{ paddingLeft: '20px' }}>
+        <StarIcon onClick={handleButtonClick} color='warning' />
+      </div>
+      <input
+        type="number"
+        value={inputValue}
+        onChange={handleInputChange}
+        min={1}
+        max={51}
+        style={{ width: '40px' }}
+      />
+    </div>
+  )
+}
+
 function PageSlider() {
   const [bookmark, setBookmark] = useRecoilState(BookMark)
   const [isSliderDisabled, setIsSliderDisabled] = useRecoilState(CoverSwitch)
@@ -84,8 +142,9 @@ function PageSlider() {
       <div style={{ display: 'flex', justifyContent: 'center', marginBottom: '10px' }}>
         <span />ページ管理
       </div>
-      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '10px' }}>
+      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '5px' }}>
         <FrontIndexDisplay index={bookmark} />
+        <AutoOpenToBookmark />
         <BackIndexDisplay index={bookmark} />
       </div>
       <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', marginBottom: '10px' }}>
