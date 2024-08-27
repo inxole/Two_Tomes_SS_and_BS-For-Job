@@ -48,8 +48,8 @@ function FrontIndexDisplay(props: IndexDisplayProps) {
   let label = ''
   if (bookmark === 0) label = '表紙'
   else if (bookmark === -1) label = '-'
-  else label = `${bookmark * 2} ページ`
-  return <span style={{ fontWeight: 'bold', fontSize: '16px' }} >{label}</span>
+  else label = `${bookmark * 2} page`
+  return <span style={{ fontWeight: 'bold', fontSize: '16px', width: '70px', display: 'inline-block' }} >{label}</span>
 }
 
 function BackIndexDisplay(props: IndexDisplayProps) {
@@ -58,8 +58,8 @@ function BackIndexDisplay(props: IndexDisplayProps) {
   let label = ''
   if (bookmark === 0) label = '表紙'
   else if (bookmark === 51) label = '背表紙'
-  else label = `${bookmark * 2 - 1} ページ`
-  return <span style={{ fontWeight: 'bold', fontSize: '16px' }} >{label}</span>
+  else label = `${bookmark * 2 - 1} page`
+  return (<span style={{ fontWeight: 'bold', fontSize: '16px', width: '70px', display: 'inline-block', textAlign: 'right' }} >{label}</span>)
 }
 
 function AutoOpenToBookmark() {
@@ -69,13 +69,18 @@ function AutoOpenToBookmark() {
 
   const handleInputChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     const value = parseInt(event.target.value, 10)
-    if (value >= 1 && value <= 51) {
+    if (value >= 1 && value <= 100) {
       setInputValue(`${value}`)
     }
   }
 
   const handleButtonClick = () => {
-    const target = parseInt(inputValue, 10)
+    let target = parseInt(inputValue, 10)
+    if (target % 2 === 0) {
+      target = (target + 2) / 2
+    } else {
+      target = (target + 1) / 2
+    }
     if (target >= 1 && target <= 51) {
       let currentBookmark = bookmark
       const step = () => {
@@ -104,7 +109,7 @@ function AutoOpenToBookmark() {
 
   return (
     <div style={{ display: 'flex', justifyContent: 'center' }}>
-      <div style={{ paddingLeft: '20px' }}>
+      <div style={{ paddingRight: '10px',cursor:'pointer' }}>
         <StarIcon onClick={handleButtonClick} color='warning' />
       </div>
       <input
@@ -112,7 +117,7 @@ function AutoOpenToBookmark() {
         value={inputValue}
         onChange={handleInputChange}
         min={1}
-        max={51}
+        max={100}
         style={{ width: '40px' }}
       />
     </div>
@@ -138,7 +143,7 @@ function PageSlider() {
   }, [bookmark])
 
   return (
-    <div style={{ flexGrow: 1, marginLeft: '10px' }}>
+    <div style={{ flexGrow: 1, marginLeft: '5px', marginRight: '5px' }}>
       <div style={{ display: 'flex', justifyContent: 'center', marginBottom: '10px' }}>
         <span />ページ管理
       </div>
