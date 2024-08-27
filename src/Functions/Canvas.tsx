@@ -1,10 +1,20 @@
 import { ArcRotateCamera, DefaultRenderingPipeline, HemisphericLight, Scene, Vector3 } from "@babylonjs/core"
 
-function LightUp(scene: Scene) {
+/**
+ * create a light
+ * @param scene add to scene
+ */
+export function LightUp(scene: Scene) {
     const light = new HemisphericLight('light1', new Vector3(1, 1, 0), scene)
     light.intensity = 1.0
 }
 
+/**
+ * create a camera
+ * @param scene add to scene
+ * @param canvas add to canvas
+ * @returns camera
+ */
 export function createCamera(scene: Scene, canvas: HTMLCanvasElement) {
     const camera = new ArcRotateCamera('camera1', Math.PI / 2, Math.PI / 4, 2, new Vector3(0, 0, 0), scene)
     camera.attachControl(canvas, true)
@@ -16,6 +26,11 @@ export function createCamera(scene: Scene, canvas: HTMLCanvasElement) {
     return camera
 }
 
+/**
+ * create camera work
+ * @param scene add to scene
+ * @param canvas add to canvas
+ */
 export function CameraWork(scene: Scene, canvas: HTMLCanvasElement | null) {
     if (!canvas) {
         throw new Error("HTMLCanvasElement is not found.")
@@ -27,5 +42,3 @@ export function CameraWork(scene: Scene, canvas: HTMLCanvasElement | null) {
     pipeline.depthOfField.fStop = 1.4
     pipeline.depthOfField.focusDistance = 2000
 }
-
-export default LightUp

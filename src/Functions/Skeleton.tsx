@@ -1,11 +1,22 @@
 import { Animation, AnimationGroup, Bone, Color3, Matrix, Mesh, MeshBuilder, Scene, Skeleton, StandardMaterial, Vector3 } from "@babylonjs/core"
-import createYRotationAnimation from "../Animation_data"
-import NormalAnimation, { ReverseAnimation } from "../Animation_sub_data"
+import { createYRotationAnimation } from "../Animation_data"
+import { ForwardAnimation, ReverseAnimation } from "../Animation_sub_data"
 
-const data_N: Animation[] = []
+const data_F: Animation[] = []
 const data_R: Animation[] = []
 
-function createSkeleton(scene: Scene, name: string, targetMesh: Mesh, z: number, animationName: string, N: AnimationGroup, R: AnimationGroup) {
+/**
+ * create skeleton and attach hit box and animation group 
+ * @param scene add to scene
+ * @param name skeleton name
+ * @param targetMesh target to attach
+ * @param z z position
+ * @param animationName animations name
+ * @param F forward animation group
+ * @param R reverse animation group
+ * @returns skeleton information
+ */
+export function createSkeleton(scene: Scene, name: string, targetMesh: Mesh, z: number, animationName: string, F: AnimationGroup, R: AnimationGroup) {
     const skeleton = new Skeleton(name, animationName, scene)
     let parentBone = new Bone(`${animationName}_Bone`, skeleton, null, Matrix.Translation(-0.11, 0, z))
     const widthSubdivisions = 10
@@ -17,9 +28,9 @@ function createSkeleton(scene: Scene, name: string, targetMesh: Mesh, z: number,
         parentBone = new Bone(boneName, skeleton, parentBone, Matrix.Translation(ratio * 0.01, 0, 0))
 
         const boneAnimation = createYRotationAnimation(animationName, boneName)
-        const N_Animation = NormalAnimation(animationName, boneName)
+        const F_Animation = ForwardAnimation(animationName, boneName)
         const R_Animation = ReverseAnimation(animationName, boneName)
-        data_N.push(N_Animation)
+        data_F.push(F_Animation)
         data_R.push(R_Animation)
         parentBone.animations = [boneAnimation]
 
@@ -34,7 +45,7 @@ function createSkeleton(scene: Scene, name: string, targetMesh: Mesh, z: number,
         }
         hitBox.attachToBone(parentBone, targetMesh)
 
-        N.addTargetedAnimation(data_N[w], parentBone)
+        F.addTargetedAnimation(data_F[w], parentBone)
         R.addTargetedAnimation(data_R[w], parentBone)
     }
     return skeleton
@@ -46,5 +57,3 @@ export function createHitBoxMaterial(scene: Scene, boneName: string, diffuseColo
     material.diffuseColor = diffuseColor
     return material
 }
-
-export default createSkeleton

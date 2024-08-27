@@ -1,12 +1,12 @@
-import { useEffect, useRef, useReducer } from 'react'
+import { useEffect, useRef } from 'react'
+import { BookMark, CoverSwitch, Long_Text, Text_Switch } from './atom'
 import { useRecoilState, useRecoilValue } from 'recoil'
-import { Scene, DynamicTexture, Skeleton, Mesh } from '@babylonjs/core'
-import { BookMark, CoverOpen, Long_Text, Text_Switch } from './atom'
-import { animationReducer, useDynamicReducers } from './Functions/Function_action'
+import { AnimationGroup, Scene, DynamicTexture, Skeleton, Mesh, PointerEventTypes } from '@babylonjs/core'
 import { initializeScene } from './Babylon_Scene'
+import { animationReducer, closePageAnimation, openPageAnimation, ToggleAnimationHandler, useDynamicReducers } from './Functions/Action'
 
 const text_size = 22
-const pageAmount = 50
+const pageAmount = 51
 const font = "bold " + text_size + "px monospace"
 
 function CanvasComponent() {
@@ -16,18 +16,17 @@ function CanvasComponent() {
     const [text_update, setText_update] = useRecoilState(Text_Switch)
     const updated_text = useRecoilValue(Long_Text)
     const dispatchers = useDynamicReducers(animationReducer, { isOpen: false }, pageAmount).map(([_, dispatch]) => dispatch)
-    const glb_dispatcher = useReducer(animationReducer, { isOpen: false })
-    const bookmark = useRecoilValue(BookMark)
     const root_controller = useRef<Mesh | null>(null)
-    const animationData = sceneRef.current?.animationGroups
-    const coverSwitch = useRecoilValue(CoverOpen)
+    const animationData = sceneRef.current?.animationGroups as AnimationGroup[]
+    const [bookmark, setBookmark] = useRecoilState(BookMark)
+    const coverCheck = useRecoilValue(CoverSwitch)
 
     // Initialize the scene
     useEffect(() => {
         const canvas = canvasRef.current
         if (!canvas) return
 
-        return initializeScene(canvas, sceneRef, skeletonRefs, dispatchers, glb_dispatcher, updated_text, root_controller)
+        return initializeScene(canvas, sceneRef, skeletonRefs, updated_text, root_controller)
     }, [])
 
     // Update the text on the front page
@@ -50,58 +49,101 @@ function CanvasComponent() {
         const scene = sceneRef.current
         if (!scene) return
         dispatchers.forEach((dispatch, index) => {
+            if (index == 0) { // front cover toggle
+                if (bookmark >= 1) {
+
+                    dispatch({
+                        type: "OPEN",
+                        open: () => {
+                            openPageAnimation(animationData)
+                        },
+                        close: () => { console.error("open cover error") }
+                    })
+                    return
+                }
+                else {
+                    dispatch({
+                        type: "CLOSE",
+                        open: () => { console.error("close cover fail") },
+                        close: () => {
+                            closePageAnimation(animationData)
+                        }
+                    })
+                    return
+                }
+            }
+
             if (index < bookmark) {
                 dispatch({
                     type: "OPEN",
                     open: () => {
-                        if (skeletonRefs.current && skeletonRefs.current[index]) {
-                            scene.beginAnimation(skeletonRefs.current[index], 0, 60, true, undefined, () => { })
-                        }
+                        pageFrontAnimation(scene, index - 1)
                     },
-                    close: () => { }
+                    close: () => { console.error(`page ${index} open fail`) }
                 })
             } else {
                 dispatch({
                     type: "CLOSE",
-                    open: () => { },
+                    open: () => { console.error(`page ${index} close fail`) },
                     close: () => {
-                        if (skeletonRefs.current && skeletonRefs.current[index]) {
-                            scene.beginAnimation(skeletonRefs.current[index], 60, 120, true, undefined, () => { })
-                        }
+                        pageBackAnimation(scene, index - 1)
                     }
                 })
             }
         })
     }, [bookmark])
 
+    // Move this code to a separate useEffect
     useEffect(() => {
         const scene = sceneRef.current
         if (!scene) return
-        if (animationData) {
-            switch (true) {
-                case (coverSwitch):
-                    animationData[4]?.start(true), animationData[5]?.stop()
-                    animationData[7]?.start(true), animationData[9]?.stop()
-                    setTimeout(() => { animationData[7]?.stop() }, 1000)
-                    setTimeout(() => { animationData[8]?.start(true) }, 1000)
-                    animationData[0]?.start(true), animationData[1]?.stop()
-                    animationData[2]?.start(true), animationData[3]?.stop()
-                    break
-                case (!coverSwitch):
-                    animationData[5]?.start(true), animationData[4]?.stop()
-                    animationData[9]?.start(true), animationData[7]?.stop()
-                    setTimeout(() => { animationData[9]?.stop() }, 1000)
-                    animationData[8]?.stop()
-                    animationData[1]?.start(true), animationData[0]?.stop()
-                    animationData[3]?.start(true), animationData[2]?.stop()
-                    break
-                default:
-                    break
+
+        scene.onPointerObservable.add(
+            (pointerInfo) => {
+                if (!(pointerInfo.type === PointerEventTypes.POINTERDOWN)) { return }
+                ToggleAnimationHandler(
+                    pointerInfo,
+                    setBookmark,
+                )
             }
+        )
+
+        return () => {
+            scene.onPointerObservable.clear()
         }
-    }, [coverSwitch])
+    }, [])
+
+    useEffect(() => {
+        const scene = sceneRef.current
+        if (!scene) return
+        if (coverCheck) {
+            scene.meshes.forEach(mesh => {
+                if (mesh.name.includes('hitBox')) {
+                    mesh.isPickable = false
+                }
+            })
+        } else {
+            scene.meshes.forEach(mesh => {
+                if (mesh.name.includes('hitBox')) {
+                    mesh.isPickable = true
+                }
+            })
+        }
+    }, [coverCheck])
 
     return <canvas ref={canvasRef} style={{ width: '100%', height: '100%' }} />
+}
+
+function pageFrontAnimation(scene: Scene, index: number) {
+    const page = scene.skeletons.find((skeleton) => skeleton.name === 'skeleton_' + index)
+    if (!page) return
+    scene.beginAnimation(page, 0, 60, true, undefined, () => { })
+}
+
+function pageBackAnimation(scene: Scene, index: number) {
+    const page = scene.skeletons.find((skeleton) => skeleton.name === 'skeleton_' + index)
+    if (!page) return
+    scene.beginAnimation(page, 60, 120, true, undefined, () => { })
 }
 
 export default CanvasComponent
