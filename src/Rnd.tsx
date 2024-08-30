@@ -1,7 +1,7 @@
 import { Rnd } from 'react-rnd'
-import TextInput from './Rnds/TextBlock'
-import FontSizeSlider from './Rnds/FontSizeBlock'
-import { CoverState, PageSlider } from './Rnds/SlideBlock'
+import TextInput from './Blocks/TextBlock'
+import FontSizeSlider from './Blocks/FontSizeBlock'
+import { CoverState, PageSlider } from './Blocks/SlideBlock'
 
 function RndComponent() {
 
