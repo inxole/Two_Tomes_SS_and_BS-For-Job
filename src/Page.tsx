@@ -39,7 +39,34 @@ function CanvasComponent() {
         if (!text_update) return
 
         front_texture.clear()
-        front_texture.drawText(updated_text, 0, text_size, font, "#000000", "#ffffff", true)
+        front_texture.drawText("", 0, 0, font, "black", "white", true, true)
+
+        // テキストを指定された行の長さに分割
+        const max_chars_per_line = 25
+        const lines = []
+        let textField = ""
+        let text = ""
+        const labelHeight = 1.5 * text_size
+
+        let line = labelHeight
+
+        for (let i = 0; i < updated_text.length; i++) {
+            textField += updated_text[i]
+            if (textField.length >= max_chars_per_line || updated_text[i] === '\n') {
+                lines.push(textField)
+                textField = ""
+            }
+        }
+        if (textField.length > 0) {
+            lines.push(textField)
+        }
+
+        for (let i = 0; i < lines.length; i++) {
+            text = lines[i]
+            front_texture.drawText(text, 40, line, font, "black", null, true, true)
+            line += labelHeight
+        }
+
         setText_update(false)
 
     }, [text_update])

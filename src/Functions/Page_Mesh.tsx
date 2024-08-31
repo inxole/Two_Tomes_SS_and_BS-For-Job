@@ -82,13 +82,13 @@ export function createPageTexture(scene: Scene, text: string, isFront: boolean) 
     const Texture = new DynamicTexture("DynamicTexture", { width: 345, height: 512 }, scene, true)
     Texture.hasAlpha = true
     if (isFront) {
-        Texture.drawText(text, 0, text_size, font, "#000000", "#ffffff", true)//基準点は左上
+        Texture.drawText(text, 40, text_size * 1.5, font, "#000000", "#ffffff", true)//基準点は左上
     } else {
         const context = Texture.getContext()
         context.fillStyle = "#ffffff"
         context.fillRect(0, 0, Texture.getSize().width, Texture.getSize().height)
         context.save()
-        context.translate(345, 512 - text_size)//基準点は右下
+        context.translate(325, 512 - text_size * 1.5)//基準点は右下
         context.rotate(Math.PI / 1)
         context.fillStyle = "#000000"
         context.font = font
