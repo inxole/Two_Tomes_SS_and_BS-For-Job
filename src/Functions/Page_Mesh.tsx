@@ -1,4 +1,4 @@
-import { Color3, DynamicTexture, Mesh, Scene, StandardMaterial, Vector3, VertexData } from "@babylonjs/core"
+import { Color3, DynamicTexture, Mesh, MirrorTexture, Scene, StandardMaterial, Vector3, VertexData } from "@babylonjs/core"
 
 /**
  * create page mesh
@@ -84,17 +84,8 @@ export function createPageTexture(scene: Scene, text: string, isFront: boolean) 
     if (isFront) {
         Texture.drawText(text, 40, text_size * 1.5, font, "#000000", "#ffffff", true)//基準点は左上
     } else {
-        const context = Texture.getContext()
-        context.fillStyle = "#ffffff"
-        context.fillRect(0, 0, Texture.getSize().width, Texture.getSize().height)
-        context.save()
-        context.translate(325, 512 - text_size * 1.5)//基準点は右下
-        context.rotate(Math.PI / 1)
-        context.fillStyle = "#000000"
-        context.font = font
-        context.fillText(text, 0, 0)
-        context.restore()
-        Texture.update(false)
+        Texture.drawText(text, 20, text_size * 1.5, font, "#000000", "#ffffff", true)
+        Texture.vAng = Math.PI
     }
     return Texture
 }

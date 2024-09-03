@@ -33,13 +33,19 @@ function CanvasComponent() {
     useEffect(() => {
         const scene = sceneRef.current
         if (!scene) return
+        if (!text_update) return
 
         const front_texture_info = scene.getMeshByName('front_page_0')?.material?.getActiveTextures()
         const front_texture = front_texture_info?.values().next().value as DynamicTexture
-        if (!text_update) return
+
+        const back_texture_info = scene.getMeshByName('back_page_0')?.material?.getActiveTextures()
+        const back_texture = back_texture_info?.values().next().value as DynamicTexture
 
         front_texture.clear()
+        back_texture.clear()
+
         front_texture.drawText("", 0, 0, font, "black", "white", true, true)
+        back_texture.drawText("", 0, 0, font, "black", "white", true, true)
 
         // テキストを指定された行の長さに分割
         const max_chars_per_line = 25
@@ -47,7 +53,6 @@ function CanvasComponent() {
         let textField = ""
         let text = ""
         const labelHeight = 1.5 * text_size
-
         let line = labelHeight
 
         for (let i = 0; i < updated_text.length; i++) {
@@ -61,10 +66,22 @@ function CanvasComponent() {
             lines.push(textField)
         }
 
-        for (let i = 0; i < lines.length; i++) {
+        // front_page_0に描画
+        for (let i = 0; i < lines.length && i < 18; i++) {
             text = lines[i]
             front_texture.drawText(text, 40, line, font, "black", null, true, true)
-            line += labelHeight
+            line += labelHeight - 6
+        }
+
+        // 残りの行をback_page_0に描画
+        if (lines.length > 18) {
+            line = labelHeight // 初期化
+            for (let i = 18; i < lines.length; i++) {
+                text = lines[i]
+                back_texture.drawText(text, 20, line, font, "black", null, true, true)
+                back_texture.vAng = Math.PI
+                line += labelHeight - 6
+            }
         }
 
         setText_update(false)
@@ -174,3 +191,14 @@ function pageBackAnimation(scene: Scene, index: number) {
 }
 
 export default CanvasComponent
+
+// let front_textures_info = []
+// let back_textures_info = []
+// let front_textures = []
+// let back_textures = []
+// for (let i = 0; i < pageAmount; i++) {
+//     front_textures_info.push(scene.getMeshByName('front_page_' + i)?.material?.getActiveTextures())
+//     front_textures = front_textures_info.map(texture_info => texture_info?.values().next().value as DynamicTexture)
+//     back_textures_info.push(scene.getMeshByName('back_page_' + i)?.material?.getActiveTextures())
+//     back_textures = back_textures_info.map(texture_info => texture_info?.values().next().value as DynamicTexture)
+// }
