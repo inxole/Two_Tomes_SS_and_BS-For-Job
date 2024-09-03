@@ -1,4 +1,4 @@
-import { AnimationGroup, PointerInfo, Skeleton } from "@babylonjs/core"
+import { AnimationGroup, PointerInfo, Scene, Skeleton } from "@babylonjs/core"
 import { Reducer, useReducer } from "react"
 import { SetterOrUpdater } from "recoil"
 
@@ -67,6 +67,10 @@ export function ToggleAnimationHandler(
     })
 }
 
+export function useDynamicReducers(reducer: Reducer<PageState, Action>, initialState: PageState, count: number) {
+    return Array.from({ length: count }, () => useReducer(reducer, initialState))
+}
+
 /**
  * Open page animation
  * @param animationData animation group reference
@@ -100,8 +104,29 @@ export function closePageAnimation(animationData: AnimationGroup[]) {
     animationData[AD.R_Animation_Group].start(true), animationData[AD.N_Animation_Group].stop()
 }
 
-export function useDynamicReducers(reducer: Reducer<PageState, Action>, initialState: PageState, count: number) {
-    return Array.from({ length: count }, () => useReducer(reducer, initialState))
+export enum AnimationDictionary {
+    N_Controller = 0,
+    R_Controller = 1,
+    N_Animation_Group = 2,
+    R_Animation_Group = 3,
+    N_0_90_Group = 4,
+    R_90_0_Group = 5,
+    BS_Non_Action = 6,
+    BS_action_0_90 = 7,
+    BS_stay_90 = 8,
+    BS_action_back = 9,
+}
+
+export function pageFrontAnimation(scene: Scene, index: number) {
+    const page = scene.skeletons.find((skeleton) => skeleton.name === 'skeleton_' + index)
+    if (!page) return
+    scene.beginAnimation(page, 0, 60, true, undefined, () => { })
+}
+
+export function pageBackAnimation(scene: Scene, index: number) {
+    const page = scene.skeletons.find((skeleton) => skeleton.name === 'skeleton_' + index)
+    if (!page) return
+    scene.beginAnimation(page, 60, 120, true, undefined, () => { })
 }
 
 //glb_animationの内訳
@@ -115,17 +140,3 @@ export function useDynamicReducers(reducer: Reducer<PageState, Action>, initialS
 // 7: Object { name: "001_BS_action_0_90", _from: 0, _to: 600, … }
 // 8: Object { name: "002_BS_stay_90", _from: 0, _to: 600, … }
 // 9: Object { name: "003_BS_action_back", _from: 0, _to: 600, … }
-
-
-export enum AnimationDictionary {
-    N_Controller = 0,
-    R_Controller = 1,
-    N_Animation_Group = 2,
-    R_Animation_Group = 3,
-    N_0_90_Group = 4,
-    R_90_0_Group = 5,
-    BS_Non_Action = 6,
-    BS_action_0_90 = 7,
-    BS_stay_90 = 8,
-    BS_action_back = 9,
-}
