@@ -35,25 +35,26 @@ function CanvasComponent() {
         if (!scene) return
         if (!text_update) return
 
-        const front_texture_info = scene.getMeshByName('front_page_0')?.material?.getActiveTextures()
-        const front_texture = front_texture_info?.values().next().value as DynamicTexture
+        const front_textures_info = []
+        const back_textures_info = []
+        const front_textures = []
+        const back_textures = []
+        const pageLimit = 50
 
-        const back_texture_info = scene.getMeshByName('back_page_0')?.material?.getActiveTextures()
-        const back_texture = back_texture_info?.values().next().value as DynamicTexture
+        // Get texture for each page
+        for (let i = 0; i < pageLimit; i++) {
+            front_textures_info.push(scene.getMeshByName('front_page_' + i)?.material?.getActiveTextures())
+            front_textures.push(front_textures_info[i]?.values().next().value as DynamicTexture)
+            back_textures_info.push(scene.getMeshByName('back_page_' + i)?.material?.getActiveTextures())
+            back_textures.push(back_textures_info[i]?.values().next().value as DynamicTexture)
+        }
 
-        front_texture.clear()
-        back_texture.clear()
-
-        front_texture.drawText("", 0, 0, font, "black", "white", true, true)
-        back_texture.drawText("", 0, 0, font, "black", "white", true, true)
-
-        // テキストを指定された行の長さに分割
-        const max_chars_per_line = 25
+        const max_chars_per_line = 25// Maximum number of characters in one line
+        const max_lines_per_page = 18// Maximum number of lines per page
         const lines = []
         let textField = ""
         let text = ""
         const labelHeight = 1.5 * text_size
-        let line = labelHeight
 
         for (let i = 0; i < updated_text.length; i++) {
             textField += updated_text[i]
@@ -62,30 +63,43 @@ function CanvasComponent() {
                 textField = ""
             }
         }
-        if (textField.length > 0) {
-            lines.push(textField)
-        }
+        if (textField.length > 0) { lines.push(textField) }
 
-        // front_page_0に描画
-        for (let i = 0; i < lines.length && i < 18; i++) {
-            text = lines[i]
-            front_texture.drawText(text, 40, line, font, "black", null, true, true)
-            line += labelHeight - 6
-        }
+        let currentPage = 0
+        let lineIndex = 0
+        while (currentPage < pageLimit) {
+            const front_texture = front_textures[currentPage]
+            const back_texture = back_textures[currentPage]
 
-        // 残りの行をback_page_0に描画
-        if (lines.length > 18) {
-            line = labelHeight // 初期化
-            for (let i = 18; i < lines.length; i++) {
-                text = lines[i]
-                back_texture.drawText(text, 20, line, font, "black", null, true, true)
-                back_texture.vAng = Math.PI
+            front_texture.clear()
+            back_texture.clear()
+            front_texture.drawText("", 0, 0, font, "black", "white", true, true)
+            back_texture.drawText("", 0, 0, font, "black", "white", true, true)
+
+            let line = labelHeight
+
+            // draw on front_page
+            for (let i = 0; i < max_lines_per_page && lineIndex < lines.length; i++) {
+                text = lines[lineIndex]
+                front_texture.drawText(text, 40, line, font, "black", null, true, true)
                 line += labelHeight - 6
+                lineIndex++
             }
+
+            // draw on back_page
+            if (lineIndex < lines.length) {
+                line = labelHeight
+                for (let i = 0; i < max_lines_per_page && lineIndex < lines.length; i++) {
+                    text = lines[lineIndex]
+                    back_texture.drawText(text, 10, line, font, "black", null, true, true)
+                    back_texture.vAng = Math.PI
+                    line += labelHeight - 6
+                    lineIndex++
+                }
+            }
+            currentPage++
         }
-
         setText_update(false)
-
     }, [text_update])
 
     // Update bookmark
@@ -191,14 +205,3 @@ function pageBackAnimation(scene: Scene, index: number) {
 }
 
 export default CanvasComponent
-
-// let front_textures_info = []
-// let back_textures_info = []
-// let front_textures = []
-// let back_textures = []
-// for (let i = 0; i < pageAmount; i++) {
-//     front_textures_info.push(scene.getMeshByName('front_page_' + i)?.material?.getActiveTextures())
-//     front_textures = front_textures_info.map(texture_info => texture_info?.values().next().value as DynamicTexture)
-//     back_textures_info.push(scene.getMeshByName('back_page_' + i)?.material?.getActiveTextures())
-//     back_textures = back_textures_info.map(texture_info => texture_info?.values().next().value as DynamicTexture)
-// }

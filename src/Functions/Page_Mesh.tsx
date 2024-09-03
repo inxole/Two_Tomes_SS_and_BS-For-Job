@@ -84,7 +84,7 @@ export function createPageTexture(scene: Scene, text: string, isFront: boolean) 
     if (isFront) {
         Texture.drawText(text, 40, text_size * 1.5, font, "#000000", "#ffffff", true)//基準点は左上
     } else {
-        Texture.drawText(text, 20, text_size * 1.5, font, "#000000", "#ffffff", true)
+        Texture.drawText(text, 10, text_size * 1.5, font, "#000000", "#ffffff", true)
         Texture.vAng = Math.PI
     }
     return Texture
