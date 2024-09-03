@@ -1,4 +1,4 @@
-import { Color3, DynamicTexture, Mesh, MirrorTexture, Scene, StandardMaterial, Vector3, VertexData } from "@babylonjs/core"
+import { Color3, DynamicTexture, Mesh, Scene, StandardMaterial, Vector3, VertexData } from "@babylonjs/core"
 
 /**
  * create page mesh
