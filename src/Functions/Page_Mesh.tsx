@@ -82,7 +82,8 @@ export function createPageTexture(scene: Scene, text: string, isFront: boolean) 
     const Texture = new DynamicTexture("DynamicTexture", { width: 345, height: 512 }, scene, true)
     Texture.hasAlpha = true
     if (isFront) {
-        Texture.drawText(text, 40, text_size * 1.5, font, "#000000", "#ffffff", true)//基準点は左上
+        Texture.drawText(text, 20, text_size * 1.5, font, "#000000", "#ffffff", true)
+        Texture.uOffset = -0.05
     } else {
         Texture.drawText(text, 10, text_size * 1.5, font, "#000000", "#ffffff", true)
         Texture.vAng = Math.PI

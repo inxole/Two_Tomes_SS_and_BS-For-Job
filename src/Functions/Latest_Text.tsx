@@ -19,19 +19,29 @@ export const updatePageTextures = (scene: Scene, updated_text: string, text_size
     const max_chars_per_line = 25 // Maximum number of characters in one line
     const max_lines_per_page = 18 // Maximum number of lines per page
     const lines = []
-    let textField = ""
-    let text = ""
     const labelHeight = 1.5 * text_size
 
-    // Split the text into lines
-    for (let i = 0; i < updated_text.length; i++) {
-        textField += updated_text[i]
-        if (textField.length >= max_chars_per_line || updated_text[i] === '\n') {
-            lines.push(textField)
-            textField = ""
+    // Split the text into words
+    const words = updated_text.split(/\s+/) // Split text by spaces
+
+    let currentLine = ""
+    for (let i = 0; i < words.length; i++) {
+        const word = words[i]
+
+        // Check if adding this word would exceed the line limit
+        if (currentLine.length + word.length + 1 <= max_chars_per_line) {
+            currentLine += (currentLine.length > 0 ? " " : "") + word
+        } else {
+            // If the line is full, push it and start a new line
+            lines.push(currentLine)
+            currentLine = word // Start the new line with the current word
         }
     }
-    if (textField.length > 0) { lines.push(textField) }
+
+    // Push any remaining text into the last line
+    if (currentLine.length > 0) {
+        lines.push(currentLine)
+    }
 
     let currentPage = 0
     let lineIndex = 0
@@ -48,8 +58,9 @@ export const updatePageTextures = (scene: Scene, updated_text: string, text_size
 
         // draw on front_page
         for (let i = 0; i < max_lines_per_page && lineIndex < lines.length; i++) {
-            text = lines[lineIndex]
-            front_texture.drawText(text, 40, line, font, "black", null, true, true)
+            const text = lines[lineIndex]
+            front_texture.drawText(text, 20, line, font, "black", null, true, true)
+            front_texture.uOffset = -0.05
             line += labelHeight - 6
             lineIndex++
         }
@@ -58,7 +69,7 @@ export const updatePageTextures = (scene: Scene, updated_text: string, text_size
         if (lineIndex < lines.length) {
             line = labelHeight
             for (let i = 0; i < max_lines_per_page && lineIndex < lines.length; i++) {
-                text = lines[lineIndex]
+                const text = lines[lineIndex]
                 back_texture.drawText(text, 10, line, font, "black", null, true, true)
                 back_texture.vAng = Math.PI
                 line += labelHeight - 6
