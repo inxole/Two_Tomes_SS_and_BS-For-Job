@@ -1,6 +1,6 @@
 import { DynamicTexture, Scene } from "@babylonjs/core"
 
-export const updatePageTextures = (scene: Scene, updated_text: string, text_size: number) => {
+export const AutoEditPageTextures = (scene: Scene, updated_text: string, text_size: number) => {
     const font = "bold " + text_size + "px monospace"
     const front_textures_info = []
     const back_textures_info = []
@@ -25,28 +25,37 @@ export const updatePageTextures = (scene: Scene, updated_text: string, text_size
     console.log(words)
 
     for (let i = 0; i < words.length; i++) {
-        const word = words[i]
+        let word = words[i]
+
+        // Check if the word is longer than the maximum characters per line
+        while (word.length > max_chars_per_line) {
+            // Add the first part of the word that fits the line
+            const split_word = word.slice(0, max_chars_per_line - textField.length)
+            textField += (textField.length > 0 ? " " : "") + split_word
+            lines.push(textField)
+            textField = ""
+
+            // Reduce the word by the split portion and continue
+            word = word.slice(max_chars_per_line - textField.length)
+        }
+
         if (word === "\n") {
             if (textField.length > 0) {
                 lines.push(textField)
                 textField = ""
             }
-            // Add an empty line for consecutive "\n"
             if (i > 0 && words[i - 1] === "\n") {
                 lines.push("")
             }
         } else {
-            // Add a space after "\n" for the next word
             if (i > 0 && words[i - 1] === "\n") {
                 textField = " " + word
             } else {
-                // Check if adding this word would exceed the line limit
                 if (textField.length + word.length + 1 <= max_chars_per_line) {
                     textField += (textField.length > 0 ? " " : "") + word
                 } else {
-                    // If the line is full, push it and start a new line
                     lines.push(textField)
-                    textField = word // Start the new line with the current word
+                    textField = word
                 }
             }
         }
