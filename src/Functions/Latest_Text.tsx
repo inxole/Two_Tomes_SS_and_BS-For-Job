@@ -7,6 +7,8 @@ export const updatePageTextures = (scene: Scene, updated_text: string, text_size
     const front_textures = []
     const back_textures = []
     const pageLimit = 50
+    let textField = ""
+    const labelHeight = 1.5 * text_size
 
     // Get texture for each page
     for (let i = 0; i < pageLimit; i++) {
@@ -19,29 +21,38 @@ export const updatePageTextures = (scene: Scene, updated_text: string, text_size
     const max_chars_per_line = 25 // Maximum number of characters in one line
     const max_lines_per_page = 18 // Maximum number of lines per page
     const lines = []
-    const labelHeight = 1.5 * text_size
+    const words = updated_text.split(/(\s|\n)/).filter(word => word !== ' ' && word !== '')
+    console.log(words)
 
-    // Split the text into words
-    const words = updated_text.split(/\s+/) // Split text by spaces
-
-    let currentLine = ""
     for (let i = 0; i < words.length; i++) {
         const word = words[i]
-
-        // Check if adding this word would exceed the line limit
-        if (currentLine.length + word.length + 1 <= max_chars_per_line) {
-            currentLine += (currentLine.length > 0 ? " " : "") + word
+        if (word === "\n") {
+            if (textField.length > 0) {
+                lines.push(textField)
+                textField = ""
+            }
+            // Add an empty line for consecutive "\n"
+            if (i > 0 && words[i - 1] === "\n") {
+                lines.push("")
+            }
         } else {
-            // If the line is full, push it and start a new line
-            lines.push(currentLine)
-            currentLine = word // Start the new line with the current word
+            // Add a space after "\n" for the next word
+            if (i > 0 && words[i - 1] === "\n") {
+                textField = " " + word
+            } else {
+                // Check if adding this word would exceed the line limit
+                if (textField.length + word.length + 1 <= max_chars_per_line) {
+                    textField += (textField.length > 0 ? " " : "") + word
+                } else {
+                    // If the line is full, push it and start a new line
+                    lines.push(textField)
+                    textField = word // Start the new line with the current word
+                }
+            }
         }
     }
-
-    // Push any remaining text into the last line
-    if (currentLine.length > 0) {
-        lines.push(currentLine)
-    }
+    if (textField.length > 0) { lines.push(textField) }
+    console.log(lines)
 
     let currentPage = 0
     let lineIndex = 0
@@ -60,7 +71,6 @@ export const updatePageTextures = (scene: Scene, updated_text: string, text_size
         for (let i = 0; i < max_lines_per_page && lineIndex < lines.length; i++) {
             const text = lines[lineIndex]
             front_texture.drawText(text, 20, line, font, "black", null, true, true)
-            front_texture.uOffset = -0.05
             line += labelHeight - 6
             lineIndex++
         }
