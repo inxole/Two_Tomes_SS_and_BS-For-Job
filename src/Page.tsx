@@ -4,7 +4,7 @@ import { useRecoilState, useRecoilValue } from 'recoil'
 import { AnimationGroup, Scene, Skeleton, Mesh, PointerEventTypes } from '@babylonjs/core'
 import { initializeScene } from './Babylon_Scene'
 import { animationReducer, closePageAnimation, openPageAnimation, pageBackAnimation, pageFrontAnimation, ToggleAnimationHandler, useDynamicReducers } from './Functions/Action'
-import { AutoEditPageTextures } from './Functions/Latest_Text'
+import { textAutoEdit } from './Functions/Text_Auto'
 
 const pageAmount = 51
 
@@ -34,7 +34,7 @@ function CanvasComponent() {
         const scene = sceneRef.current
         if (!scene) return
         if (!text_update) return
-        AutoEditPageTextures(scene, updated_text, text_size)
+        textAutoEdit(scene, updated_text, text_size)
         setText_update(false)
     }, [text_update])
 
