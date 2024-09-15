@@ -8,69 +8,7 @@ export const textAutoEdit = (scene: Scene, updated_text: string, text_size: numb
     const back_textures = []
     const pageLimit = 50
     let textField = ""
-
-    let labelHeight = 15 + text_size // Default calculation
-    if (text_size === 10) {
-        labelHeight = 16 + text_size
-    } else if (text_size === 12) {
-        labelHeight = 16 + text_size
-    } else if (text_size === 14) {
-        labelHeight = 16 + text_size
-    } else if (text_size === 16) {
-        labelHeight = 16 + text_size
-    } else if (text_size === 18) {
-        labelHeight = 16 + text_size
-    } else if (text_size === 20) {
-        labelHeight = 16 + text_size
-    } else if (text_size === 22) {//25文字
-        labelHeight = 15 + text_size
-    } else if (text_size === 24) {//24文字
-        labelHeight = 15 + 62 + ((text_size - 100) * 0.5)
-    } else if (text_size === 26) {//23文字
-        labelHeight = 15 + 63 + ((text_size - 100) * 0.5)
-    } else if (text_size === 28) {//21文字
-        labelHeight = 15 + 63 + ((text_size - 100) * 0.5)
-    } else if (text_size === 30) {//20文字
-        labelHeight = 15 + 63 + ((text_size - 100) * 0.5)
-    } else if (text_size === 32) {//19文字
-        labelHeight = 15 + 64 + ((text_size - 100) * 0.5)
-    } else if (text_size === 34) {//18文字
-        labelHeight = 15 + 64 + ((text_size - 100) * 0.5)
-    } else if (text_size === 36) {//17文字
-        labelHeight = 15 + 65 + ((text_size - 100) * 0.5)
-    } else if (text_size === 38) {//16文字
-        labelHeight = 15 + 65 + ((text_size - 100) * 0.5)
-    } else if (text_size === 40) {//15文字
-        labelHeight = 15 + 66 + ((text_size - 100) * 0.5)
-    } else if (text_size === 42) {//14文字
-        labelHeight = 15 + 67 + ((text_size - 100) * 0.5)
-    } else if (text_size === 44) {//13文字
-        labelHeight = 15 + 67 + ((text_size - 100) * 0.5)
-    } else if (text_size === 48) {//12文字
-        labelHeight = 15 + 68 + ((text_size - 100) * 0.5)
-    } else if (text_size === 52) {//11文字
-        labelHeight = 15 + 69 + ((text_size - 100) * 0.5)
-    } else if (text_size === 58) {//10文字
-        labelHeight = 15 + 71 + ((text_size - 100) * 0.5)
-    } else if (text_size === 64) {//9文字
-        labelHeight = 15 + 73 + ((text_size - 100) * 0.5)
-    } else if (text_size === 72) {//8文字
-        labelHeight = 15 + 75 + ((text_size - 100) * 0.5)
-    } else if (text_size === 82) {//7文字
-        labelHeight = 15 + 78 + ((text_size - 100) * 0.5)
-    } else if (text_size === 96) {//6文字
-        labelHeight = 15 + 82 + ((text_size - 100) * 0.5)
-    } else if (text_size === 116) {//5文字
-        labelHeight = 15 + 88 + ((text_size - 100) * 0.5)
-    } else if (text_size === 136) {//4文字
-        labelHeight = 15 + 94 + ((text_size - 100) * 0.5)
-    } else if (text_size === 166) {//3文字
-        labelHeight = 15 + 103 + ((text_size - 100) * 0.5)
-    } else if (text_size === 250) {//2文字
-        labelHeight = 15 + 128 + ((text_size - 100) * 0.5)
-    } else if (text_size === 500) {//1文字
-        labelHeight = 15 + 200 + ((text_size - 100) * 0.5)
-    }
+    let labelHeight = calculateLabelHeight(text_size)
 
     // Get texture for each page
     for (let i = 0; i < pageLimit; i++) {
@@ -157,4 +95,79 @@ export const textAutoEdit = (scene: Scene, updated_text: string, text_size: numb
         }
         currentPage++
     }
+}
+
+function calculateLabelHeight(text_size: number): number {
+    let labelHeight = 0
+    if (text_size >= 10 && text_size <= 20) {
+        labelHeight = 16 + text_size
+    } else {
+        switch (text_size) {
+            case 22:
+                labelHeight = 15 + text_size
+                break
+            case 24:
+                labelHeight = 15 + 62 + ((text_size - 100) * 0.5)
+                break
+            case 26:
+            case 28:
+            case 30:
+                labelHeight = 15 + 63 + ((text_size - 100) * 0.5)
+                break
+            case 32:
+            case 34:
+                labelHeight = 15 + 64 + ((text_size - 100) * 0.5)
+                break
+            case 36:
+            case 38:
+                labelHeight = 15 + 65 + ((text_size - 100) * 0.5)
+                break
+            case 40:
+                labelHeight = 15 + 66 + ((text_size - 100) * 0.5)
+                break
+            case 42:
+            case 44:
+                labelHeight = 15 + 67 + ((text_size - 100) * 0.5)
+                break
+            case 48:
+                labelHeight = 15 + 68 + ((text_size - 100) * 0.5)
+                break
+            case 52:
+                labelHeight = 15 + 69 + ((text_size - 100) * 0.5)
+                break
+            case 58:
+                labelHeight = 15 + 71 + ((text_size - 100) * 0.5)
+                break
+            case 64:
+                labelHeight = 15 + 73 + ((text_size - 100) * 0.5)
+                break
+            case 72:
+                labelHeight = 15 + 75 + ((text_size - 100) * 0.5)
+                break
+            case 82:
+                labelHeight = 15 + 78 + ((text_size - 100) * 0.5)
+                break
+            case 96:
+                labelHeight = 15 + 82 + ((text_size - 100) * 0.5)
+                break
+            case 116:
+                labelHeight = 15 + 88 + ((text_size - 100) * 0.5)
+                break
+            case 136:
+                labelHeight = 15 + 94 + ((text_size - 100) * 0.5)
+                break
+            case 166:
+                labelHeight = 15 + 103 + ((text_size - 100) * 0.5)
+                break
+            case 250:
+                labelHeight = 15 + 128 + ((text_size - 100) * 0.5)
+                break
+            case 500:
+                labelHeight = 15 + 200 + ((text_size - 100) * 0.5)
+                break
+            default:
+                labelHeight = 0 // Default case if text_size does not match any condition
+        }
+    }
+    return labelHeight
 }
