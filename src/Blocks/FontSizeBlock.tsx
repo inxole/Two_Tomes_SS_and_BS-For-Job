@@ -4,7 +4,7 @@ import { TextReSize } from '../atom'
 
 function FontSizeSlider() {
   const [fontSize, setFontSize] = useRecoilState(TextReSize)
-  const availableSizes = [10, 12, 14, 16, 18, 20, 22, 24, 28, 32, 36, 40, 44, 48, 52, 58, 64, 72, 82, 96, 116, 136, 166, 250, 500]
+  const availableSizes = [10, 12, 14, 16, 18, 20, 22, 24, 26, 28, 30, 32, 34, 36, 38, 40, 42, 44, 48, 54, 62, 72, 84, 100, 124, 166, 250, 500]
   const currentIndex = availableSizes.indexOf(fontSize)
 
   return (
