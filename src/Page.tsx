@@ -1,10 +1,11 @@
 import { useEffect, useRef } from 'react'
-import { BookMark, CoverSwitch, Long_Text, Text_Switch, TextReSize } from './atom'
+import { BookMark, CoverSwitch, Long_Text, Text_Switch_Automatic, Text_Switch_Freedom, TextReSize } from './atom'
 import { useRecoilState, useRecoilValue } from 'recoil'
 import { AnimationGroup, Scene, Skeleton, Mesh, PointerEventTypes } from '@babylonjs/core'
 import { initializeScene } from './Babylon_Scene'
 import { animationReducer, closePageAnimation, openPageAnimation, pageBackAnimation, pageFrontAnimation, ToggleAnimationHandler, useDynamicReducers } from './Functions/Action'
 import { textAutoEdit } from './Functions/Text_Auto'
+import { textFreeEdit } from './Functions/Text_Free'
 
 const pageAmount = 51
 
@@ -12,7 +13,8 @@ function CanvasComponent() {
     const canvasRef = useRef<HTMLCanvasElement | null>(null)
     const sceneRef = useRef<Scene | null>(null)
     const skeletonRefs = useRef<Skeleton[] | null>(null)
-    const [text_update, setText_update] = useRecoilState(Text_Switch)
+    const [text_update_F, setText_update_F] = useRecoilState(Text_Switch_Freedom)
+    const [text_update_A, setText_update_A] = useRecoilState(Text_Switch_Automatic)
     const updated_text = useRecoilValue(Long_Text)
     const dispatchers = useDynamicReducers(animationReducer, { isOpen: false }, pageAmount).map(([_, dispatch]) => dispatch)
     const root_controller = useRef<Mesh | null>(null)
@@ -29,14 +31,23 @@ function CanvasComponent() {
         return initializeScene(canvas, sceneRef, skeletonRefs, updated_text, root_controller)
     }, [])
 
-    // Update the text on the front page
+    // Update the text on the front page in freedom mode
     useEffect(() => {
         const scene = sceneRef.current
         if (!scene) return
-        if (!text_update) return
+        if (!text_update_F) return
+        textFreeEdit(scene, updated_text, text_size)
+        setText_update_F(false)
+    }, [text_update_F])
+
+    // Update the text on the front page in automatic mode
+    useEffect(() => {
+        const scene = sceneRef.current
+        if (!scene) return
+        if (!text_update_A) return
         textAutoEdit(scene, updated_text, text_size)
-        setText_update(false)
-    }, [text_update])
+        setText_update_A(false)
+    }, [text_update_A])
 
     // Update bookmark
     useEffect(() => {
