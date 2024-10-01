@@ -1,4 +1,5 @@
 import { DynamicTexture, Scene } from "@babylonjs/core"
+import { getTextLayoutDetails } from "./Text_Layout"
 
 export const textFreeEdit = (scene: Scene, updated_text: string, text_size: number) => {
     const font = "bold " + text_size + "px monospace"
@@ -8,6 +9,8 @@ export const textFreeEdit = (scene: Scene, updated_text: string, text_size: numb
     const back_textures = []
     const pageLimit = 50
 
+    let { labelHeight, max_chars_per_line, max_lines_per_page, between_line, column } = getTextLayoutDetails(text_size)
+
     // Get texture for each page
     for (let i = 0; i < pageLimit; i++) {
         front_textures_info.push(scene.getMeshByName('front_page_' + i)?.material?.getActiveTextures())
@@ -16,12 +19,9 @@ export const textFreeEdit = (scene: Scene, updated_text: string, text_size: numb
         back_textures.push(back_textures_info[i]?.values().next().value as DynamicTexture)
     }
 
-    const max_chars_per_line = 25 // Maximum number of characters in one line
-    const max_lines_per_page = 18 // Maximum number of lines per page
     const lines = []
     let textField = ""
     let text = ""
-    const labelHeight = 1.5 * text_size
 
     // Split the text into lines
     for (let i = 0; i < updated_text.length; i++) {
@@ -49,8 +49,8 @@ export const textFreeEdit = (scene: Scene, updated_text: string, text_size: numb
         // draw on front_page
         for (let i = 0; i < max_lines_per_page && lineIndex < lines.length; i++) {
             text = lines[lineIndex]
-            front_texture.drawText(text, 40, line, font, "black", null, true, true)
-            line += labelHeight - 6
+            front_texture.drawText(text, column, line, font, "black", null, true, true)
+            line += labelHeight - between_line
             lineIndex++
         }
 
@@ -59,9 +59,9 @@ export const textFreeEdit = (scene: Scene, updated_text: string, text_size: numb
             line = labelHeight
             for (let i = 0; i < max_lines_per_page && lineIndex < lines.length; i++) {
                 text = lines[lineIndex]
-                back_texture.drawText(text, 10, line, font, "black", null, true, true)
+                back_texture.drawText(text, column / 2, line, font, "black", null, true, true)
                 back_texture.vAng = Math.PI
-                line += labelHeight - 6
+                line += labelHeight - between_line
                 lineIndex++
             }
         }
