@@ -1,14 +1,16 @@
 import { DynamicTexture, Scene } from "@babylonjs/core"
+import { getTextLayoutDetails } from "./Text_Layout"
 
 export const textAutoEdit = (scene: Scene, updated_text: string, text_size: number) => {
     const font = "bold " + text_size + "px monospace"
+    const pageLimit = 50
     const front_textures_info = []
     const back_textures_info = []
     const front_textures = []
     const back_textures = []
-    const pageLimit = 50
+    const lines = []
     let textField = ""
-    const labelHeight = 1.5 * text_size
+    let { labelHeight, max_chars_per_line, max_lines_per_page, between_line, column } = getTextLayoutDetails(text_size)
 
     // Get texture for each page
     for (let i = 0; i < pageLimit; i++) {
@@ -18,11 +20,7 @@ export const textAutoEdit = (scene: Scene, updated_text: string, text_size: numb
         back_textures.push(back_textures_info[i]?.values().next().value as DynamicTexture)
     }
 
-    const max_chars_per_line = 25 // Maximum number of characters in one line
-    const max_lines_per_page = 18 // Maximum number of lines per page
-    const lines = []
     const words = updated_text.split(/(\s|\n)/).filter(word => word !== ' ' && word !== '')
-    console.log(words)
 
     for (let i = 0; i < words.length; i++) {
         let word = words[i]
@@ -61,7 +59,6 @@ export const textAutoEdit = (scene: Scene, updated_text: string, text_size: numb
         }
     }
     if (textField.length > 0) { lines.push(textField) }
-    console.log(lines)
 
     let currentPage = 0
     let lineIndex = 0
@@ -79,8 +76,8 @@ export const textAutoEdit = (scene: Scene, updated_text: string, text_size: numb
         // draw on front_page
         for (let i = 0; i < max_lines_per_page && lineIndex < lines.length; i++) {
             const text = lines[lineIndex]
-            front_texture.drawText(text, 20, line, font, "black", null, true, true)
-            line += labelHeight - 6
+            front_texture.drawText(text, column, line, font, "black", null, true, true)
+            line += labelHeight - between_line
             lineIndex++
         }
 
@@ -89,9 +86,9 @@ export const textAutoEdit = (scene: Scene, updated_text: string, text_size: numb
             line = labelHeight
             for (let i = 0; i < max_lines_per_page && lineIndex < lines.length; i++) {
                 const text = lines[lineIndex]
-                back_texture.drawText(text, 10, line, font, "black", null, true, true)
+                back_texture.drawText(text, column / 2, line, font, "black", null, true, true)
                 back_texture.vAng = Math.PI
-                line += labelHeight - 6
+                line += labelHeight - between_line
                 lineIndex++
             }
         }

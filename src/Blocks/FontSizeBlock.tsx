@@ -1,30 +1,29 @@
-import { useState } from 'react'
 import { Slider } from '@mui/material'
+import { useRecoilState } from 'recoil'
+import { TextReSize } from '../atom'
 
 function FontSizeSlider() {
-  const [fontSize, setFontSize] = useState(22)
-  return (
+  const [fontSize, setFontSize] = useRecoilState(TextReSize)
+  const availableSizes = [10, 12, 14, 16, 18, 20, 22, 24, 26, 28, 30, 32, 34, 36, 38, 40, 42, 44, 48, 54, 62, 72, 84, 100, 124, 166, 250, 500]
+  const currentIndex = availableSizes.indexOf(fontSize)
 
+  return (
     <div style={{ width: '324px', height: '120px', marginTop: '5px', marginBottom: '5px' }}>
-      <span >フォントサイズ</span>
+      <span>フォントサイズ</span>
       <div style={{ display: 'flex', alignItems: 'center', marginBottom: '10px' }}>
         <input
-          type='number'
+          type="text"
           value={fontSize}
-          onChange={(e) => {
-            const newValue = Number(e.target.value)
-            if (newValue >= 10 && newValue <= 100) {
-              setFontSize(newValue)
-            }
-          }}
-          min={10} max={100}
-          style={{ width: '60px' }}
+          readOnly
+          style={{ width: '30px' }}
         />
         <Slider
-          value={fontSize} aria-labelledby='font-size-slider' valueLabelDisplay='auto'
-          step={1} min={10} max={100}
-          style={{ flexGrow: 1 }}
-          onChange={(_, newValue) => setFontSize(newValue as number)}
+          value={currentIndex}
+          step={1}
+          min={0}
+          max={availableSizes.length - 1}
+          onChange={(_, newValue) => setFontSize(availableSizes[newValue as number])}
+          style={{ flexGrow: 1, marginLeft: '20px', marginRight: '5px' }}
         />
       </div>
     </div>

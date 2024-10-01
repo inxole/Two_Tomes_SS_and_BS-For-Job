@@ -1,4 +1,4 @@
-import { useEffect, useRef } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import { useRecoilState } from 'recoil'
 import { BookMark, CoverSwitch } from '../atom'
 import { Button, Slider } from '@mui/material'
@@ -55,6 +55,7 @@ export function PageSlider() {
 
 export function CoverState() {
   const [bookmark, setBookmark] = useRecoilState(BookMark)
+  const [cover, setCover] = useState(false)
 
   const decreaseBookmark = () => {
     let currentBookmark = bookmark
@@ -68,17 +69,25 @@ export function CoverState() {
     }, 20)
   }
 
+  useEffect(() => {
+    if (bookmark === 0) {
+      setTimeout(() => setCover(true), 1001)
+    } else {
+      setTimeout(() => setCover(false), 1001)
+    }
+  }, [bookmark])
+
   return (
     <div style={{ display: 'flex', flexDirection: 'column', marginTop: '5px', marginRight: '5px', marginBottom: '2px', paddingRight: '5px', borderRight: '1px solid black' }}>
       <span style={{ display: 'flex', justifyContent: 'center', paddingBottom: '5px' }}>表紙</span>
       <Button
         size='small' variant="contained" color="primary" style={{ marginLeft: '2px', marginRight: '2px', marginBottom: '2px' }}
-        disabled={bookmark === 0 ? false : true}
+        disabled={cover === true ? false : true}
         onClick={() => setBookmark(1)}
       >開く</Button>
       <Button
         size='small' variant="contained" color="primary" style={{ margin: '2px ' }}
-        disabled={bookmark === 0 ? true : false}
+        disabled={cover === true ? true : false}
         onClick={decreaseBookmark}
       >閉じる</Button>
     </div>
