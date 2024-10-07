@@ -36,7 +36,7 @@ export function CameraWork(scene: Scene, canvas: HTMLCanvasElement | null) {
         throw new Error("HTMLCanvasElement is not found.")
     }
     const camera = createCamera(scene, canvas)
-    const pipeline = new DefaultRenderingPipeline("default", true, scene, [camera])
+    const pipeline = new DefaultRenderingPipeline("default", true, scene, [camera], false)
     pipeline.depthOfFieldEnabled = true
     pipeline.depthOfField.focalLength = 0.1
     pipeline.depthOfField.fStop = 1.4

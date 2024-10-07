@@ -80,10 +80,9 @@ export function openPageAnimation(animationData: AnimationGroup[]) {
     const AD = AnimationDictionary
     // Open/switch cover
     animationData[AD.N_0_90_Group].start(true), animationData[AD.R_90_0_Group].stop()
-    animationData[AD.BS_action_0_90].start(true), animationData[AD.BS_action_back].stop()
+    animationData[AD.Action_0_90_BS].start(true), animationData[AD.Non_Action_BS].stop()
 
-    setTimeout(() => { animationData[AD.BS_action_0_90].stop() }, 1000) // Repeat prevention
-    setTimeout(() => { animationData[AD.BS_stay_90].start(true) }, 1000) // Start holding
+    setTimeout(() => { animationData[AD.Action_0_90_BS].stop() }, 1000) // Repeat prevention
 
     // Move pages all at once and switch
     animationData[AD.N_Controller].start(true), animationData[AD.R_Controller].stop()
@@ -94,10 +93,9 @@ export function closePageAnimation(animationData: AnimationGroup[]) {
     const AD = AnimationDictionary
     // Close/switch cover
     animationData[AD.R_90_0_Group].start(true), animationData[AD.N_0_90_Group].stop()
-    animationData[AD.BS_action_back].start(true), animationData[AD.BS_action_0_90].stop()
+    animationData[AD.Action_back_BS].start(true)
 
-    setTimeout(() => { animationData[AD.BS_action_back]?.stop() }, 1000) // Repeat prevention
-    animationData[AD.BS_stay_90].stop() // Stop holding
+    setTimeout(() => { animationData[AD.Action_back_BS]?.stop() }, 1000) // Repeat prevention
 
     // Move pages all at once and switch
     animationData[AD.R_Controller].start(true), animationData[AD.N_Controller].stop()
@@ -111,10 +109,10 @@ export enum AnimationDictionary {
     R_Animation_Group = 3,
     N_0_90_Group = 4,
     R_90_0_Group = 5,
-    BS_Non_Action = 6,
-    BS_action_0_90 = 7,
-    BS_stay_90 = 8,
-    BS_action_back = 9,
+    Action_0_90_BS = 6,
+    Stay_90_BS = 7,
+    Action_back_BS = 8,
+    Non_Action_BS = 9,
 }
 
 export function pageFrontAnimation(scene: Scene, index: number) {
