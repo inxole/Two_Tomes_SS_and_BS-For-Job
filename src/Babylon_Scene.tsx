@@ -3,9 +3,10 @@ import { Inspector } from "@babylonjs/inspector"
 import { LightUp, CameraWork } from "./Functions/Canvas"
 import { createPage } from "./Functions/Page_Mesh"
 import { createSkeleton } from "./Functions/Skeleton"
-import initializeGLB from "./Functions/Tome_BS"
+import load_Tome_BS from "./Functions/Tome_BS"
 import { createRootAnimation } from "./Animation_data"
 import { ControllerAnimation } from "./Animation_sub_data"
+import load_Tome_SS from "./Functions/Tome_SS"
 
 const isDebug = true
 export function initializeScene(
@@ -21,7 +22,8 @@ export function initializeScene(
     sceneRef.current = scene
     LightUp(scene)
     CameraWork(scene, canvas)
-    initializeGLB(scene)
+    load_Tome_BS(scene)
+    load_Tome_SS(scene)
 
     const front_pages: Mesh[] = []
     const back_pages: Mesh[] = []

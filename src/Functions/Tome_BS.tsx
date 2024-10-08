@@ -80,7 +80,7 @@ export let BookCover: Mesh
  * @param scene add to scene
  * @param animationRefs animation group reference
  */
-function initializeGLB(
+function load_Tome_BS(
     scene: Scene,
 ) {
     SceneLoader.Append("./", "Tome_BS.glb", scene, function () {
@@ -114,4 +114,4 @@ function initializeGLB(
             })
     })
 }
-export default initializeGLB
+export default load_Tome_BS
