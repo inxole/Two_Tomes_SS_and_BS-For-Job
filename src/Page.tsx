@@ -17,7 +17,7 @@ function CanvasComponent() {
     const [text_update_A, setText_update_A] = useRecoilState(Text_Switch_Automatic)
     const updated_text = useRecoilValue(Long_Text)
     const dispatchers = useDynamicReducers(animationReducer, { isOpen: false }, pageAmount).map(([_, dispatch]) => dispatch)
-    const root_controller = useRef<Mesh | null>(null)
+    const root_controller_BS = useRef<Mesh | null>(null)
     const root_controller_SS = useRef<Mesh | null>(null)
     const animationData = sceneRef.current?.animationGroups as AnimationGroup[]
     const [bookmark, setBookmark] = useRecoilState(BookMark)
@@ -29,7 +29,7 @@ function CanvasComponent() {
         const canvas = canvasRef.current
         if (!canvas) return
 
-        return initializeScene(canvas, sceneRef, skeletonRefs, updated_text, root_controller, root_controller_SS)
+        return initializeScene(canvas, sceneRef, skeletonRefs, updated_text, root_controller_BS, root_controller_SS)
     }, [])
 
     // Update the text on the front page in freedom mode
