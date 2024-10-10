@@ -4,7 +4,7 @@ import { LightUp, CameraWork } from "./Functions/Canvas"
 import { createPage } from "./Functions/Page_Mesh"
 import { createSkeleton } from "./Functions/Skeleton"
 import load_Tome_BS from "./Functions/Tome_BS"
-import { createRootAnimation } from "./Animation_data"
+import { createRootAnimation, createRootAnimation_SS } from "./Animation_data"
 import { ControllerAnimation } from "./Animation_sub_data"
 import load_Tome_SS from "./Functions/Tome_SS"
 
@@ -15,6 +15,7 @@ export function initializeScene(
     skeletonRefs: React.MutableRefObject<Skeleton[] | null>,
     updated_text: string,
     root_controller: React.MutableRefObject<Mesh | null>,
+    root_controller_SS: React.MutableRefObject<Mesh | null>,
 ) {
     const meshes_amount = 50
     const engine = new Engine(canvas, true)
@@ -76,6 +77,12 @@ export function initializeScene(
     back_pages.forEach(mesh => {
         mesh.position = mesh.position.subtract(control_mesh.position).add(targetPosition)
     })
+
+    const test = control_mesh.clone("Root_SS", null)
+    test.position = new Vector3(-0.0975 + 0.5, -0.016, 0)
+    root_controller_SS.current = test
+    root_controller_SS.current.isVisible = false
+    createRootAnimation_SS(root_controller_SS)
 
     if (isDebug) {
         scene.debugLayer.show({

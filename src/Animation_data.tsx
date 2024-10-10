@@ -65,8 +65,17 @@ const Position_keys_90_0 = [
     { frame: 50, value: new Vector3(-0.0975, -0.0144, 0) }
 ]
 
+const Position_keys_0_90_SS = [
+    { frame: 0, value: new Vector3(-0.0975 + 0.5, -0.0144, 0) },
+    { frame: 50, value: new Vector3(-0.101 + 0.5, -0.02, 0) }
+]
+const Position_keys_90_0_SS = [
+    { frame: 0, value: new Vector3(-0.101 + 0.5, -0.02, 0) },
+    { frame: 50, value: new Vector3(-0.0975 + 0.5, -0.0144, 0) }
+]
+
 /**
- * attach animation data and animation group to root controller
+ * attach animation data and animation group to root controller (Tome_BS)
  * @param mesh parent mesh for controller
 */
 export function createRootAnimation(mesh: React.MutableRefObject<Mesh | null>) {
@@ -84,6 +93,33 @@ export function createRootAnimation(mesh: React.MutableRefObject<Mesh | null>) {
 
     const Zero_To_Ninety_Group = new AnimationGroup("F_0_90_Group")
     const Ninety_To_Zero_Group = new AnimationGroup("R_90_0_Group")
+
+    Zero_To_Ninety_Group.addTargetedAnimation(normal_0_90, mesh.current)
+    Zero_To_Ninety_Group.addTargetedAnimation(position_0_90, mesh.current)
+
+    Ninety_To_Zero_Group.addTargetedAnimation(reverse_90_0, mesh.current)
+    Ninety_To_Zero_Group.addTargetedAnimation(position_90_0, mesh.current)
+}
+
+/**
+ * attach animation data and animation group to root controller(Tome_SS)
+ * @param mesh parent mesh for controller
+*/
+export function createRootAnimation_SS(mesh: React.MutableRefObject<Mesh | null>) {
+    const normal_0_90 = new Animation("F_0_90", "rotation.z", 120, Animation.ANIMATIONTYPE_FLOAT, Animation.ANIMATIONLOOPMODE_CONSTANT)
+    const reverse_90_0 = new Animation("R_90_0", "rotation.z", 120, Animation.ANIMATIONTYPE_FLOAT, Animation.ANIMATIONLOOPMODE_CONSTANT)
+
+    normal_0_90.setKeys(Normal_keys_0_90)
+    reverse_90_0.setKeys(Reverse_keys_90_0)
+
+    const position_0_90 = new Animation("P_0_90", "position", 120, Animation.ANIMATIONTYPE_VECTOR3, Animation.ANIMATIONLOOPMODE_CONSTANT)
+    const position_90_0 = new Animation("P_90_0", "position", 120, Animation.ANIMATIONTYPE_VECTOR3, Animation.ANIMATIONLOOPMODE_CONSTANT)
+
+    position_0_90.setKeys(Position_keys_0_90_SS)
+    position_90_0.setKeys(Position_keys_90_0_SS)
+
+    const Zero_To_Ninety_Group = new AnimationGroup("SS_F_0_90_Group")
+    const Ninety_To_Zero_Group = new AnimationGroup("SS_R_90_0_Group")
 
     Zero_To_Ninety_Group.addTargetedAnimation(normal_0_90, mesh.current)
     Zero_To_Ninety_Group.addTargetedAnimation(position_0_90, mesh.current)

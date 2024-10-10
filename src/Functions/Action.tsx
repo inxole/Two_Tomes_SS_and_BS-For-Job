@@ -82,6 +82,7 @@ export function openPageAnimation(animationData: AnimationGroup[]) {
 
     // Open/switch cover
     sortedAnimationData[AD.F_0_90_Group].start(true), sortedAnimationData[AD.R_90_0_Group].stop()
+    sortedAnimationData[AD.SS_F_0_90_Group].start(true), sortedAnimationData[AD.SS_R_90_0_Group].stop()
     sortedAnimationData[AD.BS_Action_0_90].start(true), sortedAnimationData[AD.BS_Non_Action].stop()
     sortedAnimationData[AD.SS_Action_0_90].start(true), sortedAnimationData[AD.SS_Non_Action].stop()
 
@@ -101,6 +102,7 @@ export function closePageAnimation(animationData: AnimationGroup[]) {
 
     // Close/switch cover
     sortedAnimationData[AD.R_90_0_Group].start(true), sortedAnimationData[AD.F_0_90_Group].stop()
+    sortedAnimationData[AD.SS_R_90_0_Group].start(true), sortedAnimationData[AD.SS_F_0_90_Group].stop()
     sortedAnimationData[AD.BS_Action_back].start(true), sortedAnimationData[AD.BS_Action_0_90].stop(true)
     sortedAnimationData[AD.SS_Action_back].start(true), sortedAnimationData[AD.SS_Action_0_90].stop(true)
 
@@ -129,6 +131,8 @@ export enum AnimationDictionary {
     R_Controller = 11,
     R_Animation_Group = 12,
     R_90_0_Group = 13,
+    SS_F_0_90_Group = 14,
+    SS_R_90_0_Group = 15,
 }
 
 export function pageFrontAnimation(scene: Scene, index: number) {
@@ -142,19 +146,3 @@ export function pageBackAnimation(scene: Scene, index: number) {
     if (!page) return
     scene.beginAnimation(page, 60, 120, true, undefined, () => { })
 }
-
-//glb_animationの内訳
-// 0: Object { name: "000_BS_Non_Action", _from: 0, _to: 600, … }
-// 1: Object { name: "001_BS_action_0_90", _from: 0, _to: 600, … }
-// 2: Object { name: "002_BS_stay_90", _from: 0, _to: 600, … }
-// 3: Object { name: "003_BS_action_back", _from: 0, _to: 600, … }
-// 4: Object { name: "004_SS_Non_Action", _from: 0, _to: 600, … }
-// 5: Object { name: "005_SS_action_0_90", _from: 0, _to: 600, … }
-// 6: Object { name: "006_SS_stay_90", _from: 0, _to: 600, … }
-// 7: Object { name: "007_SS_action_back", _from: 0, _to: 600, … }
-// 8: Object { name: "F_0_90_Group", _from: 0, _to: 50, … }
-// 9: Object { name: "F_Animation_Group", _from: 1000, _to: 1050, … }
-// 10: Object { name: "F_Controller", _from: 1000, _to: 1060, … }
-// 11: Object { name: "R_90_0_Group", _from: 0, _to: 50, … }
-// 12: Object { name: "R_Animation_Group", _from: 1050, _to: 1100, … }​
-// 13: Object { name: "R_Controller", _from: 1060, _to: 1120, … }
