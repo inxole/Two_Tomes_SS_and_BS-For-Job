@@ -7,7 +7,7 @@ import { animationReducer, closePageAnimation, openPageAnimation, pageBackAnimat
 import { textAutoEdit } from './Functions/Text_Auto'
 import { textFreeEdit } from './Functions/Text_Free'
 
-const pageAmount = 51
+const pageAmount = 101
 
 function CanvasComponent() {
     const canvasRef = useRef<HTMLCanvasElement | null>(null)
@@ -76,14 +76,14 @@ function CanvasComponent() {
             if (index < bookmark) {
                 dispatch({
                     type: "OPEN",
-                    open: () => { pageFrontAnimation(scene, index - 1) },
+                    open: () => { pageFrontAnimation(scene, index - 1), pageFrontAnimation(scene, index + 50 - 1) },
                     close: () => { console.error(`page ${index} open fail`) }
                 })
             } else {
                 dispatch({
                     type: "CLOSE",
                     open: () => { console.error(`page ${index} close fail`) },
-                    close: () => { pageBackAnimation(scene, index - 1) }
+                    close: () => { pageBackAnimation(scene, index - 1), pageBackAnimation(scene, index + 50 - 1) }
                 })
             }
         })

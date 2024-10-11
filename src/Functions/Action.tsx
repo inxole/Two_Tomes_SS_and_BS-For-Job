@@ -53,9 +53,9 @@ export function ToggleAnimationHandler(
     const cuttedNumber = splitted.substring(prefix.length)
     const hitBoxNumber: number = parseInt(cuttedNumber)
     setBookmark(previous => {
-        if (previous == hitBoxNumber + 1) {
+        if (previous == hitBoxNumber + 1|| previous == hitBoxNumber -50+1) {
             return previous + 1
-        } else if (previous == hitBoxNumber + 2) {
+        } else if (previous == hitBoxNumber + 2|| previous == hitBoxNumber -50+2) {
             return previous - 1
         } else if (previous === 0) {
             return previous + 1
