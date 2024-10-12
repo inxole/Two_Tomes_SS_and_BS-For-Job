@@ -1,13 +1,13 @@
 import { useEffect, useRef } from 'react'
 import { BookMark, CoverSwitch, Long_Text, Text_Switch_Automatic, Text_Switch_Freedom, TextReSize } from './atom'
 import { useRecoilState, useRecoilValue } from 'recoil'
-import { AnimationGroup, Scene, Skeleton, Mesh, PointerEventTypes } from '@babylonjs/core'
+import { AnimationGroup, Scene, Skeleton, Mesh, PointerEventTypes, Vector3 } from '@babylonjs/core'
 import { initializeScene } from './Babylon_Scene'
 import { animationReducer, closePageAnimation, openPageAnimation, pageBackAnimation, pageFrontAnimation, ToggleAnimationHandler, useDynamicReducers } from './Functions/Action'
 import { textAutoEdit } from './Functions/Text_Auto'
 import { textFreeEdit } from './Functions/Text_Free'
 
-const pageAmount = 51
+const pageAmount = 101
 
 function CanvasComponent() {
     const canvasRef = useRef<HTMLCanvasElement | null>(null)
@@ -17,7 +17,8 @@ function CanvasComponent() {
     const [text_update_A, setText_update_A] = useRecoilState(Text_Switch_Automatic)
     const updated_text = useRecoilValue(Long_Text)
     const dispatchers = useDynamicReducers(animationReducer, { isOpen: false }, pageAmount).map(([_, dispatch]) => dispatch)
-    const root_controller = useRef<Mesh | null>(null)
+    const root_controller_BS = useRef<Mesh | null>(null)
+    const root_controller_SS = useRef<Mesh | null>(null)
     const animationData = sceneRef.current?.animationGroups as AnimationGroup[]
     const [bookmark, setBookmark] = useRecoilState(BookMark)
     const coverCheck = useRecoilValue(CoverSwitch)
@@ -28,8 +29,25 @@ function CanvasComponent() {
         const canvas = canvasRef.current
         if (!canvas) return
 
-        return initializeScene(canvas, sceneRef, skeletonRefs, updated_text, root_controller)
+        return initializeScene(canvas, sceneRef, skeletonRefs, updated_text, root_controller_BS, root_controller_SS)
     }, [])
+
+    useEffect(() => {
+        const scene = sceneRef.current
+        if (!scene) return
+        const tomeBS = scene.getMeshByName("Tome_BS")
+        const tomeSS = scene.getMeshByName("Tome_SS")
+        const control_mesh_BS = scene.getMeshByName("Root")
+        const control_mesh_SS = scene.getMeshByName("Root_SS")
+        if (control_mesh_BS && control_mesh_SS && tomeBS && tomeSS) {
+            control_mesh_BS.parent = tomeBS
+            control_mesh_SS.parent = tomeSS
+            tomeBS.position = new Vector3(-0.28, 0, 0)
+            tomeSS.position = new Vector3(0.28, 0, 0)
+            tomeBS.rotation = new Vector3(-Math.PI / 2.25, 0, 0)
+            tomeSS.rotation = new Vector3(-Math.PI / 2.25, 0, 0)
+        }
+    })
 
     // Update the text on the front page in freedom mode
     useEffect(() => {
@@ -75,14 +93,14 @@ function CanvasComponent() {
             if (index < bookmark) {
                 dispatch({
                     type: "OPEN",
-                    open: () => { pageFrontAnimation(scene, index - 1) },
+                    open: () => { pageFrontAnimation(scene, index - 1), pageFrontAnimation(scene, index + 50 - 1) },
                     close: () => { console.error(`page ${index} open fail`) }
                 })
             } else {
                 dispatch({
                     type: "CLOSE",
                     open: () => { console.error(`page ${index} close fail`) },
-                    close: () => { pageBackAnimation(scene, index - 1) }
+                    close: () => { pageBackAnimation(scene, index - 1), pageBackAnimation(scene, index + 50 - 1) }
                 })
             }
         })

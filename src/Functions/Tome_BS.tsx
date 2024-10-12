@@ -1,4 +1,5 @@
 import { Bone, CSG, Color3, Matrix, Mesh, MeshBuilder, Scene, SceneLoader, Vector3 } from "@babylonjs/core"
+import "@babylonjs/loaders/glTF"
 import { createHitBoxMaterial } from "./Skeleton"
 
 /**
@@ -80,10 +81,8 @@ export let BookCover: Mesh
  * @param scene add to scene
  * @param animationRefs animation group reference
  */
-function initializeGLB(
-    scene: Scene,
-) {
-    SceneLoader.Append("./", "Tome_BS.glb", scene, function () {
+function load_Tome_BS(scene: Scene) {
+    SceneLoader.ImportMeshAsync("", "./", "Tome_BS.glb", scene).then(() => {
         GetMeshForGLB(scene, "Tome_BS_primitive0")
         GetMeshForGLB(scene, "Tome_BS_primitive1")
         GetMeshForGLB(scene, "Tome_BS_primitive2")
@@ -114,4 +113,4 @@ function initializeGLB(
             })
     })
 }
-export default initializeGLB
+export default load_Tome_BS
