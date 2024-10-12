@@ -1,5 +1,4 @@
 import { AnimationGroup, Engine, Mesh, MeshBuilder, Scene, Skeleton, Space, Vector3 } from "@babylonjs/core"
-import { Inspector } from "@babylonjs/inspector"
 import { LightUp, CameraWork } from "./Functions/Canvas"
 import { createPage } from "./Functions/Page_Mesh"
 import { createSkeleton } from "./Functions/Skeleton"
@@ -8,7 +7,6 @@ import { ControllerAnimation } from "./Animation_sub_data"
 import load_Tome_BS from "./Functions/Tome_BS"
 import load_Tome_SS from "./Functions/Tome_SS"
 
-const isDebug = true
 export function initializeScene(
     canvas: HTMLCanvasElement,
     sceneRef: React.MutableRefObject<Scene | null>,
@@ -94,12 +92,6 @@ export function initializeScene(
         mesh.position = mesh.position.subtract(control_mesh_SS.position).add(targetPosition_SS)
     })
 
-    if (isDebug) {
-        scene.debugLayer.show({
-            embedMode: true
-        })
-        Inspector.Show(scene, {})
-    }
     engine.runRenderLoop(() => scene.render())
     const resize = () => engine.resize()
     window.addEventListener('resize', resize)

@@ -1,4 +1,5 @@
 import { Matrix, Mesh, Scene, SceneLoader, Vector3 } from "@babylonjs/core"
+import "@babylonjs/loaders/glTF"
 import { attachHalfCylinder, attachHitBox, GetSkeletonForGLB } from "./Tome_BS"
 
 export const mesh_SS: Mesh[] = []
@@ -22,10 +23,8 @@ export function GetMeshForGLB_SS(scene: Scene, name: string): void {
  * @param scene add to scene
  * @param animationRefs animation group reference
  */
-function load_Tome_SS(
-    scene: Scene,
-) {
-    SceneLoader.Append("./", "Tome_SS.glb", scene, function () {
+function load_Tome_SS(scene: Scene) {
+    SceneLoader.ImportMeshAsync("", "./", "Tome_SS.glb", scene).then(() => {
         GetMeshForGLB_SS(scene, "Tome_SS_primitive0")
         GetMeshForGLB_SS(scene, "Tome_SS_primitive1")
         BookCover_SS = Mesh.MergeMeshes(mesh_SS, true, true, undefined, false, true) as Mesh
