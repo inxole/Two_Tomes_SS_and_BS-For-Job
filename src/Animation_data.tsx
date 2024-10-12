@@ -66,12 +66,12 @@ const Position_keys_90_0 = [
 ]
 
 const Position_keys_0_90_SS = [
-    { frame: 0, value: new Vector3(-0.0975 + 0.5, -0.0144, 0) },
-    { frame: 50, value: new Vector3(-0.101 + 0.5, -0.02, 0) }
+    { frame: 0, value: new Vector3(-0.0975, -0.0144, 0) },
+    { frame: 50, value: new Vector3(-0.101, -0.02, 0) }
 ]
 const Position_keys_90_0_SS = [
-    { frame: 0, value: new Vector3(-0.101 + 0.5, -0.02, 0) },
-    { frame: 50, value: new Vector3(-0.0975 + 0.5, -0.0144, 0) }
+    { frame: 0, value: new Vector3(-0.101, -0.02, 0) },
+    { frame: 50, value: new Vector3(-0.0975, -0.0144, 0) }
 ]
 
 /**

@@ -1,7 +1,7 @@
 import { useEffect, useRef } from 'react'
 import { BookMark, CoverSwitch, Long_Text, Text_Switch_Automatic, Text_Switch_Freedom, TextReSize } from './atom'
 import { useRecoilState, useRecoilValue } from 'recoil'
-import { AnimationGroup, Scene, Skeleton, Mesh, PointerEventTypes } from '@babylonjs/core'
+import { AnimationGroup, Scene, Skeleton, Mesh, PointerEventTypes, Vector3 } from '@babylonjs/core'
 import { initializeScene } from './Babylon_Scene'
 import { animationReducer, closePageAnimation, openPageAnimation, pageBackAnimation, pageFrontAnimation, ToggleAnimationHandler, useDynamicReducers } from './Functions/Action'
 import { textAutoEdit } from './Functions/Text_Auto'
@@ -31,6 +31,23 @@ function CanvasComponent() {
 
         return initializeScene(canvas, sceneRef, skeletonRefs, updated_text, root_controller_BS, root_controller_SS)
     }, [])
+
+    useEffect(() => {
+        const scene = sceneRef.current
+        if (!scene) return
+        const tomeBS = scene.getMeshByName("Tome_BS")
+        const tomeSS = scene.getMeshByName("Tome_SS")
+        const control_mesh_BS = scene.getMeshByName("Root")
+        const control_mesh_SS = scene.getMeshByName("Root_SS")
+        if (control_mesh_BS && control_mesh_SS && tomeBS && tomeSS) {
+            control_mesh_BS.parent = tomeBS
+            control_mesh_SS.parent = tomeSS
+            tomeBS.position = new Vector3(-0.28, 0, 0)
+            tomeSS.position = new Vector3(0.28, 0, 0)
+            tomeBS.rotation = new Vector3(-Math.PI / 2.25, 0, 0)
+            tomeSS.rotation = new Vector3(-Math.PI / 2.25, 0, 0)
+        }
+    })
 
     // Update the text on the front page in freedom mode
     useEffect(() => {

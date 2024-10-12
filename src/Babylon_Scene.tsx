@@ -71,7 +71,7 @@ export function initializeScene(
     back_pages.slice(0, 50).forEach(mesh => { mesh.parent = control_mesh_BS })
     const control_mesh_SS = MeshBuilder.CreatePlane("Root_SS", { width: 0.01, height: 0.01 }, scene)
     root_controller_SS.current = control_mesh_SS
-    root_controller_SS.current.position = new Vector3(-0.0975 + 0.5, -0.016, 0)
+    root_controller_SS.current.position = new Vector3(-0.0975, -0.016, 0)
     root_controller_SS.current.isVisible = false
     front_pages.slice(50, 100).forEach(mesh => { mesh.parent = control_mesh_SS })
     back_pages.slice(50, 100).forEach(mesh => { mesh.parent = control_mesh_SS })
@@ -86,7 +86,7 @@ export function initializeScene(
     })
 
     createRootAnimation_SS(root_controller_SS)
-    const targetPosition_SS = new Vector3(0, 0.0295, 0)
+    const targetPosition_SS = new Vector3(-0.5, 0.0295, 0)
     front_pages.slice(50, 100).forEach(mesh => {
         mesh.position = mesh.position.subtract(control_mesh_SS.position).add(targetPosition_SS)
     })

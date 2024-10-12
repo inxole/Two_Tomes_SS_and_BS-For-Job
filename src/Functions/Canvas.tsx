@@ -18,7 +18,7 @@ export function LightUp(scene: Scene) {
 export function createCamera(scene: Scene, canvas: HTMLCanvasElement) {
     const camera = new ArcRotateCamera('camera1', Math.PI / 2, Math.PI / 4, 2, new Vector3(0, 0, 0), scene)
     camera.attachControl(canvas, true)
-    camera.setPosition(new Vector3(1, 1, -1))
+    camera.setPosition(new Vector3(0, 0, -1.5))
     camera.wheelPrecision = 200
     camera.lowerRadiusLimit = 1.2
     camera.upperRadiusLimit = 5
