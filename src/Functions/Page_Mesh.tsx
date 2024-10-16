@@ -78,7 +78,7 @@ export function createPageMesh(scene: Scene, name: string, z: number, isFront: b
  */
 export function createPageTexture(scene: Scene, text: string, isFront: boolean) {
     const text_size = 22
-    const font = "bold " + text_size + "px monospace"
+    const font = "bold " + text_size + "px NieR"
     const Texture = new DynamicTexture("DynamicTexture", { width: 345, height: 512 }, scene, true)
     Texture.hasAlpha = true
     if (isFront) {
