@@ -1,5 +1,8 @@
-@font-face{
-    font-family: "NieR-Regular";
-    src:local("NieR-Regular"),
-    url('./assets/fonts/NieR-Regular.ttf')
+@font-face {
+    font-family: 'NieR-Regular';
+    src: url('/fonts/NieR-Regular.ttf') format('truetype');
+}
+
+p {
+    font-family: 'NieR-Regular', sans-serif !important;
 }

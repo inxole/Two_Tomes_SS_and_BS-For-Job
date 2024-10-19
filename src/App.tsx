@@ -2,7 +2,6 @@ import { Box } from '@mui/material'
 import CanvasComponent from './Page'
 import RndComponent from './Rnd'
 import '/app/index.css'
-import './assets/fonts/NieR-Regular.ttf'
 
 function BabylonScene() {
 
@@ -10,7 +9,7 @@ function BabylonScene() {
     <Box style={{ position: 'relative', width: '100%', height: '100%' }}>
       <CanvasComponent />
       <RndComponent />
-      <p style={{ fontFamily: 'NieR' }}>hello HELLO</p>
+      <p style={{ fontFamily: 'NieR-Regular' }}>This text is using the NieR-Regular font.</p>
     </Box>
   )
 }
