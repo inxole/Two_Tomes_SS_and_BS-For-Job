@@ -70,7 +70,7 @@ export function createPageMesh(scene: Scene, name: string, z: number, isFront: b
 }
 
 const text_size = 22
-const fontFace = new FontFace('NieR-Regular', 'url(/fonts/NieR-Regular.ttf)')
+export const fontFace = new FontFace('NieR-Regular', 'url(/fonts/NieR-Regular.ttf)')
 /**
  * create page texture
  * @param scene add to scene
