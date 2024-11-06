@@ -3,9 +3,9 @@ import { getTextLayoutDetails } from "./Text_Layout"
 import { fontFace } from "./Page_Mesh"
 
 export const textAutoEdit = async (scene: Scene, updated_text: string, text_size: number) => {
+    const pageLimit = 50
     const defaultFont = "bold " + text_size + "px monospace"
     const nieRFont = "bold " + text_size + "px 'NieR-Regular'"
-    const pageLimit = 50
     const front_textures_book1 = []
     const back_textures_book1 = []
     const front_textures_book2 = []
@@ -22,7 +22,6 @@ export const textAutoEdit = async (scene: Scene, updated_text: string, text_size
         front_textures_book1.push(scene.getMeshByName('front_page_' + i)?.material?.getActiveTextures().values().next().value as DynamicTexture)
         back_textures_book1.push(scene.getMeshByName('back_page_' + i)?.material?.getActiveTextures().values().next().value as DynamicTexture)
     }
-
     for (let i = pageLimit; i < pageLimit + pageLimit; i++) {
         front_textures_book2.push(scene.getMeshByName('front_page_' + i)?.material?.getActiveTextures().values().next().value as DynamicTexture)
         back_textures_book2.push(scene.getMeshByName('back_page_' + i)?.material?.getActiveTextures().values().next().value as DynamicTexture)
@@ -66,14 +65,12 @@ export const textAutoEdit = async (scene: Scene, updated_text: string, text_size
         back_texture.drawText("", 0, 0, font, "black", "white", true, true)
 
         let line = labelHeight
-
         for (let i = 0; i < max_lines_per_page && lineIndex < lines.length; i++) {
             const text = lines[lineIndex]
             front_texture.drawText(text, column, line, font, "black", null, true, true)
             line += labelHeight - between_line
             lineIndex++
         }
-
         if (lineIndex < lines.length) {
             line = labelHeight
             for (let i = 0; i < max_lines_per_page && lineIndex < lines.length; i++) {
@@ -100,14 +97,12 @@ export const textAutoEdit = async (scene: Scene, updated_text: string, text_size
         back_texture.drawText("", 0, 0, font, "black", "white", true, true)
 
         let line = labelHeight
-
         for (let i = 0; i < max_lines_per_page && lineIndex < lines.length; i++) {
             const text = lines[lineIndex]
             front_texture.drawText(text, column, line, font, "black", null, true, true)
             line += labelHeight - between_line
             lineIndex++
         }
-
         if (lineIndex < lines.length) {
             line = labelHeight
             for (let i = 0; i < max_lines_per_page && lineIndex < lines.length; i++) {
