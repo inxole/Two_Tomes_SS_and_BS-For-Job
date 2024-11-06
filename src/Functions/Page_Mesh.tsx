@@ -69,6 +69,8 @@ export function createPageMesh(scene: Scene, name: string, z: number, isFront: b
     return page
 }
 
+const text_size = 22
+export const fontFace = new FontFace('NieR-Regular', 'url(/fonts/NieR-Regular.ttf)')
 /**
  * create page texture
  * @param scene add to scene
@@ -77,18 +79,40 @@ export function createPageMesh(scene: Scene, name: string, z: number, isFront: b
  * @returns page texture
  */
 export function createPageTexture(scene: Scene, text: string, isFront: boolean) {
-    const text_size = 22
-    const font = "bold " + text_size + "px monospace"
-    const Texture = new DynamicTexture("DynamicTexture", { width: 345, height: 512 }, scene, true)
-    Texture.hasAlpha = true
-    if (isFront) {
-        Texture.drawText(text, 20, text_size + 15, font, "#000000", "#ffffff", true)
-        Texture.uOffset = -0.05
-    } else {
-        Texture.drawText(text, 10, text_size + 15, font, "#000000", "#ffffff", true)
-        Texture.vAng = Math.PI
+    let font = "bold " + text_size + "px monospace"
+    const match = text.match(/\d+/)
+    if (match) {
+        let number = Number(match[0])
+        if (number > 100) {
+            font = "bold " + text_size + "px 'NieR-Regular'"
+        }
+        if (number >= 101 && number <= 200) {
+            number = number - 100
+            text = text.replace(/\d+/, `${number}`)
+        }
     }
-    return Texture
+
+    const texture = new DynamicTexture("DynamicTexture", { width: 345, height: 512 }, scene, true)
+    texture.hasAlpha = true
+
+    fontFace.load().then(() => {
+        document.fonts.add(fontFace)
+
+        const ctx = texture.getContext()
+        if (ctx) {
+            if (isFront) {
+                texture.drawText(text, 20, text_size + 15, font, "#000000", "#ffffff", true)
+                texture.uOffset = -0.05
+            } else {
+                texture.drawText(text, 10, text_size + 15, font, "#000000", "#ffffff", true)
+                texture.vAng = Math.PI
+            }
+        }
+    }).catch((error) => {
+        console.error('Font loading failed:', error)
+    })
+
+    return texture
 }
 
 /**

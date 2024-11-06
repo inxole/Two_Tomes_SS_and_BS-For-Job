@@ -35,18 +35,11 @@ export function PageSlider() {
       <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', marginBottom: '10px' }}>
         <Slider
           value={bookmark}
-          aria-labelledby='page-count-slider' valueLabelDisplay='auto'
+          aria-labelledby='page-count-slider'
           step={1} min={1} max={51}
           style={{ flexGrow: 1 }}
           onChange={(_, newValue) => setBookmark(newValue as number)}
           disabled={bookmark === 0 ? true : isSliderDisabled}
-          valueLabelFormat={() => (
-            <span>
-              <span style={{ marginRight: '8px' }}>{bookmark === 1 ? '表紙' : bookmark * 2 - 2}</span>
-              |
-              <span style={{ marginLeft: '8px' }}>{bookmark === 51 ? '背表紙' : bookmark * 2 - 1}</span>
-            </span>
-          )}
         />
       </div>
     </div>

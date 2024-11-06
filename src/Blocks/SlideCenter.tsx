@@ -1,7 +1,7 @@
 import React, { useState } from 'react'
 import { useRecoilState } from 'recoil'
 import { BookMark, CoverSwitch } from '../atom'
-import StarIcon from '@mui/icons-material/Star'
+import BookmarkIcon from '@mui/icons-material/Bookmark'
 
 type IndexDisplayProps = { index: number }
 
@@ -73,7 +73,7 @@ export function AutoOpenToBookmark() {
   return (
     <div style={{ display: 'flex', justifyContent: 'center' }}>
       <div style={{ paddingRight: '10px', cursor: 'pointer' }}>
-        <StarIcon onClick={handleButtonClick} color='warning' />
+        <BookmarkIcon onClick={handleButtonClick} color='warning' />
       </div>
       <input
         type="number"
