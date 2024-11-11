@@ -16,15 +16,23 @@ const splitTextIntoLines_Free = (updated_text: string) => {
   return lines_Free
 }
 
+describe("Line break test when was pushed free button", () => {
+  test("Line break test", () => {
+    const updated_text = "This is a test\nof the emergency broadcast system"
+    const result = splitTextIntoLines_Free(updated_text)
+    expect(result).toEqual(["This is a test\n", "of the emergency broadcast", " system"])
+  })
+})
+
 let textField_Auto = ""
 let Lines_Auto: string[] = []
-const splitTextIntoLines_Auto = (updated_text:string) => {
+const splitTextIntoLines_Auto = (updated_text: string) => {
   const lines = updated_text.split(/\n/) // ①\nで文章をすべて分ける
 
   let isNewParagraph = true // 改行や空行の後かをチェックするフラグ
   lines.forEach((line: string) => {
     // ②I,II,IIIをそれぞれ分けて変数に保存
-    if (/^\s+\S/.test(line)) {
+    if (/^\s+\S/.test(line) && !/^\s{1}\S/.test(line)) {
       // I. 複数のスペース＋title\n
       Lines_Auto.push(line) // そのまま格納
       isNewParagraph = true
@@ -35,7 +43,7 @@ const splitTextIntoLines_Auto = (updated_text:string) => {
     } else {
       // III. 文章行
       const words = line.split(/\s+/)
-      let textField_Auto = isNewParagraph ? " " : "" // 新しい段落の場合、先頭にスペースを追加
+      let textField_Auto = " "
       words.forEach((word) => {
         if (textField_Auto.length + word.length + 1 <= max_chars_per_line) {
           textField_Auto += (textField_Auto.length > 1 ? " " : "") + word // スペースを挿入して単語を追加
@@ -51,14 +59,6 @@ const splitTextIntoLines_Auto = (updated_text:string) => {
 
   return Lines_Auto
 }
-
-describe("Line break test when was pushed free button", () => {
-  test("Line break test", () => {
-    const updated_text = "This is a test\nof the emergency broadcast system"
-    const result = splitTextIntoLines_Free(updated_text)
-    expect(result).toEqual(["This is a test\n", "of the emergency broadcast", " system"])
-  })
-})
 
 describe("Line break test when was pushed auto button", () => {
   beforeEach(() => { Lines_Auto = [], textField_Auto = "" })
@@ -85,7 +85,7 @@ describe("Line break test when was pushed auto button", () => {
   })
 
   test("Paragraph processing with space", () => {
-    const updated_text = "Once upon a time, there lived an old couple in a small village.\n One day the old wife was washing her clothes in the river when a huge peach came tumbling down the stream."
+    const updated_text = " Once upon a time, there lived an old couple in a small village.\n One day the old wife was washing her clothes in the river when a huge peach came tumbling down the stream."
     splitTextIntoLines_Auto(updated_text)
     expect(Lines_Auto).toEqual([
       " Once upon a time, there",
