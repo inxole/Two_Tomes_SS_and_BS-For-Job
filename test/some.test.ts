@@ -18,31 +18,37 @@ const splitTextIntoLines_Free = (updated_text: string) => {
 
 let textField_Auto = ""
 let Lines_Auto: string[] = []
-const splitTextIntoLines_Auto = (updated_text: string) => {
-  const words = updated_text.split(/(\s|\n)/).filter(word => word !== ' ' && word !== '')
-  for (let i = 0; i < words.length; i++) {
-    let word = words[i]
-    while (word.length > max_chars_per_line) {
-      const split_word = word.slice(0, max_chars_per_line - textField_Auto.length)
-      textField_Auto += (textField_Auto.length > 0 ? " " : "") + split_word
-      Lines_Auto.push(textField_Auto)
-      textField_Auto = ""
-      word = word.slice(max_chars_per_line - textField_Auto.length)
-    }
-    if (word === "\n") {
-      if (textField_Auto.length > 0) Lines_Auto.push(textField_Auto)
-      // Lines_Auto.push("")
-      textField_Auto = ""
+const splitTextIntoLines_Auto = (updated_text:string) => {
+  const lines = updated_text.split(/\n/) // ①\nで文章をすべて分ける
+
+  let isNewParagraph = true // 改行や空行の後かをチェックするフラグ
+  lines.forEach((line: string) => {
+    // ②I,II,IIIをそれぞれ分けて変数に保存
+    if (/^\s+\S/.test(line)) {
+      // I. 複数のスペース＋title\n
+      Lines_Auto.push(line) // そのまま格納
+      isNewParagraph = true
+    } else if (line.trim() === "") {
+      // II. 空行
+      Lines_Auto.push("") // 空行を格納
+      isNewParagraph = true
     } else {
-      if (textField_Auto.length + word.length + 1 <= max_chars_per_line) {
-        textField_Auto += " " + word
-      } else {
-        Lines_Auto.push(textField_Auto)
-        textField_Auto = word
-      }
+      // III. 文章行
+      const words = line.split(/\s+/)
+      let textField_Auto = isNewParagraph ? " " : "" // 新しい段落の場合、先頭にスペースを追加
+      words.forEach((word) => {
+        if (textField_Auto.length + word.length + 1 <= max_chars_per_line) {
+          textField_Auto += (textField_Auto.length > 1 ? " " : "") + word // スペースを挿入して単語を追加
+        } else {
+          Lines_Auto.push(textField_Auto.trimEnd()) // 現在の行を格納
+          textField_Auto = word // 次の行を開始
+        }
+      })
+      if (textField_Auto) Lines_Auto.push(textField_Auto.trimEnd()) // 残りの単語を追加
+      isNewParagraph = false
     }
-  }
-  if (textField_Auto.length > 0) Lines_Auto.push(textField_Auto)
+  })
+
   return Lines_Auto
 }
 
@@ -85,6 +91,27 @@ describe("Line break test when was pushed auto button", () => {
       " Once upon a time, there",
       "lived an old couple in a",
       "small village.",
+      " One day the old wife was",
+      "washing her clothes in the",
+      "river when a huge peach",
+      "came tumbling down the",
+      "stream.",
+    ])
+  })
+
+
+  test("title test", () => {
+    const updated_text = "     STEP1\n\nOnce upon a time, there lived an old couple in a small village.\n\n     STEP2\n\nOne day the old wife was washing her clothes in the river when a huge peach came tumbling down the stream."
+    splitTextIntoLines_Auto(updated_text)
+    expect(Lines_Auto).toEqual([
+      "     STEP1",
+      "",
+      " Once upon a time, there",
+      "lived an old couple in a",
+      "small village.",
+      "",
+      "     STEP2",
+      "",
       " One day the old wife was",
       "washing her clothes in the",
       "river when a huge peach",
