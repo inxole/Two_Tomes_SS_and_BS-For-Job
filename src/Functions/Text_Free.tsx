@@ -1,6 +1,7 @@
 import { DynamicTexture, Scene } from "@babylonjs/core"
 import { getTextLayoutDetails } from "./Text_Layout"
 import { fontFace } from "./Page_Mesh"
+import { splitTextIntoLines_Free } from "./Split_Text"
 
 export const textFreeEdit = async (scene: Scene, updated_text: string, text_size: number) => {
     const pageLimit = 50
@@ -10,8 +11,6 @@ export const textFreeEdit = async (scene: Scene, updated_text: string, text_size
     const back_textures_book1 = []
     const front_textures_book2 = []
     const back_textures_book2 = []
-    const lines = []
-    let textField = ""
     let { labelHeight, max_chars_per_line, max_lines_per_page, between_line, column } = getTextLayoutDetails(text_size)
 
     await fontFace.load().then(() => {
@@ -27,15 +26,7 @@ export const textFreeEdit = async (scene: Scene, updated_text: string, text_size
         back_textures_book2.push(scene.getMeshByName('back_page_' + i)?.material?.getActiveTextures().values().next().value as DynamicTexture)
     }
 
-    for (let i = 0; i < updated_text.length; i++) {
-        textField += updated_text[i]
-        if (textField.length >= max_chars_per_line || updated_text[i] === '\n') {
-            lines.push(textField)
-            textField = ""
-        }
-    }
-    if (textField.length > 0) { lines.push(textField) }
-
+    const lines = splitTextIntoLines_Free(updated_text, max_chars_per_line)
     let currentPage = 0
     let lineIndex = 0
     while (currentPage < pageLimit) {
