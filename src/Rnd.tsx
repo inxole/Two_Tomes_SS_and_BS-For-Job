@@ -1,20 +1,29 @@
+import { useEffect, useState } from 'react'
 import { Rnd } from 'react-rnd'
 import TextInput from './Blocks/TextBlock'
 import FontSizeSlider from './Blocks/FontSizeBlock'
 import { CoverState, PageSlider } from './Blocks/SlideBlock'
 
 function RndComponent() {
+  const [, setWindowSize] = useState({ width: window.innerWidth, height: window.innerHeight })
+  const [position, setPosition] = useState({ x: (window.innerWidth - 350) / 2, y: 10 })
+
+  useEffect(() => {
+    const handleResize = () => {
+      setWindowSize({ width: window.innerWidth, height: window.innerHeight })
+      setPosition({ x: (window.innerWidth - 350) / 2, y: 10 })
+    }
+
+    window.addEventListener('resize', handleResize)
+    return () => window.removeEventListener('resize', handleResize)
+  }, [window.innerWidth])
 
   return (
     <Rnd
-      default={{ x: 400, y: 20, width: 350, height: 480 }}
+      default={{ x: position.x, y: position.y, width: 350, height: 480 }}
       style={{ backgroundColor: 'rgba(255, 255, 255, 0.65)', borderRadius: '8px', paddingLeft: '4px', paddingBottom: '4px', paddingTop: '40px' }}
-      enableResizing={{
-        bottom: true, bottomLeft: true, bottomRight: true,
-        left: true, right: true,
-        top: true, topLeft: true, topRight: true,
-      }}
-      minWidth={350} minHeight={480}
+      enableResizing={false}
+      disableDragging={true}
     >
       <div
         style={{ height: '100%', display: 'flex', flexDirection: 'column', justifyContent: 'space-between' }}
