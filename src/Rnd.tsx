@@ -10,13 +10,15 @@ function RndComponent() {
 
   useEffect(() => {
     const handleResize = () => {
-      setWindowSize({ width: window.innerWidth, height: window.innerHeight })
-      setPosition({ x: (window.innerWidth - 350) / 2, y: 10 })
+      const newWidth = window.innerWidth
+      const newHeight = window.innerHeight
+      setWindowSize({ width: newWidth, height: newHeight })
+      setPosition({ x: (newWidth - 350) / 2, y: 10 })
     }
 
     window.addEventListener('resize', handleResize)
     return () => window.removeEventListener('resize', handleResize)
-  }, [window.innerWidth])
+  }, [])
 
   return (
     <Rnd
@@ -24,6 +26,7 @@ function RndComponent() {
       style={{ backgroundColor: 'rgba(255, 255, 255, 0.65)', borderRadius: '8px', paddingLeft: '4px', paddingBottom: '4px', paddingTop: '40px' }}
       enableResizing={false}
       disableDragging={true}
+      position={{ x: position.x, y: position.y }}
     >
       <div
         style={{ height: '100%', display: 'flex', flexDirection: 'column', justifyContent: 'space-between' }}
