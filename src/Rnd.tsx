@@ -5,13 +5,14 @@ import FontSizeSlider from './Blocks/FontSizeBlock'
 import { CoverState, PageSlider } from './Blocks/SlideBlock'
 import { grey } from '@mui/material/colors'
 import { Stack } from '@mui/material'
-import CenterFocusStrongTwoToneIcon from '@mui/icons-material/CenterFocusStrongTwoTone';
+import CenterFocusStrongTwoToneIcon from '@mui/icons-material/CenterFocusStrongTwoTone'
 import ArchiveTwoToneIcon from '@mui/icons-material/ArchiveTwoTone'
 
+const sub_position = 480
 function RndComponent() {
   const [, setWindowSize] = useState({ width: window.innerWidth, height: window.innerHeight })
   const [position, setPosition] = useState({ x: (window.innerWidth - 350) / 2, y: 10 })
-  const sub_position = 480
+  const [isMovedDown, setIsMovedUp] = useState(false)
 
   useEffect(() => {
     const handleResize = () => {
@@ -25,14 +26,25 @@ function RndComponent() {
     return () => window.removeEventListener('resize', handleResize)
   }, [])
 
+  const handleArchiveClick = () => {
+    setIsMovedUp(!isMovedDown)
+  }
+
   return (
     <>
       <Rnd
         default={{ x: position.x, y: position.y, width: 350, height: 480 }}
-        style={{ backgroundColor: 'rgba(255, 255, 255, 0.65)', borderRadius: '8px', paddingLeft: '4px', paddingBottom: '4px', paddingTop: '40px' }}
+        style={{
+          backgroundColor: 'rgba(255, 255, 255, 0.65)',
+          borderRadius: '8px',
+          paddingLeft: '4px',
+          paddingBottom: '4px',
+          paddingTop: '40px',
+          transition: 'transform 0.35s ease'
+        }}
         enableResizing={false}
         disableDragging={true}
-        position={{ x: position.x, y: position.y }}
+        position={{ x: position.x, y: isMovedDown ? position.y : position.y - 490 }}
       >
         <div style={{ height: '100%', display: 'flex', flexDirection: 'column', justifyContent: 'space-between' }}>
           <div style={{ width: '330px', height: '200px', display: 'flex', ...BorderStyle }}>
@@ -49,14 +61,27 @@ function RndComponent() {
       </Rnd>
       <Rnd
         default={{ x: position.x, y: sub_position, width: 350, height: 40 }}
-        position={{ x: position.x, y: sub_position }}
+        position={{ x: position.x, y: isMovedDown ? sub_position : sub_position - 490 }}
         enableResizing={false}
         disableDragging={true}
-        style={{ pointerEvents: 'none' }}
+        style={{
+          pointerEvents: 'none',
+          transition: 'transform 0.38s ease'
+        }}
       >
         <div style={{ width: '350px', margin: '0 auto', display: 'flex', justifyContent: 'center' }}>
           <Stack direction="row" alignItems="center" justifyContent="center" spacing={2} sx={{ pointerEvents: 'auto' }}>
-            <ArchiveTwoToneIcon fontSize='large' style={{ paddingTop: '10px', color: grey[100], cursor: 'pointer' }} />
+            <ArchiveTwoToneIcon
+              fontSize='large'
+              style={{
+                paddingTop: isMovedDown ? '0px' : '10px',
+                paddingBottom: !isMovedDown ? '0px' : '10px',
+                color: grey[100],
+                cursor: 'pointer',
+                transform: isMovedDown ? 'rotate(180deg)' : 'none',
+              }}
+              onClick={handleArchiveClick}
+            />
             <CenterFocusStrongTwoToneIcon fontSize='large' style={{ paddingTop: '10px', color: grey[100], cursor: 'pointer' }} />
           </Stack>
         </div>
