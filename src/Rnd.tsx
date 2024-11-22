@@ -10,9 +10,9 @@ import ArchiveTwoToneIcon from '@mui/icons-material/ArchiveTwoTone'
 
 const sub_position = 480
 function RndComponent() {
+  const [isMovedDown, setIsMovedUp] = useState(false)
   const [, setWindowSize] = useState({ width: window.innerWidth, height: window.innerHeight })
   const [position, setPosition] = useState({ x: (window.innerWidth - 350) / 2, y: 10 })
-  const [isMovedDown, setIsMovedUp] = useState(false)
 
   useEffect(() => {
     const handleResize = () => {
@@ -74,10 +74,10 @@ function RndComponent() {
             <ArchiveTwoToneIcon
               fontSize='large'
               style={{
-                paddingTop: isMovedDown ? '0px' : '10px',
-                paddingBottom: !isMovedDown ? '0px' : '10px',
                 color: grey[100],
                 cursor: 'pointer',
+                paddingTop: isMovedDown ? '0px' : '10px',
+                paddingBottom: !isMovedDown ? '0px' : '10px',
                 transform: isMovedDown ? 'rotate(180deg)' : 'none',
               }}
               onClick={handleArchiveClick}
