@@ -3,10 +3,11 @@ import { Rnd } from 'react-rnd'
 import TextInput from './Blocks/TextBlock'
 import FontSizeSlider from './Blocks/FontSizeBlock'
 import { CoverState, PageSlider } from './Blocks/SlideBlock'
-import { grey } from '@mui/material/colors'
+import { amber, grey } from '@mui/material/colors'
 import { Stack } from '@mui/material'
-import CenterFocusStrongTwoToneIcon from '@mui/icons-material/CenterFocusStrongTwoTone'
+import HomeTwoToneIcon from '@mui/icons-material/HomeTwoTone'
 import ArchiveTwoToneIcon from '@mui/icons-material/ArchiveTwoTone'
+import BookTwoToneIcon from '@mui/icons-material/BookTwoTone'
 
 const sub_position = 480
 function RndComponent() {
@@ -21,7 +22,6 @@ function RndComponent() {
       setWindowSize({ width: newWidth, height: newHeight })
       setPosition({ x: (newWidth - 350) / 2, y: 10 })
     }
-
     window.addEventListener('resize', handleResize)
     return () => window.removeEventListener('resize', handleResize)
   }, [])
@@ -64,15 +64,12 @@ function RndComponent() {
         position={{ x: position.x, y: isMovedDown ? sub_position : sub_position - 490 }}
         enableResizing={false}
         disableDragging={true}
-        style={{
-          pointerEvents: 'none',
-          transition: 'transform 0.38s ease'
-        }}
-      >
+        style={{ pointerEvents: 'none', transition: 'transform 0.38s ease' }}>
         <div style={{ width: '350px', margin: '0 auto', display: 'flex', justifyContent: 'center' }}>
           <Stack direction="row" alignItems="center" justifyContent="center" spacing={2} sx={{ pointerEvents: 'auto' }}>
             <ArchiveTwoToneIcon
               fontSize='large'
+              titleAccess={isMovedDown ? 'Hidden' : 'Display'}
               style={{
                 color: grey[100],
                 cursor: 'pointer',
@@ -82,7 +79,15 @@ function RndComponent() {
               }}
               onClick={handleArchiveClick}
             />
-            <CenterFocusStrongTwoToneIcon fontSize='large' style={{ paddingTop: '10px', color: grey[100], cursor: 'pointer' }} />
+            <BookTwoToneIcon
+              fontSize="large" titleAccess="Focus B&S" style={{ paddingTop: '10px', color: amber[100], cursor: 'pointer' }}
+            />
+            <HomeTwoToneIcon
+              fontSize='large' titleAccess="Default angle" style={{ paddingTop: '10px', color: grey[100], cursor: 'pointer' }}
+            />
+            <BookTwoToneIcon
+              fontSize="large" titleAccess="Focus S&S" style={{ paddingTop: '10px', color: grey[800], cursor: 'pointer' }}
+            />
           </Stack>
         </div>
       </Rnd>
