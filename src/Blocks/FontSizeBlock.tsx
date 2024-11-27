@@ -8,9 +8,9 @@ function FontSizeSlider() {
   const currentIndex = availableSizes.indexOf(fontSize)
 
   return (
-    <div style={{ width: '324px', height: '120px', marginTop: '5px', marginBottom: '5px' }}>
+    <div style={{ width: '324px', height: '50px', marginTop: '5px' }}>
       <span>フォントサイズ</span>
-      <div style={{ display: 'flex', alignItems: 'center', marginBottom: '10px' }}>
+      <div style={{ display: 'flex', alignItems: 'center' }}>
         <input
           type="text"
           value={fontSize}

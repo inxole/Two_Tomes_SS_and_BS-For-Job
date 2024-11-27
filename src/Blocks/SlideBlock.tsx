@@ -37,7 +37,7 @@ export function PageSlider() {
           value={bookmark}
           aria-labelledby='page-count-slider'
           step={1} min={1} max={51}
-          style={{ flexGrow: 1 }}
+          style={{ flexGrow: 1, marginLeft: '5px' }}
           onChange={(_, newValue) => setBookmark(newValue as number)}
           disabled={bookmark === 0 ? true : isSliderDisabled}
         />
