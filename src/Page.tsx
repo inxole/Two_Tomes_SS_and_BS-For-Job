@@ -4,8 +4,8 @@ import { useRecoilState, useRecoilValue } from 'recoil'
 import { AnimationGroup, Scene, Skeleton, Mesh, PointerEventTypes, Vector3 } from '@babylonjs/core'
 import { initializeScene } from './Babylon_Scene'
 import { animationReducer, closePageAnimation, openPageAnimation, pageBackAnimation, pageFrontAnimation, ToggleAnimationHandler, useDynamicReducers } from './Functions/Action'
-import { textAutoEdit } from './Functions/Text_Auto'
-import { textFreeEdit } from './Functions/Text_Free'
+import { textAutoEdit } from './Text/Text_Auto'
+import { textFreeEdit } from './Text/Text_Free'
 
 const pageAmount = 101
 

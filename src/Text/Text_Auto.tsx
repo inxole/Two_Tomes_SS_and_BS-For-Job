@@ -1,7 +1,8 @@
 import { DynamicTexture, Scene } from "@babylonjs/core"
 import { getTextLayoutDetails } from "./Text_Layout"
-import { fontFace } from "./Page_Mesh"
+
 import { splitTextIntoLines_Auto } from "./Split_Text"
+import { fontFace } from "../Functions/Page_Mesh"
 
 export const textAutoEdit = async (scene: Scene, updated_text: string, text_size: number) => {
     const pageLimit = 50

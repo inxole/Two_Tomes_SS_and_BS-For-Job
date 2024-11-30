@@ -1,6 +1,6 @@
 import { DynamicTexture, Scene } from "@babylonjs/core"
 import { getTextLayoutDetails } from "./Text_Layout"
-import { fontFace } from "./Page_Mesh"
+import { fontFace } from "../Functions/Page_Mesh"
 import { splitTextIntoLines_Free } from "./Split_Text"
 
 export const textFreeEdit = async (scene: Scene, updated_text: string, text_size: number) => {
