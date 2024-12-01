@@ -12,15 +12,8 @@ function TextInput() {
   const text_size = useRecoilValue(TextReSize)
   const [pages, setPages] = useState<string[][]>([])
 
-  const UpdateFree = () => {
-    setUpdatedText(updatedText)
-    setText_update_F(true)
-  }
-
-  const UpdateAuto = () => {
-    setUpdatedText(updatedText)
-    setText_update_A(true)
-  }
+  const UpdateFree = () => { setUpdatedText(updatedText), setText_update_F(true) }
+  const UpdateAuto = () => { setUpdatedText(updatedText), setText_update_A(true) }
 
   useEffect(() => {
     if (text_update_A === false && text_update_F === false) { return }
@@ -29,7 +22,6 @@ function TextInput() {
     })
   }, [text_update_A, text_update_F])
 
-  // 初期レンダリング時に pages を初期化
   useEffect(() => {
     pagesTextEdit(updatedText, text_size, text_update_A).then(newPages => {
       setPages(newPages)
@@ -60,11 +52,18 @@ function TextInput() {
           }}
           placeholder='Page 1'
           value={pages[0]?.join('\n') || ''}
-          readOnly
+          onChange={e => {
+            const newText = e.target.value.split('\n')
+            setPages(prevPages => {
+              const updatedPages = [...prevPages]
+              updatedPages[0] = newText
+              return updatedPages
+            })
+          }}
         />
       )
     } else if (bookmark >= 2 && bookmark <= 50) {
-      const startIndex = (bookmark - 1) * 2 - 1; // 修正: bookmark に基づきスライスの開始位置を調整
+      const startIndex = (bookmark - 1) * 2 - 1
       return (
         <div style={{
           width: '100%', height: '100%',
@@ -93,16 +92,21 @@ function TextInput() {
                   flexShrink: 0,
                   padding: 0
                 }}
-                placeholder={`Page ${startIndex + index + 1}`} // ページ番号を調整
+                placeholder={`Page ${startIndex + index + 1}`}
                 value={page.join('\n')}
-                readOnly
+                onChange={e => {
+                  setPages([
+                    ...pages.slice(0, startIndex + index),
+                    e.target.value.split('\n'),
+                    ...pages.slice(startIndex + index + 1)
+                  ])
+                }}
               />
             </div>
           ))}
         </div>
-      );
-    }
-    else if (bookmark === 51) {
+      )
+    } else if (bookmark === 51) {
       return (
         <textarea
           style={{
@@ -112,7 +116,14 @@ function TextInput() {
           }}
           placeholder='Page 100'
           value={pages[99]?.join('\n') || ''}
-          readOnly
+          onChange={e => {
+            const newText = e.target.value.split('\n')
+            setPages(prevPages => {
+              const updatedPages = [...prevPages]
+              updatedPages[99] = newText
+              return updatedPages
+            })
+          }}
         />
       )
     }
