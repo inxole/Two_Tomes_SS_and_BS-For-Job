@@ -1,8 +1,8 @@
 import { useRecoilState, useRecoilValue } from 'recoil'
-import { Long_Text, Text_Switch_Automatic, Text_Switch_Freedom, BookMark, TextReSize } from '../atom'
+import { Long_Text, Text_Switch_Automatic, Text_Switch_Freedom, BookMark, TextReSize, PagesText, EditingTextNumber } from '../atom'
 import { Button } from '@mui/material'
 import { pagesTextEdit } from '../Text/Pages_Text'
-import { useEffect, useState } from 'react'
+import { useEffect } from 'react'
 
 function TextInput() {
   const [text_update_F, setText_update_F] = useRecoilState(Text_Switch_Freedom)
@@ -10,8 +10,8 @@ function TextInput() {
   const [updatedText, setUpdatedText] = useRecoilState(Long_Text)
   const [bookmark] = useRecoilState(BookMark)
   const text_size = useRecoilValue(TextReSize)
-  const [pages, setPages] = useState<string[][]>([])
-
+  const [pages, setPages] = useRecoilState(PagesText)
+  const [, setEditNumber] = useRecoilState(EditingTextNumber)
   const UpdateFree = () => { setUpdatedText(updatedText), setText_update_F(true) }
   const UpdateAuto = () => { setUpdatedText(updatedText), setText_update_A(true) }
 
@@ -52,6 +52,7 @@ function TextInput() {
           }}
           placeholder='Page 1'
           value={pages[0]?.join('\n') || ''}
+          onFocus={() => setEditNumber(1)}
           onChange={e => {
             const newText = e.target.value.split('\n')
             setPages(prevPages => {
@@ -94,6 +95,7 @@ function TextInput() {
                 }}
                 placeholder={`Page ${startIndex + index + 1}`}
                 value={page.join('\n')}
+                onFocus={() => setEditNumber(startIndex + index + 1)}
                 onChange={e => {
                   setPages([
                     ...pages.slice(0, startIndex + index),
@@ -116,6 +118,7 @@ function TextInput() {
           }}
           placeholder='Page 100'
           value={pages[99]?.join('\n') || ''}
+          onFocus={() => setEditNumber(100)}
           onChange={e => {
             const newText = e.target.value.split('\n')
             setPages(prevPages => {
