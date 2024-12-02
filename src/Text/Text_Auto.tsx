@@ -19,12 +19,12 @@ export const textAutoEdit = async (scene: Scene, updated_text: string, text_size
     }).catch(error => console.error("Font loading failed:", error))
 
     for (let i = 0; i < pageLimit; i++) {
-        front_textures_book1.push(scene.getMeshByName('front_page_' + i)?.material?.getActiveTextures().values().next().value as DynamicTexture)
-        back_textures_book1.push(scene.getMeshByName('back_page_' + i)?.material?.getActiveTextures().values().next().value as DynamicTexture)
+        front_textures_book1.push(await scene.getMeshByName('front_page_' + i)?.material?.getActiveTextures().values().next().value as DynamicTexture)
+        back_textures_book1.push(await scene.getMeshByName('back_page_' + i)?.material?.getActiveTextures().values().next().value as DynamicTexture)
     }
     for (let i = pageLimit; i < pageLimit + pageLimit; i++) {
-        front_textures_book2.push(scene.getMeshByName('front_page_' + i)?.material?.getActiveTextures().values().next().value as DynamicTexture)
-        back_textures_book2.push(scene.getMeshByName('back_page_' + i)?.material?.getActiveTextures().values().next().value as DynamicTexture)
+        front_textures_book2.push(await scene.getMeshByName('front_page_' + i)?.material?.getActiveTextures().values().next().value as DynamicTexture)
+        back_textures_book2.push(await scene.getMeshByName('back_page_' + i)?.material?.getActiveTextures().values().next().value as DynamicTexture)
     }
 
     const lines = splitTextIntoLines_Auto(updated_text, max_chars_per_line)
