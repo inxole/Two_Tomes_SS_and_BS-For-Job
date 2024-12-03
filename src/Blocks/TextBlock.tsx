@@ -22,12 +22,6 @@ function TextInput() {
     })
   }, [text_update_A, text_update_F])
 
-  useEffect(() => {
-    pagesTextEdit(updatedText, text_size, text_update_A).then(newPages => {
-      setPages(newPages)
-    })
-  }, [])
-
   const renderTextAreas = () => {
     if (bookmark === 0) {
       return (
@@ -50,7 +44,6 @@ function TextInput() {
             border: 'none', outline: 'none', resize: 'none', backgroundColor: 'rgba(255, 255, 255, 1)',
             padding: 0
           }}
-          placeholder='Page 1'
           value={pages[0]?.join('\n') || ''}
           onFocus={() => setEditNumber(1)}
           onChange={e => {
@@ -93,7 +86,6 @@ function TextInput() {
                   flexShrink: 0,
                   padding: 0
                 }}
-                placeholder={`Page ${startIndex + index + 1}`}
                 value={page.join('\n')}
                 onFocus={() => setEditNumber(startIndex + index + 1)}
                 onChange={e => {
@@ -116,7 +108,6 @@ function TextInput() {
             border: 'none', outline: 'none', resize: 'none', backgroundColor: 'rgba(255, 255, 255, 1)',
             padding: 0
           }}
-          placeholder='Page 100'
           value={pages[99]?.join('\n') || ''}
           onFocus={() => setEditNumber(100)}
           onChange={e => {
