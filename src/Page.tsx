@@ -1,11 +1,12 @@
 import { useEffect, useRef } from 'react'
-import { BookMark, CoverSwitch, Long_Text, Text_Switch_Automatic, Text_Switch_Freedom, TextReSize } from './atom'
+import { BookMark, CoverSwitch, EditingTextNumber, Long_Text, PagesText, Text_Switch_Automatic, Text_Switch_Freedom, TextReSize } from './atom'
 import { useRecoilState, useRecoilValue } from 'recoil'
 import { AnimationGroup, Scene, Skeleton, Mesh, PointerEventTypes, Vector3 } from '@babylonjs/core'
 import { initializeScene } from './Babylon_Scene'
 import { animationReducer, closePageAnimation, openPageAnimation, pageBackAnimation, pageFrontAnimation, ToggleAnimationHandler, useDynamicReducers } from './Functions/Action'
 import { textAutoEdit } from './Text/Text_Auto'
 import { textFreeEdit } from './Text/Text_Free'
+import { oneTextFreeEdit } from './A_page_text_Edit'
 
 const pageAmount = 101
 
@@ -23,6 +24,8 @@ function CanvasComponent() {
     const [bookmark, setBookmark] = useRecoilState(BookMark)
     const coverCheck = useRecoilValue(CoverSwitch)
     const text_size = useRecoilValue(TextReSize)
+    const pages_text = useRecoilValue(PagesText)
+    const edit_number = useRecoilValue(EditingTextNumber)
 
     // Initialize the scene
     useEffect(() => {
@@ -139,6 +142,15 @@ function CanvasComponent() {
             })
         }
     }, [coverCheck])
+
+    useEffect(() => {
+        const scene = sceneRef.current
+        if (!scene) return
+        if (edit_number === 0) return
+        console.log('number ' + edit_number)
+        const a_text = pages_text[edit_number - 1].join('\n')
+        oneTextFreeEdit(scene, a_text, text_size, edit_number)
+    }, [pages_text])
 
     return <canvas ref={canvasRef} style={{ width: '100%', height: '100%' }} />
 }
