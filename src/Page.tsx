@@ -6,7 +6,7 @@ import { initializeScene } from './Babylon_Scene'
 import { animationReducer, closePageAnimation, openPageAnimation, pageBackAnimation, pageFrontAnimation, ToggleAnimationHandler, useDynamicReducers } from './Functions/Action'
 import { textAutoEdit } from './Text/Text_Auto'
 import { textFreeEdit } from './Text/Text_Free'
-import { oneTextFreeEdit } from './A_page_text_Edit'
+import { oneTextDefaultEdit, oneTextNieREdit } from './A_page_text_Edit'
 
 const pageAmount = 101
 
@@ -147,9 +147,9 @@ function CanvasComponent() {
         const scene = sceneRef.current
         if (!scene) return
         if (edit_number === 0) return
-        console.log('number ' + edit_number)
         const a_text = pages_text[edit_number - 1].join('\n')
-        oneTextFreeEdit(scene, a_text, text_size, edit_number)
+        oneTextDefaultEdit(scene, a_text, text_size, edit_number)
+        oneTextNieREdit(scene, a_text, text_size, edit_number)
     }, [pages_text])
 
     return <canvas ref={canvasRef} style={{ width: '100%', height: '100%' }} />
