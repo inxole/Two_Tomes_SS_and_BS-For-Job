@@ -8,24 +8,25 @@ function FontSizeSlider() {
   const currentIndex = availableSizes.indexOf(fontSize)
 
   return (
-    <div style={{ width: '324px', height: '50px', marginTop: '5px' }}>
-      <span>フォントサイズ</span>
-      <div style={{ display: 'flex', alignItems: 'center' }}>
+    <div style={{ width: '330px', height: '100%', marginLeft: '10px', marginRight: '10px' }}>
+      <span style={{ widows: '100%', display: 'flex', justifyContent: 'center', paddingBottom: '2px' }}>フォントサイズ</span>
+      <span style={{ widows: '100%', display: 'flex', justifyContent: 'center' }}>
         <input
           type="text"
           value={fontSize}
           readOnly
           style={{ width: '30px' }}
         />
-        <Slider
-          value={currentIndex}
-          step={1}
-          min={0}
-          max={availableSizes.length - 1}
-          onChange={(_, newValue) => setFontSize(availableSizes[newValue as number])}
-          style={{ flexGrow: 1, marginLeft: '20px', marginRight: '5px' }}
-        />
-      </div>
+      </span>
+
+      <Slider
+        value={currentIndex}
+        step={1}
+        min={0}
+        max={availableSizes.length - 1}
+        onChange={(_, newValue) => setFontSize(availableSizes[newValue as number])}
+        style={{ width: '100%', display: 'flex', justifyContent: 'center' }}
+      />
     </div>
   )
 }

@@ -10,8 +10,8 @@ import ArchiveTwoToneIcon from '@mui/icons-material/ArchiveTwoTone'
 import BookTwoToneIcon from '@mui/icons-material/BookTwoTone'
 
 const Rnd_width = 360
-const Rnd_height = 600
-const icon_position = 600
+const Rnd_height = 680
+const hidden_position = Rnd_height + 10
 
 function RndComponent() {
   const [isMovedDown, setIsMovedUp] = useState(false)
@@ -44,24 +44,26 @@ function RndComponent() {
         }}
         enableResizing={false}
         disableDragging={true}
-        position={{ x: position.x, y: isMovedDown ? position.y : position.y - 610 }}
+        position={{ x: position.x, y: isMovedDown ? position.y : position.y - hidden_position }}
       >
         <div style={{ height: '100%', display: 'flex', flexDirection: 'column', justifyContent: 'space-between' }}>
           <div style={{ width: '330px', height: '370px', display: 'flex', ...BorderStyle }}>
             <TextInput />
           </div>
-          <div style={{ width: '330px', height: '60px', display: 'flex', ...BorderStyle }}>
+          <div style={{ width: '330px', display: 'flex', ...BorderStyle }}>
             <FontSizeSlider />
           </div>
-          <div style={{ width: '330px', height: '100px', display: 'flex', ...BorderStyle }}>
-            <CoverState />
+          <div style={{ width: '330px', display: 'flex', ...BorderStyle }}>
             <PageSlider />
+          </div>
+          <div style={{ width: '330px', display: 'flex', ...BorderStyle }}>
+            <CoverState />
           </div>
         </div>
       </Rnd>
       <Rnd
-        default={{ x: position.x, y: icon_position, width: Rnd_width, height: 40 }}
-        position={{ x: position.x, y: isMovedDown ? icon_position : icon_position - 610 }}
+        default={{ x: position.x, y: Rnd_height, width: Rnd_width, height: 40 }}
+        position={{ x: position.x, y: isMovedDown ? Rnd_height : Rnd_height - hidden_position }}
         enableResizing={false}
         disableDragging={true}
         style={{ pointerEvents: 'none', transition: 'transform 0.38s ease' }}>

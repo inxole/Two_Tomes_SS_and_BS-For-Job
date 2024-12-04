@@ -1,7 +1,7 @@
 import { useEffect, useRef, useState } from 'react'
 import { useRecoilState } from 'recoil'
 import { BookMark, CoverSwitch } from '../atom'
-import { Button, Slider } from '@mui/material'
+import { Button, Slider, ButtonGroup } from '@mui/material' // Updated import
 import { AutoOpenToBookmark, BackIndexDisplay, FrontIndexDisplay } from './SlideCenter'
 
 export function PageSlider() {
@@ -24,7 +24,7 @@ export function PageSlider() {
 
   return (
     <div style={{ flexGrow: 1, marginLeft: '5px', marginRight: '5px' }}>
-      <div style={{ display: 'flex', justifyContent: 'center', marginBottom: '10px' }}>
+      <div style={{ display: 'flex', justifyContent: 'center', marginBottom: '2px' }}>
         <span />ページ管理
       </div>
       <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '5px' }}>
@@ -32,12 +32,12 @@ export function PageSlider() {
         <AutoOpenToBookmark />
         <BackIndexDisplay index={bookmark} />
       </div>
-      <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', marginBottom: '10px' }}>
+      <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
         <Slider
           value={bookmark}
           aria-labelledby='page-count-slider'
           step={1} min={1} max={51}
-          style={{ flexGrow: 1, marginLeft: '5px' }}
+          style={{ flexGrow: 1, marginLeft: '5px',marginRight: '5px' }}
           onChange={(_, newValue) => setBookmark(newValue as number)}
           disabled={bookmark === 0 ? true : isSliderDisabled}
         />
@@ -71,18 +71,27 @@ export function CoverState() {
   }, [bookmark])
 
   return (
-    <div style={{ display: 'flex', flexDirection: 'column', marginTop: '5px', marginRight: '5px', marginBottom: '2px', paddingRight: '5px', borderRight: '1px solid black' }}>
-      <span style={{ display: 'flex', justifyContent: 'center', paddingBottom: '5px' }}>表紙</span>
-      <Button
-        size='small' variant="contained" color="primary" style={{ marginLeft: '2px', marginRight: '2px', marginBottom: '2px' }}
-        disabled={cover === true ? false : true}
-        onClick={() => setBookmark(1)}
-      >開く</Button>
-      <Button
-        size='small' variant="contained" color="primary" style={{ margin: '2px ' }}
-        disabled={cover === true ? true : false}
-        onClick={decreaseBookmark}
-      >閉じる</Button>
+    <div style={{ width: '330%', justifyContent: 'center' }}>
+      <span style={{ display: 'flex', justifyContent: 'center', paddingBottom: '2px' }}>表紙</span>
+      <span style={{ display: 'flex', justifyContent: 'center' }}>
+        <ButtonGroup
+          disableElevation
+          variant="contained"
+        >
+          <Button
+            size='small'
+            style={{ width: '65px', height: '35px' }}
+            disabled={cover === true ? false : true}
+            onClick={() => setBookmark(1)}
+          >開く</Button>
+          <Button
+            size='small'
+            style={{ width: '65px', height: '35px' }}
+            disabled={cover === true ? true : false}
+            onClick={decreaseBookmark}
+          >閉じる</Button>
+        </ButtonGroup>
+      </span>
     </div>
   )
 }
