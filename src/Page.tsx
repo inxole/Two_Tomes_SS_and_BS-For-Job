@@ -23,7 +23,7 @@ function CanvasComponent() {
     const root_controller_SS = useRef<Mesh | null>(null)
     const animationData = sceneRef.current?.animationGroups as AnimationGroup[]
     const [bookmark, setBookmark] = useRecoilState(BookMark)
-    const coverCheck = useRecoilValue(CoverSwitch)
+    const coverCheck = useRecoilValue(SliderSwitch)
     const text_size = useRecoilValue(TextReSize)
     const pages_text = useRecoilValue(PagesText)
     const edit_number = useRecoilValue(EditingTextNumber)

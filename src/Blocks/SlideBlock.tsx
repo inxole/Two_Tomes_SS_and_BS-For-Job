@@ -1,12 +1,12 @@
 import { useEffect, useRef, useState } from 'react'
 import { useRecoilState } from 'recoil'
-import { BookMark, CoverSwitch } from '../atom'
+import { BookMark, SliderSwitch } from '../atom'
 import { Button, Slider, ButtonGroup } from '@mui/material' // Updated import
 import { AutoOpenToBookmark, BackIndexDisplay, FrontIndexDisplay } from './SlideCenter'
 
 export function PageSlider() {
   const [bookmark, setBookmark] = useRecoilState(BookMark)
-  const [isSliderDisabled, setIsSliderDisabled] = useRecoilState(CoverSwitch)
+  const [isSliderDisabled, setIsSliderDisabled] = useRecoilState(SliderSwitch)
   const prevBookmarkRef = useRef(bookmark)
 
   useEffect(() => {
