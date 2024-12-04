@@ -1,5 +1,5 @@
 import { useEffect, useRef } from 'react'
-import { BookMark, Camera_BS, Camera_SS, CoverSwitch, EditingTextNumber, InitCamera, Long_Text, PagesText, Text_Switch_Automatic, Text_Switch_Freedom, TextReSize } from './atom'
+import { BookMark, Camera_BS, Camera_SS, SliderSwitch, EditingTextNumber, InitCamera, Long_Text, PagesText, Text_Switch_Automatic, Text_Switch_Freedom, TextReSize } from './atom'
 import { useRecoilState, useRecoilValue } from 'recoil'
 import { AnimationGroup, Scene, Skeleton, Mesh, PointerEventTypes, Vector3 } from '@babylonjs/core'
 import { initializeScene } from './Babylon_Scene'
@@ -161,21 +161,24 @@ function CanvasComponent() {
         const camera = scene?.getCameraByName('camera1') as ArcRotateCamera
         const targetBS = scene?.getMeshByName('Tome_BS')?.position as Vector3
         const targetSS = scene?.getMeshByName('Tome_SS')?.position as Vector3
+        const switch_position = new Vector3(-0.112505, 0, 0)
         if (!scene || !camera) return
         if (init_camera) {
             camera.position = new Vector3(0, 0, -1.5)
-            camera.setTarget(Vector3.Zero())
+            camera.setTarget(bookmark == 0 ? Vector3.Zero() : switch_position)
             setInitCamera(false), setCamera_BS(false), setCamera_SS(false)
         } else if (camera_BS) {
             camera.position = new Vector3(-0.28, 0, -1.5)
-            camera.setTarget(targetBS)
+            const switch_target = bookmark == 0 ? targetBS : targetBS.add(switch_position)
+            camera.setTarget(switch_target)
             setInitCamera(false), setCamera_BS(false), setCamera_SS(false)
         } else if (camera_SS) {
             camera.position = new Vector3(0.28, 0, -1.5)
-            camera.setTarget(targetSS)
+            const switch_target = bookmark == 0 ? targetSS : targetSS.add(switch_position)
+            camera.setTarget(switch_target)
             setInitCamera(false), setCamera_BS(false), setCamera_SS(false)
         }
-    }, [init_camera, camera_BS, camera_SS])
+    }, [init_camera, camera_BS, camera_SS, bookmark])
 
     return <canvas ref={canvasRef} style={{ width: '100%', height: '100%' }} />
 }
