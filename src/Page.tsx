@@ -8,6 +8,10 @@ import { textAutoEdit } from './Text/Text_Auto'
 import { textFreeEdit } from './Text/Text_Free'
 import { oneTextDefaultEdit, oneTextNieREdit } from './A_page_text_Edit'
 import { ArcRotateCamera } from '@babylonjs/core'
+import { Tome_BS } from './Characters/Tome_Blood_and_Sacrifice'
+import { Tome_SS } from './Characters/Tome_Star_and_Song'
+import { Root_BS } from './Characters/BS_Root'
+import { Root_SS } from './Characters/SS_Root'
 
 const pageAmount = 101
 
@@ -42,18 +46,14 @@ function CanvasComponent() {
     useEffect(() => {
         const scene = sceneRef.current
         if (!scene) return
-        const tomeBS = scene.getMeshByName("Tome_BS")
-        const tomeSS = scene.getMeshByName("Tome_SS")
-        const control_mesh_BS = scene.getMeshByName("Root")
-        const control_mesh_SS = scene.getMeshByName("Root_SS")
-        if (control_mesh_BS && control_mesh_SS && tomeBS && tomeSS) {
-            control_mesh_BS.parent = tomeBS
-            control_mesh_SS.parent = tomeSS
-            tomeBS.position = new Vector3(-0.28, 0, 0)
-            tomeSS.position = new Vector3(0.28, 0, 0)
-            tomeBS.rotation = new Vector3(-Math.PI / 2.25, 0, 0)
-            tomeSS.rotation = new Vector3(-Math.PI / 2.25, 0, 0)
-        }
+        Tome_BS.GetMesh(scene)
+        Tome_SS.GetMesh(scene)
+        Root_BS.GetMesh(scene)
+        Root_SS.GetMesh(scene)
+        Root_BS.AddParent(Tome_BS.mesh)
+        Root_SS.AddParent(Tome_SS.mesh)
+        Tome_BS.ToDefaultPose()
+        Tome_SS.ToDefaultPose()
     })
 
     // Update the text on the front page in freedom mode

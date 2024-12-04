@@ -61,7 +61,7 @@ export function initializeScene(
 
     skeletonRefs.current = pageSkeletons
 
-    const control_mesh_BS = MeshBuilder.CreatePlane("Root", { width: 0.01, height: 0.01 }, scene)
+    const control_mesh_BS = MeshBuilder.CreatePlane("Root_BS", { width: 0.01, height: 0.01 }, scene)
     root_controller_BS.current = control_mesh_BS
     root_controller_BS.current.position = new Vector3(-0.0975, -0.016, 0)
     root_controller_BS.current.isVisible = false
