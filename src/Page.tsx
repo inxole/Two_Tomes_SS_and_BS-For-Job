@@ -163,20 +163,17 @@ function CanvasComponent() {
         const targetSS = scene?.getMeshByName('Tome_SS')?.position as Vector3
         if (!scene || !camera) return
         if (init_camera) {
-            camera.position = new Vector3(0, 0, -0.5)
+            camera.position = new Vector3(0, 0, -1.5)
             camera.setTarget(Vector3.Zero())
-            setCamera_BS(false)
-            setCamera_SS(false)
+            setInitCamera(false), setCamera_BS(false), setCamera_SS(false)
         } else if (camera_BS) {
-            camera.position = new Vector3(0, 0, -0.5)
+            camera.position = new Vector3(-0.28, 0, -1.5)
             camera.setTarget(targetBS)
-            setInitCamera(false)
-            setCamera_BS(false)
+            setInitCamera(false), setCamera_BS(false), setCamera_SS(false)
         } else if (camera_SS) {
-            camera.position = new Vector3(0, 0, -0.5)
+            camera.position = new Vector3(0.28, 0, -1.5)
             camera.setTarget(targetSS)
-            setInitCamera(false)
-            setCamera_SS(false)
+            setInitCamera(false), setCamera_BS(false), setCamera_SS(false)
         }
     }, [init_camera, camera_BS, camera_SS])
 
