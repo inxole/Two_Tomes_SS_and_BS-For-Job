@@ -27,9 +27,9 @@ function TextInput() {
       return (
         <textarea
           style={{
-            width: '98.5%', height: '100%',
+            width: '100%', height: '100%',
             border: 'none', outline: 'none', resize: 'none', backgroundColor: 'rgba(255, 255, 255, 1)',
-            padding: 0
+            padding: 0, borderRadius: '4px'
           }}
           placeholder='文章を入力してください...'
           value={updatedText}
@@ -40,9 +40,9 @@ function TextInput() {
       return (
         <textarea
           style={{
-            width: '98.5%', height: '100%',
+            width: '100%', height: '100%',
             border: 'none', outline: 'none', resize: 'none', backgroundColor: 'rgba(255, 255, 255, 1)',
-            padding: 0
+            padding: 0, borderRadius: '4px'
           }}
           value={pages[0]?.join('\n') || ''}
           onFocus={() => setEditNumber(1)}
@@ -84,7 +84,7 @@ function TextInput() {
                   backgroundColor: 'rgba(255, 255, 255, 1)',
                   boxSizing: 'border-box',
                   flexShrink: 0,
-                  padding: 0
+                  padding: 0, borderRadius: '4px'
                 }}
                 value={page.join('\n')}
                 onFocus={() => setEditNumber(startIndex + index + 1)}
@@ -104,9 +104,9 @@ function TextInput() {
       return (
         <textarea
           style={{
-            width: '98.5%', height: '100%',
+            width: '100%', height: '100%',
             border: 'none', outline: 'none', resize: 'none', backgroundColor: 'rgba(255, 255, 255, 1)',
-            padding: 0
+            padding: 0, borderRadius: '4px'
           }}
           value={pages[99]?.join('\n') || ''}
           onFocus={() => setEditNumber(100)}
