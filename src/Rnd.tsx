@@ -8,6 +8,8 @@ import { Stack } from '@mui/material'
 import HomeTwoToneIcon from '@mui/icons-material/HomeTwoTone'
 import ArchiveTwoToneIcon from '@mui/icons-material/ArchiveTwoTone'
 import BookTwoToneIcon from '@mui/icons-material/BookTwoTone'
+import { InitCamera, Camera_BS, Camera_SS } from './atom'
+import { useRecoilState } from 'recoil'
 
 const Rnd_width = 360
 const Rnd_height = 680
@@ -17,6 +19,9 @@ function RndComponent() {
   const [isMovedDown, setIsMovedUp] = useState(false)
   const [, setWindowSize] = useState({ width: window.innerWidth, height: window.innerHeight })
   const [position, setPosition] = useState({ x: (window.innerWidth - Rnd_width) / 2, y: 10 })
+  const [, setCamera] = useRecoilState(InitCamera)
+  const [, setCamera_BS] = useRecoilState(Camera_BS)
+  const [, setCamera_SS] = useRecoilState(Camera_SS)
 
   useEffect(() => {
     const handleResize = () => {
@@ -83,12 +88,15 @@ function RndComponent() {
             />
             <BookTwoToneIcon
               fontSize="large" titleAccess="Focus B&S" style={{ paddingTop: '10px', color: amber[100], cursor: 'pointer' }}
+              onClick={() => setCamera_BS(true)}
             />
             <HomeTwoToneIcon
               fontSize='large' titleAccess="Default angle" style={{ paddingTop: '10px', color: grey[100], cursor: 'pointer' }}
+              onClick={() => setCamera(true)}
             />
             <BookTwoToneIcon
               fontSize="large" titleAccess="Focus S&S" style={{ paddingTop: '10px', color: grey[800], cursor: 'pointer' }}
+              onClick={() => setCamera_SS(true)}
             />
           </Stack>
         </div>

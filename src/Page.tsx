@@ -1,5 +1,5 @@
 import { useEffect, useRef } from 'react'
-import { BookMark, CoverSwitch, EditingTextNumber, Long_Text, PagesText, Text_Switch_Automatic, Text_Switch_Freedom, TextReSize } from './atom'
+import { BookMark, Camera_BS, Camera_SS, CoverSwitch, EditingTextNumber, InitCamera, Long_Text, PagesText, Text_Switch_Automatic, Text_Switch_Freedom, TextReSize } from './atom'
 import { useRecoilState, useRecoilValue } from 'recoil'
 import { AnimationGroup, Scene, Skeleton, Mesh, PointerEventTypes, Vector3 } from '@babylonjs/core'
 import { initializeScene } from './Babylon_Scene'
@@ -7,6 +7,7 @@ import { animationReducer, closePageAnimation, openPageAnimation, pageBackAnimat
 import { textAutoEdit } from './Text/Text_Auto'
 import { textFreeEdit } from './Text/Text_Free'
 import { oneTextDefaultEdit, oneTextNieREdit } from './A_page_text_Edit'
+import { ArcRotateCamera } from '@babylonjs/core'
 
 const pageAmount = 101
 
@@ -26,6 +27,9 @@ function CanvasComponent() {
     const text_size = useRecoilValue(TextReSize)
     const pages_text = useRecoilValue(PagesText)
     const edit_number = useRecoilValue(EditingTextNumber)
+    const [init_camera, setInitCamera] = useRecoilState(InitCamera)
+    const [camera_BS, setCamera_BS] = useRecoilState(Camera_BS)
+    const [camera_SS, setCamera_SS] = useRecoilState(Camera_SS)
 
     // Initialize the scene
     useEffect(() => {
@@ -151,6 +155,30 @@ function CanvasComponent() {
         oneTextDefaultEdit(scene, a_text, text_size, edit_number)
         oneTextNieREdit(scene, a_text, text_size, edit_number)
     }, [pages_text])
+
+    useEffect(() => {
+        const scene = sceneRef.current
+        const camera = scene?.getCameraByName('camera1') as ArcRotateCamera
+        const targetBS = scene?.getMeshByName('Tome_BS')?.position as Vector3
+        const targetSS = scene?.getMeshByName('Tome_SS')?.position as Vector3
+        if (!scene || !camera) return
+        if (init_camera) {
+            camera.position = new Vector3(0, 0, -0.5)
+            camera.setTarget(Vector3.Zero())
+            setCamera_BS(false)
+            setCamera_SS(false)
+        } else if (camera_BS) {
+            camera.position = new Vector3(0, 0, -0.5)
+            camera.setTarget(targetBS)
+            setInitCamera(false)
+            setCamera_BS(false)
+        } else if (camera_SS) {
+            camera.position = new Vector3(0, 0, -0.5)
+            camera.setTarget(targetSS)
+            setInitCamera(false)
+            setCamera_SS(false)
+        }
+    }, [init_camera, camera_BS, camera_SS])
 
     return <canvas ref={canvasRef} style={{ width: '100%', height: '100%' }} />
 }
