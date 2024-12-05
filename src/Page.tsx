@@ -7,11 +7,11 @@ import { animationReducer, closePageAnimation, openPageAnimation, pageBackAnimat
 import { textAutoEdit } from './Text/Text_Auto'
 import { textFreeEdit } from './Text/Text_Free'
 import { oneTextDefaultEdit, oneTextNieREdit } from './A_page_text_Edit'
-import { ArcRotateCamera } from '@babylonjs/core'
 import { Tome_BS } from './Characters/Tome_Blood_and_Sacrifice'
 import { Tome_SS } from './Characters/Tome_Star_and_Song'
 import { Root_BS } from './Characters/BS_Root'
 import { Root_SS } from './Characters/SS_Root'
+import { A_Camera } from './Camera/Camera_Controll'
 
 const pageAmount = 101
 
@@ -158,24 +158,25 @@ function CanvasComponent() {
 
     useEffect(() => {
         const scene = sceneRef.current
-        const camera = scene?.getCameraByName('camera1') as ArcRotateCamera
-        const targetBS = scene?.getMeshByName('Tome_BS')?.position as Vector3
-        const targetSS = scene?.getMeshByName('Tome_SS')?.position as Vector3
-        const switch_position = new Vector3(-0.112505, 0, 0)
-        if (!scene || !camera) return
+        if (!scene) return
+        A_Camera.GetCamera(scene)
+        // const targetBS = scene?.getMeshByName('Tome_BS')?.position as Vector3
+        // const targetSS = scene?.getMeshByName('Tome_SS')?.position as Vector3
+        // const switch_position = new Vector3(-0.112505, 0, 0)
+        if (!A_Camera.camera) return
         if (init_camera) {
-            camera.position = new Vector3(0, 0, -1.5)
-            camera.setTarget(bookmark == 0 ? Vector3.Zero() : switch_position)
+            A_Camera.ToDefaultPose(A_Camera.camera)
+            // camera.setTarget(bookmark == 0 ? Vector3.Zero() : switch_position)
             setInitCamera(false), setCamera_BS(false), setCamera_SS(false)
         } else if (camera_BS) {
-            camera.position = new Vector3(-0.28, 0, -1.5)
-            const switch_target = bookmark == 0 ? targetBS : targetBS.add(switch_position)
-            camera.setTarget(switch_target)
+            A_Camera.SetBS(A_Camera.camera)
+            // const switch_target = bookmark == 0 ? targetBS : targetBS.add(switch_position)
+            // camera.setTarget(switch_target)
             setInitCamera(false), setCamera_BS(false), setCamera_SS(false)
         } else if (camera_SS) {
-            camera.position = new Vector3(0.28, 0, -1.5)
-            const switch_target = bookmark == 0 ? targetSS : targetSS.add(switch_position)
-            camera.setTarget(switch_target)
+            A_Camera.SetSS(A_Camera.camera)
+            // const switch_target = bookmark == 0 ? targetSS : targetSS.add(switch_position)
+            // camera.setTarget(switch_target)
             setInitCamera(false), setCamera_BS(false), setCamera_SS(false)
         }
     }, [init_camera, camera_BS, camera_SS, bookmark])
