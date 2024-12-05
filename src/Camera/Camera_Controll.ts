@@ -5,8 +5,6 @@ const name = 'camera1'
 const defaultPosition = new Vector3(0, 0, -1.5)
 const Tome_BS_Position = new Vector3(-0.28, 0, -1.5)
 const Tome_SS_Position = new Vector3(0.28, 0, -1.5)
-const LookAtBS = new Vector3(-0.28, 0, 0)
-const LookAtSS = new Vector3(0.28, 0, 0)
 
 const A_Camera: Camera_Angle = {
     name: name,
@@ -31,16 +29,16 @@ function ToDefaultPose() {
     A_Camera.camera.setTarget(Vector3.Zero())
 }
 
-function setTarget_BS() {
+function setTarget_BS(LookAtObject: Vector3) {
     if (!A_Camera.camera) return
     A_Camera.camera.position = Tome_BS_Position
-    A_Camera.camera.setTarget(LookAtBS)
+    A_Camera.camera.setTarget(LookAtObject)
 }
 
-function setTarget_SS() {
+function setTarget_SS(LookAtObject: Vector3) {
     if (!A_Camera.camera) return
     A_Camera.camera.position = Tome_SS_Position
-    A_Camera.camera.setTarget(LookAtSS)
+    A_Camera.camera.setTarget(LookAtObject)
 }
 
 const animeCam_position1 = new Vector3(0, 0, -1.5)
