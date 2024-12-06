@@ -2,11 +2,19 @@ import { ArcRotateCamera, Scene, Vector3, Animation } from "@babylonjs/core"
 import { Camera_Angle } from "./Camera_Info"
 
 const name = 'camera1'
-const defaultPosition = new Vector3(0, 0, -1.5)
-const Tome_BS_Position = new Vector3(-0.28, 0, -1.5)
-const Tome_BS_Target = new Vector3(-0.28, 0, 0)
-const Tome_SS_Position = new Vector3(0.28, 0, -1.5)
-const Tome_SS_Target = new Vector3(0.28, 0, 0)
+const defaultOpenPosition = new Vector3(0, 0, -1.5)
+const defaultClosePosition = new Vector3(-0.115981, 0, -1.5)
+const Tome_BS_OpenPosition = new Vector3(-0.28, 0, -1.5)
+const Tome_BS_ClosePosition = new Vector3(-0.392505, 0, -1.5)
+const Tome_SS_OpenPosition = new Vector3(0.28, 0, -1.5)
+const Tome_SS_ClosePosition = new Vector3(0.164019, 0, -1.5)
+
+const defaultOpenTarget = new Vector3(-0.115981, 0, 0)
+const defaultCloseTarget = Vector3.Zero()
+const Tome_BS_OpenTarget = new Vector3(-0.28, 0, 0)
+const Tome_BS_CloseTarget = new Vector3(-0.392505, 0, 0)
+const Tome_SS_OpenTarget = new Vector3(0.28, 0, 0)
+const Tome_SS_CloseTarget = new Vector3(0.164019, 0, 0)
 
 const A_Camera: Camera_Angle = {
     name: name,
@@ -18,29 +26,28 @@ const A_Camera: Camera_Angle = {
     CameraAngle: CameraAngle,
     CameraBSAngle: CameraBSAngle,
     CameraSSAngle: CameraSSAngle,
-    defaultPosition: defaultPosition
 }
 
 const getCamera = (scene: Scene) => {
     A_Camera.camera = scene.getCameraByName(name) as ArcRotateCamera
 }
 
-function FocusOnDefault() {
+function FocusOnDefault(OpenUp: boolean) {
     if (!A_Camera.camera) return
-    A_Camera.camera.position = defaultPosition
-    A_Camera.camera.setTarget(Vector3.Zero())
+    A_Camera.camera.position = OpenUp ? defaultClosePosition : defaultOpenPosition
+    A_Camera.camera.setTarget(OpenUp ? defaultOpenTarget : defaultCloseTarget)
 }
 
-function FocusOnBS() {
+function FocusOnBS(OpenUp: boolean) {
     if (!A_Camera.camera) return
-    A_Camera.camera.position = Tome_BS_Position
-    A_Camera.camera.setTarget(Tome_BS_Target)
+    A_Camera.camera.position = OpenUp ? Tome_BS_ClosePosition : Tome_BS_OpenPosition
+    A_Camera.camera.setTarget(OpenUp ? Tome_BS_CloseTarget : Tome_BS_OpenTarget)
 }
 
-function FocusOnSS() {
+function FocusOnSS(OpenUp: boolean) {
     if (!A_Camera.camera) return
-    A_Camera.camera.position = Tome_SS_Position
-    A_Camera.camera.setTarget(Tome_SS_Target)
+    A_Camera.camera.position = OpenUp ? Tome_SS_ClosePosition : Tome_SS_OpenPosition
+    A_Camera.camera.setTarget(OpenUp ? Tome_SS_CloseTarget : Tome_SS_OpenTarget)
 }
 
 const positionAnimation = new Animation(

@@ -20,9 +20,10 @@ function RndComponent() {
   const [isMovedDown, setIsMovedUp] = useState(false)
   const [, setWindowSize] = useState({ width: window.innerWidth, height: window.innerHeight })
   const [position, setPosition] = useState({ x: (window.innerWidth - Rnd_width) / 2, y: 10 })
-  const [, setCamera] = useRecoilState(InitCamera)
-  const [, setCamera_BS] = useRecoilState(Camera_BS)
-  const [, setCamera_SS] = useRecoilState(Camera_SS)
+  const bookmark = useRecoilValue(BookMark)
+  // const [, setCamera] = useRecoilState(InitCamera)
+  // const [, setCamera_BS] = useRecoilState(Camera_BS)
+  // const [, setCamera_SS] = useRecoilState(Camera_SS)
 
   useEffect(() => {
     const handleResize = () => {
@@ -89,15 +90,15 @@ function RndComponent() {
             />
             <BookTwoToneIcon
               fontSize="large" titleAccess="Focus B&S" style={{ paddingTop: '10px', color: amber[100], cursor: 'pointer' }}
-              onClick={() => A_Camera.FocusOnBS()}
+              onClick={() => { bookmark >= 1 ? A_Camera.FocusOnBS(true) : A_Camera.FocusOnBS(false) }}
             />
             <HomeTwoToneIcon
               fontSize='large' titleAccess="Default angle" style={{ paddingTop: '10px', color: grey[100], cursor: 'pointer' }}
-              onClick={() => A_Camera.FocusOnDefault()}
+              onClick={() => bookmark >= 1 ? A_Camera.FocusOnDefault(true) : A_Camera.FocusOnDefault(false)}
             />
             <BookTwoToneIcon
               fontSize="large" titleAccess="Focus S&S" style={{ paddingTop: '10px', color: grey[800], cursor: 'pointer' }}
-              onClick={() => A_Camera.FocusOnSS()}
+              onClick={() => bookmark >= 1 ? A_Camera.FocusOnSS(true) : A_Camera.FocusOnSS(false)}
             />
           </Stack>
         </div>
