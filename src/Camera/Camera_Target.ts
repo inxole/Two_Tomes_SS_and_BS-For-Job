@@ -1,5 +1,5 @@
 import { Scene, Vector3, Animation } from "@babylonjs/core"
-import { A_Camera } from "./Camera_Controll"
+import { A_Camera } from "./Camera_Focus"
 
 const TargetCam_position1 = Vector3.Zero()
 const TargetCam_position2 = new Vector3(-0.115981, 0, 0)

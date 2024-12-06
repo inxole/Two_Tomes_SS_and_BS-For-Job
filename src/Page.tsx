@@ -11,7 +11,7 @@ import { Tome_BS } from './Characters/Tome_Blood_and_Sacrifice'
 import { Tome_SS } from './Characters/Tome_Star_and_Song'
 import { Root_BS } from './Characters/BS_Root'
 import { Root_SS } from './Characters/SS_Root'
-import { A_Camera } from './Camera/Camera_Controll'
+import { A_Camera } from './Camera/Camera_Focus'
 
 const pageAmount = 101
 
