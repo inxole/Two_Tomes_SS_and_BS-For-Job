@@ -31,9 +31,9 @@ function CanvasComponent() {
     const text_size = useRecoilValue(TextReSize)
     const pages_text = useRecoilValue(PagesText)
     const edit_number = useRecoilValue(EditingTextNumber)
-    const [init_camera, setInitCamera] = useRecoilState(InitCamera)
-    const [camera_BS, setCamera_BS] = useRecoilState(Camera_BS)
-    const [camera_SS, setCamera_SS] = useRecoilState(Camera_SS)
+    const init_camera = useRecoilValue(InitCamera)
+    const camera_BS = useRecoilValue(Camera_BS)
+    const camera_SS = useRecoilValue(Camera_SS)
 
     // Initialize the scene
     useEffect(() => {
@@ -87,7 +87,13 @@ function CanvasComponent() {
                         open: () => { openPageAnimation(animationData) },
                         close: () => { }
                     })
-                    A_Camera.CameraAngle(scene, true)
+                    if (init_camera) {
+                        A_Camera.CameraAngle(scene, true)
+                    } else if (camera_BS) {
+                        A_Camera.CameraBSAngle(scene, true)
+                    } else if (camera_SS) {
+                        A_Camera.CameraSSAngle(scene, true)
+                    }
                     return
                 }
                 else {
@@ -96,7 +102,13 @@ function CanvasComponent() {
                         open: () => { },
                         close: () => { closePageAnimation(animationData) }
                     })
-                    A_Camera.CameraAngle(scene, false)
+                    if (init_camera) {
+                        A_Camera.CameraAngle(scene, false)
+                    } else if (camera_BS) {
+                        A_Camera.CameraBSAngle(scene, false)
+                    } else if (camera_SS) {
+                        A_Camera.CameraSSAngle(scene, false)
+                    }
                     return
                 }
             }

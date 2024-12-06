@@ -1,4 +1,4 @@
-import { ArcRotateCamera, Scene, Vector3 } from "@babylonjs/core"
+import { ArcRotateCamera, Scene } from "@babylonjs/core"
 
 export interface Camera_Angle {
     name: string
@@ -8,6 +8,6 @@ export interface Camera_Angle {
     FocusOnBS: (OpenUp: boolean) => void
     FocusOnSS: (OpenUp: boolean) => void
     CameraAngle: (scene: Scene, OpenUp: boolean) => void
-    CameraBSAngle: (scene: Scene, x: number) => void
-    CameraSSAngle: (scene: Scene, x: number) => void
+    CameraBSAngle: (scene: Scene, OpenUp: boolean) => void
+    CameraSSAngle: (scene: Scene, OpenUp: boolean) => void
 }

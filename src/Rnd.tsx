@@ -8,9 +8,9 @@ import { Stack } from '@mui/material'
 import HomeTwoToneIcon from '@mui/icons-material/HomeTwoTone'
 import ArchiveTwoToneIcon from '@mui/icons-material/ArchiveTwoTone'
 import BookTwoToneIcon from '@mui/icons-material/BookTwoTone'
-import { InitCamera, Camera_BS, Camera_SS } from './atom'
-import { useRecoilState } from 'recoil'
-import { A_Camera } from './Camera/Camera_Controll'
+import { InitCamera, Camera_BS, Camera_SS, BookMark } from './atom'
+import { useRecoilState, useRecoilValue } from 'recoil'
+import { A_Camera } from './Camera/Camera_Focus'
 
 const Rnd_width = 360
 const Rnd_height = 680
@@ -21,9 +21,9 @@ function RndComponent() {
   const [, setWindowSize] = useState({ width: window.innerWidth, height: window.innerHeight })
   const [position, setPosition] = useState({ x: (window.innerWidth - Rnd_width) / 2, y: 10 })
   const bookmark = useRecoilValue(BookMark)
-  // const [, setCamera] = useRecoilState(InitCamera)
-  // const [, setCamera_BS] = useRecoilState(Camera_BS)
-  // const [, setCamera_SS] = useRecoilState(Camera_SS)
+  const [, setCamera] = useRecoilState(InitCamera)
+  const [, setCamera_BS] = useRecoilState(Camera_BS)
+  const [, setCamera_SS] = useRecoilState(Camera_SS)
 
   useEffect(() => {
     const handleResize = () => {
@@ -40,13 +40,25 @@ function RndComponent() {
     setIsMovedUp(!isMovedDown)
   }
 
+  function FocusCam() {
+    bookmark >= 1 ? A_Camera.FocusOnDefault(true) : A_Camera.FocusOnDefault(false)
+    setCamera(true), setCamera_BS(false), setCamera_SS(false)
+  }
+  function FocusCamBS() {
+    bookmark >= 1 ? A_Camera.FocusOnBS(true) : A_Camera.FocusOnBS(false)
+    setCamera(false), setCamera_BS(true), setCamera_SS(false)
+  }
+  function FocusCamSS() {
+    bookmark >= 1 ? A_Camera.FocusOnSS(true) : A_Camera.FocusOnSS(false)
+    setCamera(false), setCamera_BS(false), setCamera_SS(true)
+  }
+
   return (
     <>
       <Rnd
         default={{ x: position.x, y: position.y, width: Rnd_width, height: Rnd_height }}
         style={{
-          borderRadius: '8px',
-          padding: '4px',
+          borderRadius: '8px', padding: '4px',
           transition: 'transform 0.35s ease'
         }}
         enableResizing={false}
@@ -90,15 +102,15 @@ function RndComponent() {
             />
             <BookTwoToneIcon
               fontSize="large" titleAccess="Focus B&S" style={{ paddingTop: '10px', color: amber[100], cursor: 'pointer' }}
-              onClick={() => { bookmark >= 1 ? A_Camera.FocusOnBS(true) : A_Camera.FocusOnBS(false) }}
+              onClick={() => FocusCamBS()}
             />
             <HomeTwoToneIcon
               fontSize='large' titleAccess="Default angle" style={{ paddingTop: '10px', color: grey[100], cursor: 'pointer' }}
-              onClick={() => bookmark >= 1 ? A_Camera.FocusOnDefault(true) : A_Camera.FocusOnDefault(false)}
+              onClick={() => FocusCam()}
             />
             <BookTwoToneIcon
               fontSize="large" titleAccess="Focus S&S" style={{ paddingTop: '10px', color: grey[800], cursor: 'pointer' }}
-              onClick={() => bookmark >= 1 ? A_Camera.FocusOnSS(true) : A_Camera.FocusOnSS(false)}
+              onClick={() => FocusCamSS()}
             />
           </Stack>
         </div>
@@ -108,5 +120,4 @@ function RndComponent() {
 }
 
 const BorderStyle = { border: '1px solid black', borderRadius: '8px', padding: '10px', backgroundColor: 'rgba(255, 255, 255, 0.5)' }
-
 export default RndComponent
