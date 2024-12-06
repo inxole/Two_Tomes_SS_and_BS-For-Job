@@ -1,7 +1,7 @@
 import { useEffect, useRef } from 'react'
 import { BookMark, Camera_BS, Camera_SS, SliderSwitch, EditingTextNumber, InitCamera, Long_Text, PagesText, Text_Switch_Automatic, Text_Switch_Freedom, TextReSize } from './atom'
 import { useRecoilState, useRecoilValue } from 'recoil'
-import { AnimationGroup, Scene, Skeleton, Mesh, PointerEventTypes, Vector3 } from '@babylonjs/core'
+import { AnimationGroup, Scene, Skeleton, Mesh, PointerEventTypes } from '@babylonjs/core'
 import { initializeScene } from './Babylon_Scene'
 import { animationReducer, closePageAnimation, openPageAnimation, pageBackAnimation, pageFrontAnimation, ToggleAnimationHandler, useDynamicReducers } from './Functions/Action'
 import { textAutoEdit } from './Text/Text_Auto'
@@ -87,7 +87,7 @@ function CanvasComponent() {
                         open: () => { openPageAnimation(animationData) },
                         close: () => { }
                     })
-                    A_Camera.CameraAngle(scene, A_Camera.camera?.globalPosition as Vector3,true)
+                    A_Camera.CameraAngle(scene, true)
                     return
                 }
                 else {
@@ -96,7 +96,7 @@ function CanvasComponent() {
                         open: () => { },
                         close: () => { closePageAnimation(animationData) }
                     })
-                    A_Camera.CameraAngle(scene, A_Camera.camera?.globalPosition as Vector3,false)
+                    A_Camera.CameraAngle(scene, false)
                     return
                 }
             }
