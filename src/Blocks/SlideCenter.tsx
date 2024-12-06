@@ -1,6 +1,6 @@
 import React, { useState } from 'react'
 import { useRecoilState } from 'recoil'
-import { BookMark, CoverSwitch } from '../atom'
+import { BookMark, SliderSwitch } from '../atom'
 import BookmarkIcon from '@mui/icons-material/Bookmark'
 
 type IndexDisplayProps = { index: number }
@@ -28,7 +28,7 @@ export function BackIndexDisplay(props: IndexDisplayProps) {
 export function AutoOpenToBookmark() {
   const [bookmark, setBookmark] = useRecoilState(BookMark)
   const [inputValue, setInputValue] = useState('1')
-  const [, setIsSliderDisabled] = useRecoilState(CoverSwitch)
+  const [, setIsSliderDisabled] = useRecoilState(SliderSwitch)
 
   const handleInputChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     const value = parseInt(event.target.value, 10)

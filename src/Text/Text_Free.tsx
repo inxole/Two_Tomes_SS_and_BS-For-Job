@@ -1,8 +1,9 @@
 import { DynamicTexture, Scene } from "@babylonjs/core"
 import { getTextLayoutDetails } from "./Text_Layout"
-import { fontFace } from "./Page_Mesh"
+import { fontFace } from "../Functions/Page_Mesh"
 import { splitTextIntoLines_Free } from "./Split_Text"
 
+//22,23,26,27行目のawaitは、updated_textの更新が確実に行われるようにするためのもの。外すとテクスチャが意図しないものになる。
 export const textFreeEdit = async (scene: Scene, updated_text: string, text_size: number) => {
     const pageLimit = 50
     const defaultFont = "bold " + text_size + "px monospace"
@@ -18,12 +19,12 @@ export const textFreeEdit = async (scene: Scene, updated_text: string, text_size
     }).catch(error => console.error("Font loading failed:", error))
 
     for (let i = 0; i < pageLimit; i++) {
-        front_textures_book1.push(scene.getMeshByName('front_page_' + i)?.material?.getActiveTextures().values().next().value as DynamicTexture)
-        back_textures_book1.push(scene.getMeshByName('back_page_' + i)?.material?.getActiveTextures().values().next().value as DynamicTexture)
+        front_textures_book1.push(await scene.getMeshByName('front_page_' + i)?.material?.getActiveTextures().values().next().value as DynamicTexture)
+        back_textures_book1.push(await scene.getMeshByName('back_page_' + i)?.material?.getActiveTextures().values().next().value as DynamicTexture)
     }
     for (let i = pageLimit; i < pageLimit + pageLimit; i++) {
-        front_textures_book2.push(scene.getMeshByName('front_page_' + i)?.material?.getActiveTextures().values().next().value as DynamicTexture)
-        back_textures_book2.push(scene.getMeshByName('back_page_' + i)?.material?.getActiveTextures().values().next().value as DynamicTexture)
+        front_textures_book2.push(await scene.getMeshByName('front_page_' + i)?.material?.getActiveTextures().values().next().value as DynamicTexture)
+        back_textures_book2.push(await scene.getMeshByName('back_page_' + i)?.material?.getActiveTextures().values().next().value as DynamicTexture)
     }
 
     const lines = splitTextIntoLines_Free(updated_text, max_chars_per_line)
