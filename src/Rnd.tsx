@@ -10,6 +10,7 @@ import ArchiveTwoToneIcon from '@mui/icons-material/ArchiveTwoTone'
 import BookTwoToneIcon from '@mui/icons-material/BookTwoTone'
 import { InitCamera, Camera_BS, Camera_SS } from './atom'
 import { useRecoilState } from 'recoil'
+import { A_Camera } from './Camera/Camera_Controll'
 
 const Rnd_width = 360
 const Rnd_height = 680
@@ -88,15 +89,15 @@ function RndComponent() {
             />
             <BookTwoToneIcon
               fontSize="large" titleAccess="Focus B&S" style={{ paddingTop: '10px', color: amber[100], cursor: 'pointer' }}
-              onClick={() => setCamera_BS(true)}
+              onClick={() => A_Camera.FocusOnBS()}
             />
             <HomeTwoToneIcon
               fontSize='large' titleAccess="Default angle" style={{ paddingTop: '10px', color: grey[100], cursor: 'pointer' }}
-              onClick={() => setCamera(true)}
+              onClick={() => A_Camera.FocusOnDefault()}
             />
             <BookTwoToneIcon
               fontSize="large" titleAccess="Focus S&S" style={{ paddingTop: '10px', color: grey[800], cursor: 'pointer' }}
-              onClick={() => setCamera_SS(true)}
+              onClick={() => A_Camera.FocusOnSS()}
             />
           </Stack>
         </div>

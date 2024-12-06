@@ -4,11 +4,11 @@ export interface Camera_Angle {
     name: string
     camera: ArcRotateCamera | null
     GetCamera: (Scene: Scene) => void
-    ToDefaultPose: () => void
-    SetBS: (LookAtObject: Vector3) => void
-    SetSS: (LookAtObject: Vector3) => void
-    SetTargetCam: (x: number) => void
-    SetTargetBS: (x: number) => void
-    SetTargetSS: (x: number) => void
+    FocusOnDefault: () => void
+    FocusOnBS: () => void
+    FocusOnSS: () => void
+    CameraAngle: (scene: Scene, offset: Vector3, OpenUp: boolean) => void
+    CameraBSAngle: (scene: Scene, x: number) => void
+    CameraSSAngle: (scene: Scene, x: number) => void
     defaultPosition: Vector3
 }

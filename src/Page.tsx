@@ -78,6 +78,7 @@ function CanvasComponent() {
     useEffect(() => {
         const scene = sceneRef.current
         if (!scene) return
+        A_Camera.GetCamera(scene)
         dispatchers.forEach((dispatch, index) => {
             if (index == 0) { // front cover toggle
                 if (bookmark >= 1) {
@@ -86,6 +87,7 @@ function CanvasComponent() {
                         open: () => { openPageAnimation(animationData) },
                         close: () => { }
                     })
+                    A_Camera.CameraAngle(scene, A_Camera.camera?.globalPosition as Vector3,true)
                     return
                 }
                 else {
@@ -94,6 +96,7 @@ function CanvasComponent() {
                         open: () => { },
                         close: () => { closePageAnimation(animationData) }
                     })
+                    A_Camera.CameraAngle(scene, A_Camera.camera?.globalPosition as Vector3,false)
                     return
                 }
             }
@@ -155,29 +158,6 @@ function CanvasComponent() {
         oneTextDefaultEdit(scene, a_text, text_size, edit_number)
         oneTextNieREdit(scene, a_text, text_size, edit_number)
     }, [pages_text])
-
-    useEffect(() => {
-        const scene = sceneRef.current
-        if (!scene) return
-        A_Camera.GetCamera(scene)
-        // const switch_position = new Vector3(-0.112505, 0, 0)
-        if (!A_Camera.camera) return
-        if (init_camera) {
-            A_Camera.ToDefaultPose()
-            // camera.setTarget(bookmark == 0 ? Vector3.Zero() : switch_position)
-            setInitCamera(false), setCamera_BS(false), setCamera_SS(false)
-        } else if (camera_BS) {
-            A_Camera.SetBS(Tome_BS.mesh?.position as Vector3)
-            // const switch_target = bookmark == 0 ? targetBS : targetBS.add(switch_position)
-            // camera.setTarget(switch_target)
-            setInitCamera(false), setCamera_BS(false), setCamera_SS(false)
-        } else if (camera_SS) {
-            A_Camera.SetSS(Tome_SS.mesh?.position as Vector3)
-            // const switch_target = bookmark == 0 ? targetSS : targetSS.add(switch_position)
-            // camera.setTarget(switch_target)
-            setInitCamera(false), setCamera_BS(false), setCamera_SS(false)
-        }
-    }, [init_camera, camera_BS, camera_SS, bookmark])
 
     return <canvas ref={canvasRef} style={{ width: '100%', height: '100%' }} />
 }
