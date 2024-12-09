@@ -26,6 +26,7 @@ function RndComponent() {
   const [, setCamera_SS] = useRecoilState(Camera_SS)
 
   useEffect(() => {
+    FocusCam()
     const handleResize = () => {
       const newWidth = window.innerWidth
       const newHeight = window.innerHeight
