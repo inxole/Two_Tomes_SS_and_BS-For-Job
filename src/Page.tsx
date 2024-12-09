@@ -1,5 +1,5 @@
 import { useEffect, useRef } from 'react'
-import { BookMark, Camera_BS, Camera_SS, SliderSwitch, EditingTextNumber, InitCamera, Long_Text, PagesText, Text_Switch_Automatic, Text_Switch_Freedom, TextReSize } from './atom'
+import { BookMark, SliderSwitch, EditingTextNumber, Long_Text, PagesText, Text_Switch_Automatic, Text_Switch_Freedom, TextReSize } from './atom'
 import { useRecoilState, useRecoilValue } from 'recoil'
 import { AnimationGroup, Scene, Skeleton, Mesh, PointerEventTypes } from '@babylonjs/core'
 import { initializeScene } from './Babylon_Scene'
@@ -31,9 +31,6 @@ function CanvasComponent() {
     const text_size = useRecoilValue(TextReSize)
     const pages_text = useRecoilValue(PagesText)
     const edit_number = useRecoilValue(EditingTextNumber)
-    const init_camera = useRecoilValue(InitCamera)
-    const camera_BS = useRecoilValue(Camera_BS)
-    const camera_SS = useRecoilValue(Camera_SS)
 
     // Initialize the scene
     useEffect(() => {
@@ -87,13 +84,6 @@ function CanvasComponent() {
                         open: () => { openPageAnimation(animationData) },
                         close: () => { }
                     })
-                    if (init_camera) {
-                        A_Camera.CameraAngle(scene, true)
-                    } else if (camera_BS) {
-                        A_Camera.CameraBSAngle(scene, true)
-                    } else if (camera_SS) {
-                        A_Camera.CameraSSAngle(scene, true)
-                    }
                     return
                 }
                 else {
@@ -102,13 +92,6 @@ function CanvasComponent() {
                         open: () => { },
                         close: () => { closePageAnimation(animationData) }
                     })
-                    if (init_camera) {
-                        A_Camera.CameraAngle(scene, false)
-                    } else if (camera_BS) {
-                        A_Camera.CameraBSAngle(scene, false)
-                    } else if (camera_SS) {
-                        A_Camera.CameraSSAngle(scene, false)
-                    }
                     return
                 }
             }
@@ -170,6 +153,20 @@ function CanvasComponent() {
         oneTextDefaultEdit(scene, a_text, text_size, edit_number)
         oneTextNieREdit(scene, a_text, text_size, edit_number)
     }, [pages_text])
+
+    useEffect(() => {
+        const TargetBaseNormalAnimation = new AnimationGroup("TargetBaseNormalAnimation")
+        const TargetBSNormalAnimation = new AnimationGroup("TargetBSNormalAnimation")
+        const TargetSSNormalAnimation = new AnimationGroup("TargetSSNormalAnimation")
+
+        const TargetAnimation: AnimationGroup[] = [
+            TargetBaseNormalAnimation,
+            TargetBSNormalAnimation,
+            TargetSSNormalAnimation,
+        ]
+
+        A_Camera.CameraAnimation(TargetAnimation, A_Camera.camera)
+    }, [])
 
     return <canvas ref={canvasRef} style={{ width: '100%', height: '100%' }} />
 }
