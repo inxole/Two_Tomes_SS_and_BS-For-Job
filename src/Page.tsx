@@ -1,5 +1,5 @@
 import { useEffect, useRef } from 'react'
-import { BookMark, SliderSwitch, EditingTextNumber, Long_Text, PagesText, Text_Switch_Automatic, Text_Switch_Freedom, TextReSize } from './atom'
+import { BookMark, SliderSwitch, EditingTextNumber, Long_Text, PagesText, Text_Switch_Automatic, Text_Switch_Freedom, TextReSize, InitCamera, Camera_BS, Camera_SS } from './atom'
 import { useRecoilState, useRecoilValue } from 'recoil'
 import { AnimationGroup, Scene, Skeleton, Mesh, PointerEventTypes } from '@babylonjs/core'
 import { initializeScene } from './Babylon_Scene'
@@ -31,6 +31,9 @@ function CanvasComponent() {
     const text_size = useRecoilValue(TextReSize)
     const pages_text = useRecoilValue(PagesText)
     const edit_number = useRecoilValue(EditingTextNumber)
+    const cam = useRecoilValue(InitCamera)
+    const cam_BS = useRecoilValue(Camera_BS)
+    const cam_SS = useRecoilValue(Camera_SS)
 
     // Initialize the scene
     useEffect(() => {
@@ -73,6 +76,10 @@ function CanvasComponent() {
 
     // Update bookmark
     useEffect(() => {
+        let lookNumber = 0
+        if (cam) { lookNumber = 0 }
+        if (cam_BS) { lookNumber = 1 }
+        if (cam_SS) { lookNumber = 2 }
         const scene = sceneRef.current
         if (!scene) return
         A_Camera.GetCamera(scene)
@@ -81,7 +88,7 @@ function CanvasComponent() {
                 if (bookmark >= 1) {
                     dispatch({
                         type: "OPEN",
-                        open: () => { openPageAnimation(animationData) },
+                        open: () => { openPageAnimation(animationData, lookNumber) },
                         close: () => { }
                     })
                     return
@@ -90,7 +97,7 @@ function CanvasComponent() {
                     dispatch({
                         type: "CLOSE",
                         open: () => { },
-                        close: () => { closePageAnimation(animationData) }
+                        close: () => { closePageAnimation(animationData, lookNumber) }
                     })
                     return
                 }
