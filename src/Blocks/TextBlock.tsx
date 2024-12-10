@@ -129,10 +129,10 @@ function TextInput() {
       <span style={{ display: 'flex', justifyContent: 'center', padding: '2px 0px' }}>文章の一括変更</span>
       <span style={{ display: 'flex', justifyContent: 'center' }}>
         <Tooltip title="入力された文章をそのままテクスチャに描画します（単語が見切れる可能性があります）。">
-          <Button size='small' variant='outlined' onClick={UpdateFree} style={{ marginRight: '5px' }}>Free</Button>
+          <Button size='small' variant='outlined' onClick={UpdateFree} style={{ marginRight: '5px', width: '80px' }}>そのまま</Button>
         </Tooltip>
         <Tooltip title="入力された文章を自動的に調整し、単語が見切れないように描画します。">
-          <Button size='small' variant='outlined' onClick={UpdateAuto}>Auto</Button>
+          <Button size='small' variant='outlined' onClick={UpdateAuto} style={{ width: '80px' }}>お任せ</Button>
         </Tooltip>
       </span>
     </div >
