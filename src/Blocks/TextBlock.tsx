@@ -1,6 +1,6 @@
 import { useRecoilState, useRecoilValue } from 'recoil'
 import { Long_Text, Text_Switch_Automatic, Text_Switch_Freedom, BookMark, TextReSize, PagesText, EditingTextNumber } from '../atom'
-import { Button } from '@mui/material'
+import { Button, Tooltip } from '@mui/material'
 import { pagesTextEdit } from '../Text/Pages_Text'
 import { useEffect } from 'react'
 
@@ -124,14 +124,18 @@ function TextInput() {
   }
 
   return (
-    <div style={{ display: 'flex', flexDirection: 'column', width: '100%' }}>
+    <div style={{ display: 'flex', flexDirection: 'column', width: '330px' }}>
       {renderTextAreas()}
-      <div style={{ display: 'flex', paddingTop: '5px', alignSelf: 'flex-end' }}>
-        <div style={{ paddingRight: '5px', paddingTop: '10px' }}>UPDATE</div>
-        <Button size='small' variant='outlined' onClick={UpdateFree} style={{ marginRight: '5px' }}>Free</Button>
-        <Button size='small' variant='outlined' onClick={UpdateAuto}>Auto</Button>
-      </div>
-    </div>
+      <span style={{ display: 'flex', justifyContent: 'center', padding: '2px 0px' }}>文章の一括変更</span>
+      <span style={{ display: 'flex', justifyContent: 'center' }}>
+        <Tooltip title="入力された文章をそのままテクスチャに描画します（単語が見切れる可能性があります）。">
+          <Button size='small' variant='outlined' onClick={UpdateFree} style={{ marginRight: '5px' }}>Free</Button>
+        </Tooltip>
+        <Tooltip title="入力された文章を自動的に調整し、単語が見切れないように描画します。">
+          <Button size='small' variant='outlined' onClick={UpdateAuto}>Auto</Button>
+        </Tooltip>
+      </span>
+    </div >
   )
 }
 
