@@ -7,23 +7,30 @@ export const pagesTextEdit = async (updated_text: string, text_size: number, sta
     let { max_chars_per_line, max_lines_per_page } = getTextLayoutDetails(text_size)
 
     // 行単位に分割
-    const lines = state ? splitTextIntoLines_Auto(updated_text, max_chars_per_line) : splitTextIntoLines_Free(updated_text, max_chars_per_line)
+    const lines = state
+        ? splitTextIntoLines_Auto(updated_text, max_chars_per_line)
+        : splitTextIntoLines_Free(updated_text, max_chars_per_line)
 
-    // ページ単位で分割
-    const allPages: string[][] = []
+    // ページ単位でまとめた文字列を格納
+    const allLines: string[] = []
     let lineIndex = 0
 
     for (let currentPage = 0; currentPage < pageLimit; currentPage++) {
         const pageLines: string[] = []
+
+        // max_lines_per_page分だけlinesから取得してpageLinesに追加
         for (let i = 0; i < max_lines_per_page && lineIndex < lines.length; i++) {
             pageLines.push(lines[lineIndex])
             lineIndex++
         }
-        // ページ内にデータがない場合、空行を追加
-        if (pageLines.length === 0) {
+
+        // ページ内容をjoinで結合してallLinesに追加
+        allLines.push(pageLines.join(""))
+
+        if(pageLines.length === 0) {
             pageLines.push("")
         }
-        allPages.push(pageLines)
     }
-    return allPages // ページごとのテキストが格納された2次元配列を返す
+
+    return allLines // ページ単位で結合された文字列を格納した配列を返す
 }
