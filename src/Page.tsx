@@ -156,7 +156,7 @@ function CanvasComponent() {
         const scene = sceneRef.current
         if (!scene) return
         if (edit_number === 0) return
-        const a_text = pages_text[edit_number - 1].join('\n')
+        const a_text = pages_text[edit_number - 1]
         oneTextDefaultEdit(scene, a_text, text_size, edit_number)
         oneTextNieREdit(scene, a_text, text_size, edit_number)
     }, [pages_text])

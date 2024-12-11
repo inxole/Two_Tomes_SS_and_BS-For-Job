@@ -44,13 +44,13 @@ function TextInput() {
             border: 'none', outline: 'none', resize: 'none', backgroundColor: 'rgba(255, 255, 255, 1)',
             padding: 0, borderRadius: '4px'
           }}
-          value={pages[0]?.join('\n') || ''}
+          value={pages[0]}
           onFocus={() => setEditNumber(1)}
           onChange={e => {
             const newText = e.target.value.split('\n')
             setPages(prevPages => {
               const updatedPages = [...prevPages]
-              updatedPages[0] = newText
+              updatedPages[0] = newText.join('\n')
               return updatedPages
             })
           }}
@@ -86,12 +86,12 @@ function TextInput() {
                   flexShrink: 0,
                   padding: 0, borderRadius: '4px'
                 }}
-                value={page.join('\n')}
+                value={page}
                 onFocus={() => setEditNumber(startIndex + index + 1)}
                 onChange={e => {
                   setPages([
                     ...pages.slice(0, startIndex + index),
-                    e.target.value.split('\n'),
+                    e.target.value,
                     ...pages.slice(startIndex + index + 1)
                   ])
                 }}
@@ -108,13 +108,13 @@ function TextInput() {
             border: 'none', outline: 'none', resize: 'none', backgroundColor: 'rgba(255, 255, 255, 1)',
             padding: 0, borderRadius: '4px'
           }}
-          value={pages[99]?.join('\n') || ''}
+          value={pages[99]}
           onFocus={() => setEditNumber(100)}
           onChange={e => {
             const newText = e.target.value.split('\n')
             setPages(prevPages => {
               const updatedPages = [...prevPages]
-              updatedPages[99] = newText
+              updatedPages[99] = newText.join('\n')
               return updatedPages
             })
           }}
