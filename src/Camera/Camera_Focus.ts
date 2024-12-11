@@ -1,6 +1,6 @@
 import { ArcRotateCamera, Scene, Vector3 } from "@babylonjs/core"
-import { CameraAngle, CameraBSAngle, CameraSSAngle } from "./Camera_Target"
 import { Camera_Angle } from "./Camera_Info"
+import { TargetAnimations } from "./Camera_Target"
 
 const name = 'camera1'
 const defaultOpenPosition = new Vector3(0, 0, -1.5)
@@ -24,9 +24,7 @@ const A_Camera: Camera_Angle = {
     FocusOnDefault: FocusOnDefault,
     FocusOnBS: FocusOnBS,
     FocusOnSS: FocusOnSS,
-    CameraAngle: CameraAngle,
-    CameraBSAngle: CameraBSAngle,
-    CameraSSAngle: CameraSSAngle,
+    CameraAnimation: TargetAnimations,
 }
 
 const getCamera = (scene: Scene) => {

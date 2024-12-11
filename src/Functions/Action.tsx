@@ -53,9 +53,9 @@ export function ToggleAnimationHandler(
     const cuttedNumber = splitted.substring(prefix.length)
     const hitBoxNumber: number = parseInt(cuttedNumber)
     setBookmark(previous => {
-        if (previous == hitBoxNumber + 1|| previous == hitBoxNumber -50+1) {
+        if (previous == hitBoxNumber + 1 || previous == hitBoxNumber - 50 + 1) {
             return previous + 1
-        } else if (previous == hitBoxNumber + 2|| previous == hitBoxNumber -50+2) {
+        } else if (previous == hitBoxNumber + 2 || previous == hitBoxNumber - 50 + 2) {
             return previous - 1
         } else if (previous === 0) {
             return previous + 1
@@ -76,7 +76,7 @@ export function useDynamicReducers(reducer: Reducer<PageState, Action>, initialS
  * @param sortedAnimationData animation group reference
  * @returns void
  */
-export function openPageAnimation(animationData: AnimationGroup[]) {
+export function openPageAnimation(animationData: AnimationGroup[], lookNumber: number) {
     const AD = AnimationDictionary
     const sortedAnimationData = [...animationData].sort((a, b) => a.name.localeCompare(b.name))
 
@@ -94,9 +94,17 @@ export function openPageAnimation(animationData: AnimationGroup[]) {
     // Move pages all at once and switch
     sortedAnimationData[AD.F_Controller].start(true), sortedAnimationData[AD.R_Controller].stop()
     sortedAnimationData[AD.F_Animation_Group].start(true), sortedAnimationData[AD.R_Animation_Group].stop()
+
+    if (lookNumber === 0) {
+        sortedAnimationData[AD.TargetCam].start(false, 1, 0, 30)
+    } else if (lookNumber === 1) {
+        sortedAnimationData[AD.TargetBS].start(false, 1, 0, 30)
+    } else if (lookNumber === 2) {
+        sortedAnimationData[AD.TargetSS].start(false, 1, 0, 30)
+    }
 }
 
-export function closePageAnimation(animationData: AnimationGroup[]) {
+export function closePageAnimation(animationData: AnimationGroup[], lookNumber: number) {
     const AD = AnimationDictionary
     const sortedAnimationData = [...animationData].sort((a, b) => a.name.localeCompare(b.name))
 
@@ -114,6 +122,14 @@ export function closePageAnimation(animationData: AnimationGroup[]) {
     // Move pages all at once and switch
     sortedAnimationData[AD.R_Controller].start(true), sortedAnimationData[AD.F_Controller].stop()
     sortedAnimationData[AD.R_Animation_Group].start(true), sortedAnimationData[AD.F_Animation_Group].stop()
+
+    if (lookNumber === 0) {
+        sortedAnimationData[AD.TargetCam].start(false, 1, 30, 0)
+    } else if (lookNumber === 1) {
+        sortedAnimationData[AD.TargetBS].start(false, 1, 30, 0)
+    } else if (lookNumber === 2) {
+        sortedAnimationData[AD.TargetSS].start(false, 1, 30, 0)
+    }
 }
 
 export enum AnimationDictionary {
@@ -133,6 +149,9 @@ export enum AnimationDictionary {
     R_90_0_Group = 13,
     SS_F_0_90_Group = 14,
     SS_R_90_0_Group = 15,
+    TargetCam = 16,
+    TargetBS = 17,
+    TargetSS = 18,
 }
 
 export function pageFrontAnimation(scene: Scene, index: number) {

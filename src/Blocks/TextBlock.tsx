@@ -1,6 +1,6 @@
 import { useRecoilState, useRecoilValue } from 'recoil'
 import { Long_Text, Text_Switch_Automatic, Text_Switch_Freedom, BookMark, TextReSize, PagesText, EditingTextNumber } from '../atom'
-import { Button } from '@mui/material'
+import { Button, Tooltip } from '@mui/material'
 import { pagesTextEdit } from '../Text/Pages_Text'
 import { useEffect } from 'react'
 
@@ -44,13 +44,13 @@ function TextInput() {
             border: 'none', outline: 'none', resize: 'none', backgroundColor: 'rgba(255, 255, 255, 1)',
             padding: 0, borderRadius: '4px'
           }}
-          value={pages[0]?.join('\n') || ''}
+          value={pages[0]}
           onFocus={() => setEditNumber(1)}
           onChange={e => {
             const newText = e.target.value.split('\n')
             setPages(prevPages => {
               const updatedPages = [...prevPages]
-              updatedPages[0] = newText
+              updatedPages[0] = newText.join('\n')
               return updatedPages
             })
           }}
@@ -86,12 +86,12 @@ function TextInput() {
                   flexShrink: 0,
                   padding: 0, borderRadius: '4px'
                 }}
-                value={page.join('\n')}
+                value={page}
                 onFocus={() => setEditNumber(startIndex + index + 1)}
                 onChange={e => {
                   setPages([
                     ...pages.slice(0, startIndex + index),
-                    e.target.value.split('\n'),
+                    e.target.value,
                     ...pages.slice(startIndex + index + 1)
                   ])
                 }}
@@ -108,13 +108,13 @@ function TextInput() {
             border: 'none', outline: 'none', resize: 'none', backgroundColor: 'rgba(255, 255, 255, 1)',
             padding: 0, borderRadius: '4px'
           }}
-          value={pages[99]?.join('\n') || ''}
+          value={pages[99]}
           onFocus={() => setEditNumber(100)}
           onChange={e => {
             const newText = e.target.value.split('\n')
             setPages(prevPages => {
               const updatedPages = [...prevPages]
-              updatedPages[99] = newText
+              updatedPages[99] = newText.join('\n')
               return updatedPages
             })
           }}
@@ -124,14 +124,18 @@ function TextInput() {
   }
 
   return (
-    <div style={{ display: 'flex', flexDirection: 'column', width: '100%' }}>
+    <div style={{ display: 'flex', flexDirection: 'column', width: '330px' }}>
       {renderTextAreas()}
-      <div style={{ display: 'flex', paddingTop: '5px', alignSelf: 'flex-end' }}>
-        <div style={{ paddingRight: '5px', paddingTop: '10px' }}>UPDATE</div>
-        <Button size='small' variant='outlined' onClick={UpdateFree} style={{ marginRight: '5px' }}>Free</Button>
-        <Button size='small' variant='outlined' onClick={UpdateAuto}>Auto</Button>
-      </div>
-    </div>
+      <span style={{ display: 'flex', justifyContent: 'center', padding: '2px 0px' }}>文章の一括変更</span>
+      <span style={{ display: 'flex', justifyContent: 'center' }}>
+        <Tooltip title="入力された文章をそのままテクスチャに描画します（単語が見切れる可能性があります）。">
+          <Button size='small' variant='outlined' onClick={UpdateFree} style={{ marginRight: '5px', width: '80px' }}>そのまま</Button>
+        </Tooltip>
+        <Tooltip title="入力された文章を自動的に調整し、単語が見切れないように描画します。">
+          <Button size='small' variant='outlined' onClick={UpdateAuto} style={{ width: '80px' }}>お任せ</Button>
+        </Tooltip>
+      </span>
+    </div >
   )
 }
 

@@ -12,7 +12,7 @@ export function FrontIndexDisplay(props: IndexDisplayProps) {
   if (bookmark === 0) label = '表紙'
   else if (bookmark === -1) label = '-'
   else label = `${bookmark * 2} page`
-  return <span style={{ fontWeight: 'bold', fontSize: '16px', width: '70px', display: 'inline-block' }} >{label}</span>
+  return <span style={{ fontWeight: 'bold', fontSize: '16px', width: '80px', display: 'inline-block' }} >{label}</span>
 }
 
 export function BackIndexDisplay(props: IndexDisplayProps) {
@@ -22,7 +22,7 @@ export function BackIndexDisplay(props: IndexDisplayProps) {
   if (bookmark === 0) label = '表紙'
   else if (bookmark === 51) label = '背表紙'
   else label = `${bookmark * 2 - 1} page`
-  return (<span style={{ fontWeight: 'bold', fontSize: '16px', width: '70px', display: 'inline-block', textAlign: 'right' }} >{label}</span>)
+  return (<span style={{ fontWeight: 'bold', fontSize: '16px', width: '80px', display: 'inline-block', textAlign: 'right' }} >{label}</span>)
 }
 
 export function AutoOpenToBookmark() {
