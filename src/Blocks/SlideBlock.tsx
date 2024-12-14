@@ -1,13 +1,14 @@
 import { useEffect, useRef, useState } from 'react'
 import { useRecoilState } from 'recoil'
-import { BookMark, SliderSwitch } from '../atom'
-import { Button, Slider, ButtonGroup } from '@mui/material' // Updated import
+import { BookMark, ChangeSize, SliderSwitch } from '../atom'
+import { Button, Slider, ButtonGroup, Switch } from '@mui/material'
 import { AutoOpenToBookmark, BackIndexDisplay, FrontIndexDisplay } from './SlideCenter'
 
 export function PageSlider() {
   const [bookmark, setBookmark] = useRecoilState(BookMark)
   const [isSliderDisabled, setIsSliderDisabled] = useRecoilState(SliderSwitch)
   const prevBookmarkRef = useRef(bookmark)
+  const [isHidden, setIsHidden] = useRecoilState(ChangeSize)
 
   useEffect(() => {
     const prevBookmark = prevBookmarkRef.current
@@ -22,25 +23,44 @@ export function PageSlider() {
     prevBookmarkRef.current = bookmark
   }, [bookmark])
 
+  const handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    setIsHidden({ ...isHidden, management: event.target.checked })
+  }
+
   return (
-    <div style={{ flexGrow: 1, marginLeft: '5px', marginRight: '5px' }}>
+    <div style={{
+      flexGrow: 1, marginLeft: '5px', marginRight: '5px',
+      height: isHidden.management ? '20px' : '89px'
+    }}>
       <div style={{ display: 'flex', justifyContent: 'center', marginBottom: '2px' }}>
-        <span />ページ管理
+        <span>
+          <Switch
+            checked={isHidden.management}
+            onChange={handleChange}
+            size="small"
+          />{isHidden.management ? '表示' : '隠す'}
+        </span>
+        <div style={{ flexGrow: 1, textAlign: 'center' }}>
+          ページ管理
+        </div>
+        <span style={{ display: 'flex', width: '72px' }} />
       </div>
-      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '5px' }}>
-        <FrontIndexDisplay index={bookmark} />
-        <AutoOpenToBookmark />
-        <BackIndexDisplay index={bookmark} />
-      </div>
-      <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
-        <Slider
-          value={bookmark}
-          aria-labelledby='page-count-slider'
-          step={1} min={1} max={51}
-          style={{ flexGrow: 1, marginLeft: '5px',marginRight: '5px' }}
-          onChange={(_, newValue) => setBookmark(newValue as number)}
-          disabled={bookmark === 0 ? true : isSliderDisabled}
-        />
+      <div style={{ visibility: isHidden.management ? 'hidden' : 'visible' }}>
+        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '5px' }}>
+          <FrontIndexDisplay index={bookmark} />
+          <AutoOpenToBookmark />
+          <BackIndexDisplay index={bookmark} />
+        </div>
+        <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
+          <Slider
+            value={bookmark}
+            aria-labelledby='page-count-slider'
+            step={1} min={1} max={51}
+            style={{ flexGrow: 1, marginLeft: '5px', marginRight: '5px' }}
+            onChange={(_, newValue) => setBookmark(newValue as number)}
+            disabled={bookmark === 0 ? true : isSliderDisabled}
+          />
+        </div>
       </div>
     </div>
   )
