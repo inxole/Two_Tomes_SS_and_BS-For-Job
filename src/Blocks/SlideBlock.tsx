@@ -8,7 +8,7 @@ export function PageSlider() {
   const [bookmark, setBookmark] = useRecoilState(BookMark)
   const [isSliderDisabled, setIsSliderDisabled] = useRecoilState(SliderSwitch)
   const prevBookmarkRef = useRef(bookmark)
-  const [isHidden, setIsHidden] = useRecoilState(ChangeSize)
+  const [hideOrder, setHideOrder] = useRecoilState(ChangeSize)
 
   useEffect(() => {
     const prevBookmark = prevBookmarkRef.current
@@ -24,28 +24,28 @@ export function PageSlider() {
   }, [bookmark])
 
   const handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-    setIsHidden({ ...isHidden, management: event.target.checked })
+    setHideOrder({ ...hideOrder, management: event.target.checked })
   }
 
   return (
     <div style={{
       flexGrow: 1, marginLeft: '5px', marginRight: '5px',
-      height: isHidden.management ? '20px' : '89px'
+      height: hideOrder.management ? '20px' : '89px'
     }}>
       <div style={{ display: 'flex', justifyContent: 'center', marginBottom: '2px' }}>
         <span>
           <Switch
-            checked={isHidden.management}
+            checked={hideOrder.management}
             onChange={handleChange}
             size="small"
-          />{isHidden.management ? '表示' : '隠す'}
+          />{hideOrder.management ? '表示' : '隠す'}
         </span>
         <div style={{ flexGrow: 1, textAlign: 'center' }}>
           ページ管理
         </div>
         <span style={{ display: 'flex', width: '72px' }} />
       </div>
-      <div style={{ visibility: isHidden.management ? 'hidden' : 'visible' }}>
+      <div style={{ visibility: hideOrder.management ? 'hidden' : 'visible' }}>
         <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '5px' }}>
           <FrontIndexDisplay index={bookmark} />
           <AutoOpenToBookmark />
