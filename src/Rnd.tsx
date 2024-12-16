@@ -8,7 +8,7 @@ import { Stack } from '@mui/material'
 import HomeTwoToneIcon from '@mui/icons-material/HomeTwoTone'
 import ArchiveTwoToneIcon from '@mui/icons-material/ArchiveTwoTone'
 import BookTwoToneIcon from '@mui/icons-material/BookTwoTone'
-import { InitCamera, Camera_BS, Camera_SS, BookMark } from './atom'
+import { InitCamera, Camera_BS, Camera_SS, BookMark, ChangeSize } from './atom'
 import { useRecoilState, useRecoilValue } from 'recoil'
 import { A_Camera } from './Camera/Camera_Focus'
 
@@ -24,6 +24,7 @@ function RndComponent() {
   const [, setCamera] = useRecoilState(InitCamera)
   const [, setCamera_BS] = useRecoilState(Camera_BS)
   const [, setCamera_SS] = useRecoilState(Camera_SS)
+  const hideOrder = useRecoilValue(ChangeSize)
 
   useEffect(() => {
     FocusCam()
@@ -67,6 +68,12 @@ function RndComponent() {
         position={{ x: position.x, y: isMovedDown ? position.y : position.y - hidden_position }}
       >
         <div style={{ height: '100%', display: 'flex', flexDirection: 'column', justifyContent: 'space-between' }}>
+          <div style={{
+            height: hideOrder.size && hideOrder.management ? '125.5px' :
+              hideOrder.size && !hideOrder.management ? '56.5px' :
+                !hideOrder.size && hideOrder.management ? '69px' :
+                  '0px',
+          }}></div>
           <div style={{ width: '330px', height: '370px', display: 'flex', ...BorderStyle }}>
             <TextInput />
           </div>
