@@ -104,7 +104,7 @@ function RndComponent() {
       </Rnd>
       <Rnd
         default={{ x: position.x, y: Rnd_height, width: Rnd_width, height: 40 }}
-        position={{ x: position.x, y: isMovedDown ? Rnd_height : Rnd_height - hidden_position }}
+        position={{ x: position.x, y: isMovedDown ? position.y + Rnd_height - 10 : Rnd_height - hidden_position }}
         enableResizing={false}
         disableDragging={true}
         style={{ pointerEvents: 'none', transition: 'transform 0.38s ease' }}>
