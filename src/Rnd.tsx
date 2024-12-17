@@ -8,7 +8,7 @@ import { Stack } from '@mui/material'
 import HomeTwoToneIcon from '@mui/icons-material/HomeTwoTone'
 import ArchiveTwoToneIcon from '@mui/icons-material/ArchiveTwoTone'
 import BookTwoToneIcon from '@mui/icons-material/BookTwoTone'
-import { InitCamera, Camera_BS, Camera_SS, BookMark } from './atom'
+import { InitCamera, Camera_BS, Camera_SS, BookMark, ChangeSize } from './atom'
 import { useRecoilState, useRecoilValue } from 'recoil'
 import { A_Camera } from './Camera/Camera_Focus'
 
@@ -24,6 +24,7 @@ function RndComponent() {
   const [, setCamera] = useRecoilState(InitCamera)
   const [, setCamera_BS] = useRecoilState(Camera_BS)
   const [, setCamera_SS] = useRecoilState(Camera_SS)
+  const hideOrder = useRecoilValue(ChangeSize)
 
   useEffect(() => {
     FocusCam()
@@ -31,7 +32,7 @@ function RndComponent() {
       const newWidth = window.innerWidth
       const newHeight = window.innerHeight
       setWindowSize({ width: newWidth, height: newHeight })
-      setPosition({ x: (newWidth - Rnd_width) / 2, y: 10 })
+      setPosition({ x: (newWidth - Rnd_width) / 2, y: -680 })
     }
     window.addEventListener('resize', handleResize)
     return () => window.removeEventListener('resize', handleResize)
@@ -40,6 +41,20 @@ function RndComponent() {
   const handleArchiveClick = () => {
     setIsMovedUp(!isMovedDown)
   }
+
+  useEffect(() => {
+    if (isMovedDown && !hideOrder.size && !hideOrder.management) {
+      setPosition({ x: position.x, y: 10 })
+    } else if (isMovedDown && hideOrder.size && !hideOrder.management) {
+      setPosition({ x: position.x, y: -46.5 })
+    } else if (isMovedDown && !hideOrder.size && hideOrder.management) {
+      setPosition({ x: position.x, y: -59 })
+    } else if (isMovedDown && hideOrder.size && hideOrder.management) {
+      setPosition({ x: position.x, y: -115.5 })
+    } else {
+      setPosition({ x: position.x, y: -680 })
+    }
+  }, [isMovedDown, hideOrder.size, hideOrder.management, position.y])
 
   function FocusCam() {
     bookmark >= 1 ? A_Camera.FocusOnDefault(true) : A_Camera.FocusOnDefault(false)
@@ -64,9 +79,15 @@ function RndComponent() {
         }}
         enableResizing={false}
         disableDragging={true}
-        position={{ x: position.x, y: isMovedDown ? position.y : position.y - hidden_position }}
+        position={{ x: position.x, y: position.y }}
       >
         <div style={{ height: '100%', display: 'flex', flexDirection: 'column', justifyContent: 'space-between' }}>
+          <div style={{
+            height: hideOrder.size && hideOrder.management ? '125.5px' :
+              hideOrder.size && !hideOrder.management ? '56.5px' :
+                !hideOrder.size && hideOrder.management ? '69px' :
+                  '0px',
+          }} />
           <div style={{ width: '330px', height: '370px', display: 'flex', ...BorderStyle }}>
             <TextInput />
           </div>
@@ -83,7 +104,7 @@ function RndComponent() {
       </Rnd>
       <Rnd
         default={{ x: position.x, y: Rnd_height, width: Rnd_width, height: 40 }}
-        position={{ x: position.x, y: isMovedDown ? Rnd_height : Rnd_height - hidden_position }}
+        position={{ x: position.x, y: isMovedDown ? position.y + Rnd_height - 10 : Rnd_height - hidden_position }}
         enableResizing={false}
         disableDragging={true}
         style={{ pointerEvents: 'none', transition: 'transform 0.38s ease' }}>

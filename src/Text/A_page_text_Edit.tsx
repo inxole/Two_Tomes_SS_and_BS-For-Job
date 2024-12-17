@@ -1,7 +1,7 @@
 import { DynamicTexture, Scene } from "@babylonjs/core"
-import { getTextLayoutDetails } from "./Text/Text_Layout"
-import { fontFace } from "./Functions/Page_Mesh"
-import { splitTextIntoLines_Free } from "./Text/Split_Text"
+import { getTextLayoutDetails } from "./Text_Layout"
+import { fontFace } from "../Functions/Page_Mesh"
+import { splitTextIntoLines_Free } from "./Split_Text"
 
 export const oneTextDefaultEdit = async (scene: Scene, updated_text: string, text_size: number, target: number) => {
     const defaultFont = "bold " + text_size + "px monospace"
