@@ -28,10 +28,7 @@ export function PageSlider() {
   }
 
   return (
-    <div style={{
-      flexGrow: 1, marginLeft: '5px', marginRight: '5px',
-      height: hideOrder.management ? '20px' : '89px'
-    }}>
+    <div style={{ width: '330px', height: hideOrder.management ? '20px' : '89px' }}>
       <div style={{ display: 'flex', justifyContent: 'center', marginBottom: '2px' }}>
         <span>
           <Switch
@@ -51,16 +48,14 @@ export function PageSlider() {
           <AutoOpenToBookmark />
           <BackIndexDisplay index={bookmark} />
         </div>
-        <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
-          <Slider
-            value={bookmark}
-            aria-labelledby='page-count-slider'
-            step={1} min={1} max={51}
-            style={{ flexGrow: 1, marginLeft: '5px', marginRight: '5px' }}
-            onChange={(_, newValue) => setBookmark(newValue as number)}
-            disabled={bookmark === 0 ? true : isSliderDisabled}
-          />
-        </div>
+        <Slider
+          value={bookmark}
+          aria-labelledby='page-count-slider'
+          step={1} min={1} max={51}
+          style={{ display: 'flex', justifyContent: 'center' }}
+          onChange={(_, newValue) => setBookmark(newValue as number)}
+          disabled={bookmark === 0 ? true : isSliderDisabled}
+        />
       </div>
     </div>
   )

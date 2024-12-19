@@ -13,10 +13,7 @@ function FontSizeSlider() {
   }
 
   return (
-    <div style={{
-      width: '330px', marginLeft: '5px', marginRight: '5px',
-      height: hideOrder.size ? '20px' : '76.5px'
-    }}>
+    <div style={{ width: '330px', height: hideOrder.size ? '20px' : '76.5px' }}>
       <div style={{ display: 'flex', justifyContent: 'center' }}>
         <span>
           <Switch
@@ -43,7 +40,7 @@ function FontSizeSlider() {
           min={0}
           max={availableSizes.length - 1}
           onChange={(_, newValue) => setFontSize(availableSizes[newValue as number])}
-          style={{ width: '310px', display: 'flex', justifyContent: 'center', marginLeft: '5px', marginRight: '5px' }}
+          style={{ display: 'flex', justifyContent: 'center' }}
         />
       </div>
     </div>
