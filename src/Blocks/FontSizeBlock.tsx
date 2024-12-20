@@ -10,7 +10,6 @@ function FontSizeSlider() {
   const [hideOrder, setHideOrder] = useRecoilState(ChangeSize)
 
   let interval: number | null = null
-
   const handleMouseDown = (direction: number) => {
     const changeFontSize = () => {
       setFontSize((currentFontSize) => {
@@ -23,13 +22,8 @@ function FontSizeSlider() {
       })
     }
 
-    // 最初の変更
     changeFontSize()
-
-    // 押し続けた場合の連続変更
     interval = setInterval(changeFontSize, 100)
-
-    // マウスアップで停止
     const handleMouseUp = () => {
       if (interval) clearInterval(interval)
       interval = null
@@ -47,11 +41,10 @@ function FontSizeSlider() {
           setHideOrder((prev) => ({ ...prev, size: !prev.size }))
         }
         style={{
-          backgroundColor: 'rgba(255, 255, 255, 0.1)',
-          boxShadow: '0px 2px 4px rgba(0, 0, 0, 0.05)',
-          border: '1px solid rgba(255, 255, 255, 0.05)',
-        }}
-      >
+          backgroundColor: 'rgba(255, 255, 255, 0.15)',
+          boxShadow: '0px 1px 2px rgba(255, 255, 255, 0.2)',
+          border: '1px solid rgba(255, 255, 255, 0.2)',
+        }}>
         <AccordionSummary
           expandIcon={
             <ArrowForwardIosSharpIcon
@@ -59,11 +52,9 @@ function FontSizeSlider() {
                 transform: hideOrder.size ? 'rotate(0deg)' : 'rotate(-90deg)',
                 transition: 'transform 0.3s',
                 fontSize: '1.0rem'
-              }}
-            />
+              }} />
           }
-          style={{ display: 'flex', justifyContent: 'center', flexDirection: 'row-reverse' }}
-        >
+          style={{ display: 'flex', justifyContent: 'center', flexDirection: 'row-reverse' }}>
           <span style={{ flexGrow: 1, textAlign: 'center', paddingRight: '24px', fontSize: '1.0rem' }}>フォントサイズ</span>
         </AccordionSummary>
         <AccordionDetails style={{ padding: '0px' }}>
@@ -100,7 +91,7 @@ function FontSizeSlider() {
               onChange={(_, newValue) =>
                 setFontSize(availableSizes[newValue as number])
               }
-              style={{ display: 'flex', justifyContent: 'center', width: '99.5%' }}
+              style={{ display: 'flex', justifyContent: 'center' }}
             />
           </div>
         </AccordionDetails>

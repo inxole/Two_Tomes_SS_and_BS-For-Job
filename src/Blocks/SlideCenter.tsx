@@ -12,7 +12,7 @@ export function FrontIndexDisplay(props: IndexDisplayProps) {
   if (bookmark === 0) label = '表紙'
   else if (bookmark === -1) label = '-'
   else label = `${bookmark * 2} page`
-  return <span style={{ fontWeight: 'bold', fontSize: '16px', width: '80px', display: 'inline-block' }} >{label}</span>
+  return <span style={{ fontSize: '15px', width: '60px', display: 'inline-block' }} >{label}</span>
 }
 
 export function BackIndexDisplay(props: IndexDisplayProps) {
@@ -22,7 +22,7 @@ export function BackIndexDisplay(props: IndexDisplayProps) {
   if (bookmark === 0) label = '表紙'
   else if (bookmark === 51) label = '背表紙'
   else label = `${bookmark * 2 - 1} page`
-  return (<span style={{ fontWeight: 'bold', fontSize: '16px', width: '80px', display: 'inline-block', textAlign: 'right' }} >{label}</span>)
+  return (<span style={{ fontSize: '15px', width: '60px', display: 'inline-block', textAlign: 'right' }} >{label}</span>)
 }
 
 export function AutoOpenToBookmark() {
@@ -70,19 +70,57 @@ export function AutoOpenToBookmark() {
     }
   }
 
+  let interval: number | null = null
+  const handleMouseDown = (direction: number) => {
+    const changeFontSize = () => {
+      setInputValue(
+        (currentValue) => {
+          const newValue = parseInt(currentValue, 10) + direction
+          if (newValue >= 1 && newValue <= 100) {
+            return `${newValue}`
+          }
+          return currentValue
+        })
+    }
+
+    changeFontSize()
+    interval = setInterval(changeFontSize, 100)
+    const handleMouseUp = () => {
+      if (interval) clearInterval(interval)
+      interval = null
+      document.removeEventListener('mouseup', handleMouseUp)
+    }
+
+    document.addEventListener('mouseup', handleMouseUp)
+  }
+
   return (
-    <div style={{ display: 'flex', justifyContent: 'center' }}>
+    <div style={{ display: 'flex', justifyContent: 'center', paddingRight: '34px' }}>
       <div style={{ paddingRight: '10px', cursor: 'pointer' }}>
         <BookmarkIcon onClick={handleButtonClick} color='warning' />
       </div>
-      <input
-        type="number"
-        value={inputValue}
-        onChange={handleInputChange}
-        min={1}
-        max={100}
-        style={{ width: '40px' }}
-      />
+      <div style={{ display: 'flex', alignItems: 'center' }}>
+        <button
+          style={{ width: '27.5px', height: '27.5px' }}
+          onMouseDown={inputValue === '100' ? () => handleMouseDown(-2) : () => { handleMouseDown(-1) }}
+          onMouseUp={() => { }}
+          disabled={inputValue === '1'}
+        >-</button>
+        <input
+          type="text"
+          value={inputValue}
+          onChange={handleInputChange}
+          min={1}
+          max={100}
+          style={{ width: '40px', height: '21.5px', textAlign: 'center', margin: '0px 15px' }}
+        />
+        <button
+          style={{ width: '27.5px', height: '27.5px' }}
+          onMouseDown={() => handleMouseDown(1)}
+          onMouseUp={() => { }}
+          disabled={inputValue === '100'}
+        >+</button>
+      </div>
     </div>
   )
 }
