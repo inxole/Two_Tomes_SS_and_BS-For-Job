@@ -1,4 +1,5 @@
-import { Slider, Switch } from '@mui/material'
+import { Slider, Accordion, AccordionSummary, AccordionDetails } from '@mui/material'
+import ArrowForwardIosSharpIcon from '@mui/icons-material/ArrowForwardIosSharp'
 import { useRecoilState } from 'recoil'
 import { ChangeSize, TextReSize } from '../atom'
 
@@ -8,41 +9,102 @@ function FontSizeSlider() {
   const currentIndex = availableSizes.indexOf(fontSize)
   const [hideOrder, setHideOrder] = useRecoilState(ChangeSize)
 
-  const handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-    setHideOrder({ ...hideOrder, size: event.target.checked })
+  let interval: number | null = null
+
+  const handleMouseDown = (direction: number) => {
+    const changeFontSize = () => {
+      setFontSize((currentFontSize) => {
+        const currentIndex = availableSizes.indexOf(currentFontSize)
+        const newIndex = currentIndex + direction
+        if (newIndex >= 0 && newIndex < availableSizes.length) {
+          return availableSizes[newIndex]
+        }
+        return currentFontSize
+      })
+    }
+
+    // 最初の変更
+    changeFontSize()
+
+    // 押し続けた場合の連続変更
+    interval = setInterval(changeFontSize, 100)
+
+    // マウスアップで停止
+    const handleMouseUp = () => {
+      if (interval) clearInterval(interval)
+      interval = null
+      document.removeEventListener('mouseup', handleMouseUp)
+    }
+
+    document.addEventListener('mouseup', handleMouseUp)
   }
 
   return (
-    <div style={{ width: '330px', height: hideOrder.size ? '20px' : '76.5px' }}>
-      <div style={{ display: 'flex', justifyContent: 'center' }}>
-        <span>
-          <Switch
-            checked={hideOrder.size}
-            onChange={handleChange}
-            size="small"
-          />{hideOrder.size ? '表示' : '隠す'}
-        </span>
-        <span style={{ flexGrow: 1, textAlign: 'center' }}>フォントサイズ</span>
-        <span style={{ display: 'flex', width: '72px' }}></span>
-      </div>
-      <div style={{ visibility: hideOrder.size ? 'hidden' : 'visible' }}>
-        <span style={{ widows: '100%', display: 'flex', justifyContent: 'center' }}>
-          <input
-            type="text"
-            value={fontSize}
-            readOnly
-            style={{ width: '30px' }}
-          />
-        </span>
-        <Slider
-          value={currentIndex}
-          step={1}
-          min={0}
-          max={availableSizes.length - 1}
-          onChange={(_, newValue) => setFontSize(availableSizes[newValue as number])}
-          style={{ display: 'flex', justifyContent: 'center' }}
-        />
-      </div>
+    <div style={{ width: '330px' }}>
+      <Accordion
+        expanded={!hideOrder.size}
+        onChange={() =>
+          setHideOrder((prev) => ({ ...prev, size: !prev.size }))
+        }
+        style={{
+          backgroundColor: 'rgba(255, 255, 255, 0.1)',
+          boxShadow: '0px 2px 4px rgba(0, 0, 0, 0.05)',
+          border: '1px solid rgba(255, 255, 255, 0.05)',
+        }}
+      >
+        <AccordionSummary
+          expandIcon={
+            <ArrowForwardIosSharpIcon
+              style={{
+                transform: hideOrder.size ? 'rotate(0deg)' : 'rotate(-90deg)',
+                transition: 'transform 0.3s',
+                fontSize: '1.0rem'
+              }}
+            />
+          }
+          style={{ display: 'flex', justifyContent: 'center', flexDirection: 'row-reverse' }}
+        >
+          <span style={{ flexGrow: 1, textAlign: 'center', paddingRight: '24px', fontSize: '1.0rem' }}>フォントサイズ</span>
+        </AccordionSummary>
+        <AccordionDetails style={{ padding: '0px' }}>
+          <div>
+            <span style={{ width: '100%', display: 'flex', justifyContent: 'center' }}>
+              <div style={{ display: 'flex', alignItems: 'center' }}>
+                <button
+                  style={{ width: '27.5px', height: '27.5px' }}
+                  onMouseDown={() => handleMouseDown(-1)}
+                  disabled={fontSize === availableSizes[0]}
+                >
+                  -
+                </button>
+                <input
+                  type="text"
+                  value={fontSize}
+                  readOnly
+                  style={{ width: '40px', height: '21.5px', textAlign: 'center', margin: '0px 15px' }}
+                />
+                <button
+                  style={{ width: '27.5px', height: '27.5px' }}
+                  onMouseDown={() => handleMouseDown(1)}
+                  disabled={fontSize === availableSizes[availableSizes.length - 1]}
+                >
+                  +
+                </button>
+              </div>
+            </span>
+            <Slider
+              value={currentIndex}
+              step={1}
+              min={0}
+              max={availableSizes.length - 1}
+              onChange={(_, newValue) =>
+                setFontSize(availableSizes[newValue as number])
+              }
+              style={{ display: 'flex', justifyContent: 'center', width: '99.5%' }}
+            />
+          </div>
+        </AccordionDetails>
+      </Accordion>
     </div>
   )
 }
