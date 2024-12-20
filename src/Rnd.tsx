@@ -141,5 +141,5 @@ function RndComponent() {
   )
 }
 
-const BorderStyle = { border: '1px', borderRadius: '8px', padding: '15px', backgroundColor: 'rgba(255, 255, 255, 0.5)', margin: '1.5px' }
+const BorderStyle = { border: '1px', borderRadius: '8px', padding: '10px 15px', backgroundColor: 'rgba(255, 255, 255, 0.5)', margin: '1.5px' }
 export default RndComponent
