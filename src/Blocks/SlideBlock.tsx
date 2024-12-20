@@ -1,7 +1,8 @@
 import { useEffect, useRef, useState } from 'react'
 import { useRecoilState } from 'recoil'
 import { BookMark, ChangeSize, SliderSwitch } from '../atom'
-import { Button, Slider, ButtonGroup, Switch } from '@mui/material'
+import { Button, Slider, ButtonGroup, AccordionSummary, AccordionDetails, Accordion } from '@mui/material'
+import ArrowForwardIosSharpIcon from '@mui/icons-material/ArrowForwardIosSharp'
 import { AutoOpenToBookmark, BackIndexDisplay, FrontIndexDisplay } from './SlideCenter'
 
 export function PageSlider() {
@@ -23,40 +24,44 @@ export function PageSlider() {
     prevBookmarkRef.current = bookmark
   }, [bookmark])
 
-  const handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-    setHideOrder({ ...hideOrder, management: event.target.checked })
-  }
-
   return (
-    <div style={{ width: '330px', height: hideOrder.management ? '20px' : '89px' }}>
-      <div style={{ display: 'flex', justifyContent: 'center', marginBottom: '2px' }}>
-        <span>
-          <Switch
-            checked={hideOrder.management}
-            onChange={handleChange}
-            size="small"
-          />{hideOrder.management ? '表示' : '隠す'}
-        </span>
-        <div style={{ flexGrow: 1, textAlign: 'center' }}>
-          ページ管理
-        </div>
-        <span style={{ display: 'flex', width: '72px' }} />
-      </div>
-      <div style={{ visibility: hideOrder.management ? 'hidden' : 'visible' }}>
-        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '5px' }}>
-          <FrontIndexDisplay index={bookmark} />
-          <AutoOpenToBookmark />
-          <BackIndexDisplay index={bookmark} />
-        </div>
-        <Slider
-          value={bookmark}
-          aria-labelledby='page-count-slider'
-          step={1} min={1} max={51}
-          style={{ display: 'flex', justifyContent: 'center' }}
-          onChange={(_, newValue) => setBookmark(newValue as number)}
-          disabled={bookmark === 0 ? true : isSliderDisabled}
-        />
-      </div>
+    <div style={{ width: '330px' }}>
+      <Accordion
+        expanded={!hideOrder.management}
+        onChange={() => setHideOrder((prev) => ({ ...prev, management: !prev.management }))}
+        style={{
+          backgroundColor: 'rgba(255, 255, 255, 0.15)',
+          boxShadow: '0px 1px 2px rgba(255, 255, 255, 0.2)',
+          border: '1px solid rgba(255, 255, 255, 0.2)',
+        }}>
+        <AccordionSummary
+          expandIcon={
+            <ArrowForwardIosSharpIcon
+              style={{
+                transform: hideOrder.management ? 'rotate(0deg)' : 'rotate(-90deg)',
+                transition: 'transform 0.3s',
+                fontSize: '1.0rem'
+              }} />
+          }
+          style={{ display: 'flex', justifyContent: 'center', flexDirection: 'row-reverse' }}>
+          <span style={{ flexGrow: 1, textAlign: 'center', paddingRight: '24px', fontSize: '1.0rem' }}>ページ管理</span>
+        </AccordionSummary>
+        <AccordionDetails style={{ padding: '0px' }}>
+          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+            <FrontIndexDisplay index={bookmark} />
+            <AutoOpenToBookmark />
+            <BackIndexDisplay index={bookmark} />
+          </div>
+          <Slider
+            value={bookmark}
+            aria-labelledby='page-count-slider'
+            step={1} min={1} max={51}
+            style={{ display: 'flex', justifyContent: 'center' }}
+            onChange={(_, newValue) => setBookmark(newValue as number)}
+            disabled={bookmark === 0 ? true : isSliderDisabled}
+          />
+        </AccordionDetails>
+      </Accordion>
     </div>
   )
 }
