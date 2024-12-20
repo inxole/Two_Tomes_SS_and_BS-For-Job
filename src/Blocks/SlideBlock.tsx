@@ -95,13 +95,13 @@ export function CoverState() {
         >
           <Button
             size='small'
-            style={{ width: '65px', height: '35px' }}
+            style={{ width: '165px', height: '35px' }}
             disabled={cover === true ? false : true}
             onClick={() => setBookmark(1)}
           >開く</Button>
           <Button
             size='small'
-            style={{ width: '65px', height: '35px' }}
+            style={{ width: '165px', height: '35px' }}
             disabled={cover === true ? true : false}
             onClick={decreaseBookmark}
           >閉じる</Button>
