@@ -27,9 +27,9 @@ function TextInput() {
       return (
         <textarea
           style={{
-            width: '100%', height: '100%',
-            border: 'none', outline: 'none', resize: 'none', backgroundColor: 'rgba(255, 255, 255, 1)',
-            padding: 0, borderRadius: '4px'
+            width: '99.8%', height: '100%',
+            border: '1px solid #ccc', overflow: 'auto', resize: 'none', backgroundColor: 'rgba(255, 255, 255, 1)',
+            padding: '0px', borderRadius: '4px'
           }}
           placeholder='文章を入力してください...'
           value={updatedText}
@@ -40,9 +40,9 @@ function TextInput() {
       return (
         <textarea
           style={{
-            width: '100%', height: '100%',
-            border: 'none', outline: 'none', resize: 'none', backgroundColor: 'rgba(255, 255, 255, 1)',
-            padding: 0, borderRadius: '4px'
+            width: '99.8%', height: '100%',
+            border: '1px solid #ccc', overflow: 'auto', resize: 'none', backgroundColor: 'rgba(255, 255, 255, 1)',
+            padding: '0px', borderRadius: '4px'
           }}
           value={pages[0]}
           onFocus={() => setEditNumber(1)}
@@ -62,18 +62,15 @@ function TextInput() {
         <div style={{
           width: '100%', height: '100%',
           display: 'flex',
-          overflowX: 'auto',
-          overflowY: 'hidden',
-          boxSizing: 'border-box',
-          scrollSnapType: 'x mandatory'
+          overflow: 'visible',
         }}>
           {pages.slice(startIndex, startIndex + 2).map((page, index) => (
             <div
               key={`container_${index}`}
               style={{
-                width: '100%', height: '100%',
+                width: '50%', height: '99%',
                 flexShrink: 0,
-                scrollSnapAlign: 'start'
+                padding: '0px 0.5px',
               }}
             >
               <textarea
@@ -84,9 +81,10 @@ function TextInput() {
                   backgroundColor: 'rgba(255, 255, 255, 1)',
                   boxSizing: 'border-box',
                   flexShrink: 0,
-                  padding: 0, borderRadius: '4px'
+                  padding: '0px', borderRadius: '4px'
                 }}
                 value={page}
+                placeholder={`page ${startIndex + index + 1}`}
                 onFocus={() => setEditNumber(startIndex + index + 1)}
                 onChange={e => {
                   setPages([
@@ -104,9 +102,9 @@ function TextInput() {
       return (
         <textarea
           style={{
-            width: '100%', height: '100%',
-            border: 'none', outline: 'none', resize: 'none', backgroundColor: 'rgba(255, 255, 255, 1)',
-            padding: 0, borderRadius: '4px'
+            width: '99.8%', height: '100%',
+            border: '1px solid #ccc', overflow: 'auto', resize: 'none', backgroundColor: 'rgba(255, 255, 255, 1)',
+            padding: '0px', borderRadius: '4px'
           }}
           value={pages[99]}
           onFocus={() => setEditNumber(100)}
@@ -125,14 +123,17 @@ function TextInput() {
 
   return (
     <div style={{ display: 'flex', flexDirection: 'column', width: '330px' }}>
+      <span style={{ display: 'flex', justifyContent: 'center', width: '330px', paddingBottom: '8px' }}>
+        文章の変更
+      </span>
       {renderTextAreas()}
-      <span style={{ display: 'flex', justifyContent: 'center', padding: '2px 0px' }}>文章の一括変更</span>
+      <span style={{ display: 'flex', justifyContent: 'center', padding: '10px 0px' }}>文章の一括変更</span>
       <span style={{ display: 'flex', justifyContent: 'center' }}>
         <Tooltip title="入力された文章をそのままテクスチャに描画します（単語が見切れる可能性があります）。">
-          <Button size='small' variant='outlined' onClick={UpdateFree} style={{ marginRight: '5px', width: '80px' }}>そのまま</Button>
+          <Button size='small' variant='contained' onClick={UpdateFree} style={{ marginRight: '15px', width: '157.5px', height: '35px', boxShadow: 'none' }}>そのまま</Button>
         </Tooltip>
         <Tooltip title="入力された文章を自動的に調整し、単語が見切れないように描画します。">
-          <Button size='small' variant='outlined' onClick={UpdateAuto} style={{ width: '80px' }}>お任せ</Button>
+          <Button size='small' variant='contained' onClick={UpdateAuto} style={{ width: '157.5px', height: '35px', boxShadow: 'none' }}>お任せ</Button>
         </Tooltip>
       </span>
     </div >
