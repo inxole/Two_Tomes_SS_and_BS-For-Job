@@ -40,10 +40,11 @@ function FontSizeSlider() {
         onChange={() =>
           setHideOrder((prev) => ({ ...prev, size: !prev.size }))
         }
+        disableGutters
         style={{
-          backgroundColor: 'rgba(255, 255, 255, 0.15)',
-          boxShadow: '0px 1px 2px rgba(255, 255, 255, 0.2)',
-          border: '1px solid rgba(255, 255, 255, 0.2)',
+          backgroundColor: 'rgba(255, 255, 255, 0.01)',
+          boxShadow: 'none',
+          border: '1px solid rgba(255, 255, 255, 0.01)',
         }}>
         <AccordionSummary
           expandIcon={
@@ -51,15 +52,18 @@ function FontSizeSlider() {
               style={{
                 transform: hideOrder.size ? 'rotate(0deg)' : 'rotate(-90deg)',
                 transition: 'transform 0.3s',
-                fontSize: '1.0rem'
+                fontSize: '1.0rem', padding: '12.5px'
               }} />
           }
-          style={{ display: 'flex', justifyContent: 'center', flexDirection: 'row-reverse' }}>
-          <span style={{ flexGrow: 1, textAlign: 'center', paddingRight: '24px', fontSize: '1.0rem' }}>フォントサイズ</span>
+          sx={{
+            display: 'flex', justifyContent: 'center', flexDirection: 'row-reverse',
+            height: '20px', minHeight: '20px', padding: '0px'
+          }}>
+          <span style={{ flexGrow: 1, textAlign: 'center', fontSize: '1.0rem', padding: '10px 41px 10px 0px' }}>フォントサイズ</span>
         </AccordionSummary>
         <AccordionDetails style={{ padding: '0px' }}>
           <div>
-            <span style={{ width: '100%', display: 'flex', justifyContent: 'center' }}>
+            <span style={{ width: '100%', display: 'flex', justifyContent: 'center', paddingTop: '10px' }}>
               <div style={{ display: 'flex', alignItems: 'center' }}>
                 <button
                   style={{ width: '27.5px', height: '27.5px' }}

@@ -29,10 +29,11 @@ export function PageSlider() {
       <Accordion
         expanded={!hideOrder.management}
         onChange={() => setHideOrder((prev) => ({ ...prev, management: !prev.management }))}
+        disableGutters
         style={{
-          backgroundColor: 'rgba(255, 255, 255, 0.15)',
-          boxShadow: '0px 1px 2px rgba(255, 255, 255, 0.2)',
-          border: '1px solid rgba(255, 255, 255, 0.2)',
+          backgroundColor: 'rgba(255, 255, 255, 0.01)',
+          boxShadow: 'none',
+          border: '1px solid rgba(255, 255, 255, 0.01)',
         }}>
         <AccordionSummary
           expandIcon={
@@ -40,14 +41,17 @@ export function PageSlider() {
               style={{
                 transform: hideOrder.management ? 'rotate(0deg)' : 'rotate(-90deg)',
                 transition: 'transform 0.3s',
-                fontSize: '1.0rem'
+                fontSize: '1.0rem', padding: '12.5px'
               }} />
           }
-          style={{ display: 'flex', justifyContent: 'center', flexDirection: 'row-reverse' }}>
-          <span style={{ flexGrow: 1, textAlign: 'center', paddingRight: '24px', fontSize: '1.0rem' }}>ページ管理</span>
+          sx={{
+            display: 'flex', justifyContent: 'center', flexDirection: 'row-reverse',
+            height: '20px', minHeight: '20px', padding: '0px'
+          }}>
+          <span style={{ flexGrow: 1, textAlign: 'center', paddingRight: '16px', fontSize: '1.0rem', padding: '10px 41px 10px 0px' }}>ページ管理</span>
         </AccordionSummary>
         <AccordionDetails style={{ padding: '0px' }}>
-          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', paddingTop: '10px' }}>
             <FrontIndexDisplay index={bookmark} />
             <AutoOpenToBookmark />
             <BackIndexDisplay index={bookmark} />
@@ -92,7 +96,7 @@ export function CoverState() {
 
   return (
     <div style={{ width: '330%', justifyContent: 'center' }}>
-      <span style={{ display: 'flex', justifyContent: 'center', paddingBottom: '2px' }}>表紙</span>
+      <span style={{ display: 'flex', justifyContent: 'center', paddingBottom: '10px' }}>表紙</span>
       <span style={{ display: 'flex', justifyContent: 'center' }}>
         <ButtonGroup
           disableElevation
