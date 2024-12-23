@@ -10,16 +10,14 @@ function FontSizeSlider() {
   const [hideOrder, setHideOrder] = useRecoilState(ChangeSize)
 
   let interval: number | null = null
+  let currentFontSizeIndex = availableSizes.indexOf(fontSize)
   const handleMouseDown = (direction: number) => {
     const changeFontSize = () => {
-      setFontSize((currentFontSize) => {
-        const currentIndex = availableSizes.indexOf(currentFontSize)
-        const newIndex = currentIndex + direction
-        if (newIndex >= 0 && newIndex < availableSizes.length) {
-          return availableSizes[newIndex]
-        }
-        return currentFontSize
-      })
+      const newIndex = currentFontSizeIndex + direction
+      if (newIndex >= 0 && newIndex < availableSizes.length) {
+        currentFontSizeIndex = newIndex
+        setFontSize(availableSizes[currentFontSizeIndex])
+      }
     }
 
     changeFontSize()
@@ -29,7 +27,6 @@ function FontSizeSlider() {
       interval = null
       document.removeEventListener('mouseup', handleMouseUp)
     }
-
     document.addEventListener('mouseup', handleMouseUp)
   }
 

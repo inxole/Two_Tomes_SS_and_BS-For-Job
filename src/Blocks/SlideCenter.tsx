@@ -71,16 +71,14 @@ export function AutoOpenToBookmark() {
   }
 
   let interval: number | null = null
+  let currentInputValue = parseInt(inputValue, 10)
   const handleMouseDown = (direction: number) => {
     const changeFontSize = () => {
-      setInputValue(
-        (currentValue) => {
-          const newValue = parseInt(currentValue, 10) + direction
-          if (newValue >= 1 && newValue <= 100) {
-            return `${newValue}`
-          }
-          return currentValue
-        })
+      const newValue = currentInputValue + direction
+      if (newValue >= 1 && newValue <= 100) {
+        currentInputValue = newValue
+        setInputValue(`${currentInputValue}`)
+      }
     }
 
     changeFontSize()
@@ -90,7 +88,6 @@ export function AutoOpenToBookmark() {
       interval = null
       document.removeEventListener('mouseup', handleMouseUp)
     }
-
     document.addEventListener('mouseup', handleMouseUp)
   }
 
@@ -102,7 +99,7 @@ export function AutoOpenToBookmark() {
       <div style={{ display: 'flex', alignItems: 'center' }}>
         <button
           style={{ width: '27.5px', height: '27.5px' }}
-          onMouseDown={inputValue === '100' ? () => handleMouseDown(-2) : () => { handleMouseDown(-1) }}
+          onMouseDown={() => { handleMouseDown(-1) }}
           onMouseUp={() => { }}
           disabled={inputValue === '1'}
         >-</button>
