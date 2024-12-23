@@ -2,6 +2,7 @@ import { Slider, Accordion, AccordionSummary, AccordionDetails } from '@mui/mate
 import ArrowForwardIosSharpIcon from '@mui/icons-material/ArrowForwardIosSharp'
 import { useRecoilState } from 'recoil'
 import { ChangeSize, TextReSize } from '../atom'
+import { inner_width } from '../Rnd'
 
 function FontSizeSlider() {
   const [fontSize, setFontSize] = useRecoilState(TextReSize)
@@ -31,7 +32,7 @@ function FontSizeSlider() {
   }
 
   return (
-    <div style={{ width: '330px' }}>
+    <div style={{ width: inner_width }}>
       <Accordion
         expanded={!hideOrder.size}
         onChange={() =>

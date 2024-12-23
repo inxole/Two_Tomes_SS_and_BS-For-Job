@@ -15,6 +15,7 @@ import { A_Camera } from './Camera/Camera_Focus'
 const Rnd_width = 360
 const Rnd_height = 680
 const hidden_position = Rnd_height + 10
+export const inner_width = '320px'
 
 function RndComponent() {
   const [isMovedDown, setIsMovedUp] = useState(false)
@@ -46,11 +47,11 @@ function RndComponent() {
     if (isMovedDown && !hideOrder.size && !hideOrder.management) {
       setPosition({ x: position.x, y: 10 })
     } else if (isMovedDown && hideOrder.size && !hideOrder.management) {
-      setPosition({ x: position.x, y: -46.5 })
+      setPosition({ x: position.x, y: -57.5 })
     } else if (isMovedDown && !hideOrder.size && hideOrder.management) {
-      setPosition({ x: position.x, y: -59 })
+      setPosition({ x: position.x, y: -57.5 })
     } else if (isMovedDown && hideOrder.size && hideOrder.management) {
-      setPosition({ x: position.x, y: -115.5 })
+      setPosition({ x: position.x, y: -125 })
     } else {
       setPosition({ x: position.x, y: -680 })
     }
@@ -83,21 +84,21 @@ function RndComponent() {
       >
         <div style={{ height: '100%', display: 'flex', flexDirection: 'column', justifyContent: 'space-between' }}>
           <div style={{
-            height: hideOrder.size && hideOrder.management ? '125.5px' :
-              hideOrder.size && !hideOrder.management ? '56.5px' :
-                !hideOrder.size && hideOrder.management ? '69px' :
+            height: hideOrder.size && hideOrder.management ? '135px' :
+              hideOrder.size && !hideOrder.management ? '67.5px' :
+                !hideOrder.size && hideOrder.management ? '67.5px' :
                   '0px',
           }} />
-          <div style={{ width: '330px', height: '370px', display: 'flex', ...BorderStyle }}>
+          <div style={{ width: inner_width, display: 'flex', ...BorderStyle }}>
             <TextInput />
           </div>
-          <div style={{ width: '330px', display: 'flex', ...BorderStyle }}>
+          <div style={{ width: inner_width, display: 'flex', ...BorderStyle }}>
             <FontSizeSlider />
           </div>
-          <div style={{ width: '330px', display: 'flex', ...BorderStyle }}>
+          <div style={{ width: inner_width, display: 'flex', ...BorderStyle }}>
             <PageSlider />
           </div>
-          <div style={{ width: '330px', display: 'flex', ...BorderStyle }}>
+          <div style={{ width: inner_width, display: 'flex', ...BorderStyle }}>
             <CoverState />
           </div>
         </div>
