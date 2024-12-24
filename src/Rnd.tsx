@@ -14,7 +14,7 @@ import { A_Camera } from './Camera/Camera_Focus'
 
 const Rnd_width = 360
 const Rnd_height = 680
-const hidden_position = Rnd_height + 10
+const hidden_position = Rnd_height - 8
 export const inner_width = '320px'
 
 function RndComponent() {
@@ -110,29 +110,48 @@ function RndComponent() {
         disableDragging={true}
         style={{ pointerEvents: 'none', transition: 'transform 0.38s ease' }}>
         <div style={{ width: '350px', margin: '0 auto', display: 'flex', justifyContent: 'center' }}>
-          <Stack direction="row" alignItems="center" justifyContent="center" spacing={2} sx={{ pointerEvents: 'auto' }}>
+          <Stack direction="row" alignItems="center" justifyContent="center" spacing={4} sx={{ pointerEvents: 'auto', paddingTop: '15px' }}>
             <ArchiveTwoToneIcon
               fontSize='large'
               titleAccess={isMovedDown ? 'Hidden' : 'Display'}
-              style={{
-                color: grey[100],
-                cursor: 'pointer',
-                paddingTop: isMovedDown ? '0px' : '10px',
-                paddingBottom: !isMovedDown ? '0px' : '10px',
+              sx={{
+                color: grey[300], cursor: 'pointer',
+                padding: '3px',
+                background: 'rgba(0, 105, 211, 0.7)',
+                borderRadius: '8px',
                 transform: isMovedDown ? 'rotate(180deg)' : 'none',
               }}
               onClick={handleArchiveClick}
             />
             <BookTwoToneIcon
-              fontSize="large" titleAccess="Focus B&S" style={{ paddingTop: '10px', color: amber[100], cursor: 'pointer' }}
+              fontSize="large" titleAccess="Focus B&S"
+              sx={{
+                color: grey[100], cursor: 'pointer',
+                padding: '3px',
+                background: 'linear-gradient(45deg,rgba(244, 174, 35, 0.7),rgb(254, 236, 173, 0.7))',
+                borderRadius: '8px',
+              }}
               onClick={() => FocusCamBS()}
             />
             <HomeTwoToneIcon
-              fontSize='large' titleAccess="Default angle" style={{ paddingTop: '10px', color: grey[100], cursor: 'pointer' }}
+              fontSize='large' titleAccess="Default angle"
+              sx={{
+                color: grey[100], cursor: 'pointer',
+                padding: '3px',
+                background: 'rgba(0, 105, 211, 0.7)',
+                borderRadius: '8px',
+              }}
               onClick={() => FocusCam()}
             />
             <BookTwoToneIcon
-              fontSize="large" titleAccess="Focus S&S" style={{ paddingTop: '10px', color: grey[800], cursor: 'pointer' }}
+              fontSize="large" titleAccess="Focus S&S"
+              sx={{
+                color: grey[100],
+                cursor: 'pointer',
+                padding: '3px',
+                background: 'linear-gradient(45deg, rgb(113, 113, 117, 0.7), rgb(58, 58, 60, 0.7), rgb(230, 188, 76, 0.7))',
+                borderRadius: '8px',
+              }}
               onClick={() => FocusCamSS()}
             />
           </Stack>

@@ -1,4 +1,4 @@
-import { AnimationGroup, Engine, Mesh, MeshBuilder, Scene, Skeleton, Space, Vector3 } from "@babylonjs/core"
+import { AnimationGroup, Color4, Engine, Mesh, MeshBuilder, Scene, Skeleton, Space, Vector3 } from "@babylonjs/core"
 import { LightUp, CameraWork } from "./Functions/Canvas"
 import { createPage } from "./Functions/Page_Mesh"
 import { createSkeleton } from "./Functions/Skeleton"
@@ -19,6 +19,7 @@ export function initializeScene(
     const engine = new Engine(canvas, true)
     const scene = new Scene(engine)
     sceneRef.current = scene
+    scene.clearColor = new Color4(0.8, 0.8, 0.8, 1)
     LightUp(scene)
     CameraWork(scene, canvas)
     load_Tome_BS(scene)
