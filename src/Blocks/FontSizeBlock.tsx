@@ -85,16 +85,18 @@ function FontSizeSlider() {
                 </button>
               </div>
             </span>
-            <Slider
-              value={currentIndex}
-              step={1}
-              min={0}
-              max={availableSizes.length - 1}
-              onChange={(_, newValue) =>
-                setFontSize(availableSizes[newValue as number])
-              }
-              style={{ display: 'flex', justifyContent: 'center' }}
-            />
+            <div style={{ height: '30px' }}>
+              <Slider
+                value={currentIndex}
+                step={1}
+                min={0}
+                max={availableSizes.length - 1}
+                onChange={(_, newValue) =>
+                  setFontSize(availableSizes[newValue as number])
+                }
+                style={{ display: 'flex', justifyContent: 'center' }}
+              />
+            </div>
           </div>
         </AccordionDetails>
       </Accordion>

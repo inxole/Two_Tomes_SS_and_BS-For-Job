@@ -57,14 +57,16 @@ export function PageSlider() {
             <AutoOpenToBookmark />
             <BackIndexDisplay index={bookmark} />
           </div>
-          <Slider
-            value={bookmark}
-            aria-labelledby='page-count-slider'
-            step={1} min={1} max={51}
-            style={{ display: 'flex', justifyContent: 'center' }}
-            onChange={(_, newValue) => setBookmark(newValue as number)}
-            disabled={bookmark === 0 ? true : isSliderDisabled}
-          />
+          <div style={{ height: '30px' }}>
+            <Slider
+              value={bookmark}
+              aria-labelledby='page-count-slider'
+              step={1} min={1} max={51}
+              style={{ display: 'flex', justifyContent: 'center' }}
+              onChange={(_, newValue) => setBookmark(newValue as number)}
+              disabled={bookmark === 0 ? true : isSliderDisabled}
+            />
+          </div>
         </AccordionDetails>
       </Accordion>
     </div>
