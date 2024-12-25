@@ -17,7 +17,7 @@ const Tome_BS_CloseTarget = new Vector3(-0.392505, 0, 0)
 const Tome_SS_OpenTarget = new Vector3(0.28, 0, 0)
 const Tome_SS_CloseTarget = new Vector3(0.164019, 0, 0)
 
-const mobile_defaultClosePosition = new Vector3(0, 0, -2.5)
+const mobile_defaultClosePosition = new Vector3(0, 0, -3.5)
 const mobile_defaultOpenPosition = new Vector3(-0.115981, 0, -3.5)
 const mobil_Tome_BS_ClosePosition = new Vector3(0, 0.18, -3.5)
 const mobil_Tome_BS_OpenPosition = new Vector3(-0.115981, 0.18, -3.5)
