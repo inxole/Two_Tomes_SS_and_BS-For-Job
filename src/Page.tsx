@@ -1,5 +1,5 @@
 import { useEffect, useRef } from 'react'
-import { BookMark, SliderSwitch, EditingTextNumber, Long_Text, PagesText, Text_Switch_Automatic, Text_Switch_Freedom, TextReSize, InitCamera, Camera_BS, Camera_SS } from './atom'
+import { BookMark, SliderSwitch, EditingTextNumber, Long_Text, PagesText, Text_Switch_Automatic, Text_Switch_Freedom, TextReSize, InitCamera, Camera_BS, Camera_SS, DeviceMobile } from './atom'
 import { useRecoilState, useRecoilValue } from 'recoil'
 import { AnimationGroup, Scene, Skeleton, Mesh, PointerEventTypes } from '@babylonjs/core'
 import { initializeScene } from './Babylon_Scene'
@@ -34,6 +34,7 @@ function CanvasComponent() {
     const cam = useRecoilValue(InitCamera)
     const cam_BS = useRecoilValue(Camera_BS)
     const cam_SS = useRecoilValue(Camera_SS)
+    const usedMobile = useRecoilValue(DeviceMobile)
 
     // Initialize the scene
     useEffect(() => {
@@ -52,8 +53,8 @@ function CanvasComponent() {
         Root_SS.GetMesh(scene)
         Root_BS.AddParent(Tome_BS.mesh)
         Root_SS.AddParent(Tome_SS.mesh)
-        Tome_BS.ToDefaultPose()
-        Tome_SS.ToDefaultPose()
+        if (usedMobile) { Tome_BS.ToDefaultPose(true), Tome_SS.ToDefaultPose(true) }
+        else { Tome_BS.ToDefaultPose(false), Tome_SS.ToDefaultPose(false) }
     })
 
     // Update the text on the front page in freedom mode

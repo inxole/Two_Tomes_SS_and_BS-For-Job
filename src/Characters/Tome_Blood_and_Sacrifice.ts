@@ -4,6 +4,7 @@ import { Tomes } from "./Tomes"
 const name = 'Tome_BS'
 const defaultPosition = new Vector3(-0.28, 0, 0)
 const defaultRotation = new Vector3(-Math.PI / 2.25, 0, 0)
+const mobilePosition = new Vector3(0, 0.18, 0)
 
 const Tome_BS: Tomes = {
     name: name,
@@ -18,9 +19,9 @@ const getMesh = (scene: Scene) => {
     Tome_BS.mesh = scene.getMeshByName(name)
 }
 
-function ToDefaultPose() {
+function ToDefaultPose(usedMobile: boolean) {
     if (!Tome_BS.mesh) return
-    Tome_BS.mesh.position = defaultPosition
+    Tome_BS.mesh.position = usedMobile ? mobilePosition : defaultPosition
     Tome_BS.mesh.rotation = defaultRotation
 }
 
