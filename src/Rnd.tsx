@@ -8,7 +8,7 @@ import { Stack } from '@mui/material'
 import HomeTwoToneIcon from '@mui/icons-material/HomeTwoTone'
 import ArchiveTwoToneIcon from '@mui/icons-material/ArchiveTwoTone'
 import BookTwoToneIcon from '@mui/icons-material/BookTwoTone'
-import { InitCamera, Camera_BS, Camera_SS, BookMark, ChangeSize } from './atom'
+import { InitCamera, Camera_BS, Camera_SS, BookMark, ChangeSize, DeviceMobile } from './atom'
 import { useRecoilState, useRecoilValue } from 'recoil'
 import { A_Camera } from './Camera/Camera_Focus'
 
@@ -26,6 +26,7 @@ function RndComponent() {
   const [, setCamera_BS] = useRecoilState(Camera_BS)
   const [, setCamera_SS] = useRecoilState(Camera_SS)
   const hideOrder = useRecoilValue(ChangeSize)
+  const usedMobile = useRecoilValue(DeviceMobile)
 
   useEffect(() => {
     FocusCam()
@@ -58,15 +59,27 @@ function RndComponent() {
   }, [isMovedDown, hideOrder.size, hideOrder.management, position.y])
 
   function FocusCam() {
-    bookmark >= 1 ? A_Camera.FocusOnDefault(true) : A_Camera.FocusOnDefault(false)
+    if (usedMobile) {
+      bookmark >= 1 ? A_Camera.FocusOnDefault(true, true) : A_Camera.FocusOnDefault(false, true)
+    } else {
+      bookmark >= 1 ? A_Camera.FocusOnDefault(true, false) : A_Camera.FocusOnDefault(false, false)
+    }
     setCamera(true), setCamera_BS(false), setCamera_SS(false)
   }
   function FocusCamBS() {
-    bookmark >= 1 ? A_Camera.FocusOnBS(true) : A_Camera.FocusOnBS(false)
+    if (usedMobile) {
+      bookmark >= 1 ? A_Camera.FocusOnBS(true, true) : A_Camera.FocusOnBS(false, true)
+    } else {
+      bookmark >= 1 ? A_Camera.FocusOnBS(true, false) : A_Camera.FocusOnBS(false, false)
+    }
     setCamera(false), setCamera_BS(true), setCamera_SS(false)
   }
   function FocusCamSS() {
-    bookmark >= 1 ? A_Camera.FocusOnSS(true) : A_Camera.FocusOnSS(false)
+    if (usedMobile) {
+      bookmark >= 1 ? A_Camera.FocusOnSS(true, true) : A_Camera.FocusOnSS(false, true)
+    } else {
+      bookmark >= 1 ? A_Camera.FocusOnSS(true, false) : A_Camera.FocusOnSS(false, false)
+    }
     setCamera(false), setCamera_BS(false), setCamera_SS(true)
   }
 
