@@ -53,14 +53,14 @@ function CanvasComponent() {
         Root_SS.GetMesh(scene)
         Root_BS.AddParent(Tome_BS.mesh)
         Root_SS.AddParent(Tome_SS.mesh)
-        if (usedMobile) { Tome_BS.ToDefaultPose(true), Tome_SS.ToDefaultPose(true) }
-        else { Tome_BS.ToDefaultPose(false), Tome_SS.ToDefaultPose(false) }
+        Tome_BS.ToDefaultPose()
+        Tome_SS.ToDefaultPose()
     })
 
     useEffect(() => {
         const scene = sceneRef.current
         if (!scene) return
-        A_Camera.camera?.setPosition(usedMobile ? new Vector3(0, 0, -3.5) : new Vector3(0, 0, -1.5))
+        A_Camera.camera?.setPosition(usedMobile ? new Vector3(0, 0, -5) : new Vector3(0, 0, -1.5))
     }, [usedMobile])
 
     // Update the text on the front page in freedom mode

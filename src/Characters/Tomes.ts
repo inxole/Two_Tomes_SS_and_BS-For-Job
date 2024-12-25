@@ -4,7 +4,7 @@ export interface Tomes {
     name: string
     mesh: Nullable<AbstractMesh>
     GetMesh: (Scene: Scene) => void
-    ToDefaultPose: (usedMobile: boolean) => void
+    ToDefaultPose: () => void
     defaultPosition: Vector3
     defaultRotation: Vector3
 }
