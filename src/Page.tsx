@@ -1,7 +1,7 @@
 import { useEffect, useRef } from 'react'
 import { BookMark, SliderSwitch, EditingTextNumber, Long_Text, PagesText, Text_Switch_Automatic, Text_Switch_Freedom, TextReSize, InitCamera, Camera_BS, Camera_SS, DeviceMobile } from './atom'
 import { useRecoilState, useRecoilValue } from 'recoil'
-import { AnimationGroup, Scene, Skeleton, Mesh, PointerEventTypes } from '@babylonjs/core'
+import { AnimationGroup, Scene, Skeleton, Mesh, PointerEventTypes, Vector3 } from '@babylonjs/core'
 import { initializeScene } from './Babylon_Scene'
 import { animationReducer, closePageAnimation, openPageAnimation, pageBackAnimation, pageFrontAnimation, ToggleAnimationHandler, useDynamicReducers } from './Functions/Action'
 import { textAutoEdit } from './Text/Text_Auto'
@@ -56,6 +56,12 @@ function CanvasComponent() {
         if (usedMobile) { Tome_BS.ToDefaultPose(true), Tome_SS.ToDefaultPose(true) }
         else { Tome_BS.ToDefaultPose(false), Tome_SS.ToDefaultPose(false) }
     })
+
+    useEffect(() => {
+        const scene = sceneRef.current
+        if (!scene) return
+        A_Camera.camera?.setPosition(usedMobile ? new Vector3(0, 0, -2.5) : new Vector3(0, 0, -1.5))
+    }, [usedMobile])
 
     // Update the text on the front page in freedom mode
     useEffect(() => {
