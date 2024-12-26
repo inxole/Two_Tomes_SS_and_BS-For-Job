@@ -1,14 +1,24 @@
 export const splitTextIntoLines_Free = (updated_text: string, Limit_number: number) => {
   const lines_Free: string[] = []
-  let textField_Free = ""
-  for (let i = 0; i < updated_text.length; i++) {
-    textField_Free += updated_text[i]
-    if (textField_Free.length >= Limit_number || updated_text[i] === '\n') {
-      lines_Free.push(textField_Free)
-      textField_Free = ""
+  const segments = updated_text.split('\n')
+
+  for (const segment of segments) {
+    if (segment === "") {
+      lines_Free.push("")
+    } else {
+      let currentLine = ""
+      for (let i = 0; i < segment.length; i++) {
+        currentLine += segment[i]
+        if (currentLine.length >= Limit_number) {
+          lines_Free.push(currentLine)
+          currentLine = ""
+        }
+      }
+      if (currentLine.length > 0) {
+        lines_Free.push(currentLine)
+      }
     }
   }
-  if (textField_Free.length > 0) { lines_Free.push(textField_Free) }
   return lines_Free
 }
 
