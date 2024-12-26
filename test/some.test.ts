@@ -6,22 +6,28 @@ let textField_Free = ""
 const lines_Free: string[] = []
 const splitTextIntoLines_Free = (updated_text: string) => {
   const lines: string[] = []
-  let currentLine = ""
 
-  for (let i = 0; i < updated_text.length; i++) {
-    const char = updated_text[i]
-    currentLine += char
+  // 改行文字で分割
+  const segments = updated_text.split('\n')
 
-    if (char === '\n' || currentLine.length >= max_chars_per_line) {
-      // 改行の場合、現在の行を保存し、改行文字を削除して次の行を開始
-      lines.push(currentLine.trimEnd()) // trimEndで改行文字や末尾スペースを削除
-      currentLine = ""
+  for (const segment of segments) {
+    if (segment === "") {
+      // 空行をそのまま追加
+      lines.push("")
+    } else {
+      // max_chars_per_line の制約を適用
+      let currentLine = ""
+      for (let i = 0; i < segment.length; i++) {
+        currentLine += segment[i]
+        if (currentLine.length >= max_chars_per_line) {
+          lines.push(currentLine)
+          currentLine = ""
+        }
+      }
+      if (currentLine.length > 0) {
+        lines.push(currentLine)
+      }
     }
-  }
-
-  // 最後の行が空でない場合、linesに追加
-  if (currentLine.length > 0) {
-    lines.push(currentLine)
   }
 
   return lines
@@ -42,7 +48,7 @@ describe("Line break test when was pushed free button", () => {
       "ved an old couple in a sma",
       "ll village.",
       "One day the old wife was w",
-      "ashing her clothes in the",
+      "ashing her clothes in the ",
       "river when a huge peach ca",
       "me tumbling down the strea",
       "m.",
@@ -50,7 +56,16 @@ describe("Line break test when was pushed free button", () => {
   })
 
   test("string of characters test", () => {
-    const updated_text = "wwwwwwwwwwwwwwwwwwwwwwwwww\nww\n\n\nwwwwwwwwwwwwwwwwwwwwwwwwww"
+    const updated_text = "wwwwwwwwwwwwwwwwwwwwwwwwww\nww"
+    const result = splitTextIntoLines_Free(updated_text)
+    expect(result).toEqual([
+      "wwwwwwwwwwwwwwwwwwwwwwwwww",
+      "ww",
+    ])
+  })
+
+  test("string of characters test two", () => {
+    const updated_text = "wwwwwwwwwwwwwwwwwwwwwwwwww\n\nww\n\n\nww"
     const result = splitTextIntoLines_Free(updated_text)
     expect(result).toEqual([
       "wwwwwwwwwwwwwwwwwwwwwwwwww",
@@ -58,7 +73,7 @@ describe("Line break test when was pushed free button", () => {
       "ww",
       "",
       "",
-      "wwwwwwwwwwwwwwwwwwwwwwwwww",
+      "ww",
     ])
   })
 })
