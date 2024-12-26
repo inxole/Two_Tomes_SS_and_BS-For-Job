@@ -135,7 +135,7 @@ function RndComponent() {
           <Stack direction="row" alignItems="center" justifyContent="center" spacing={4} sx={{ pointerEvents: 'auto', paddingTop: '15px' }}>
             <ArchiveTwoToneIcon
               fontSize='large'
-              titleAccess={isMovedDown ? 'Hidden' : 'Display'}
+              titleAccess={'コントロールパネルの表示/非表示を切り替えます。'}
               sx={{
                 color: grey[300], cursor: 'pointer',
                 padding: '3px',
@@ -146,7 +146,7 @@ function RndComponent() {
               onClick={handleArchiveClick}
             />
             <BookTwoToneIcon
-              fontSize="large" titleAccess="Focus B&S"
+              fontSize="large" titleAccess="「書物型：血ト贄」にカメラを合わせます。"
               sx={{
                 color: grey[100], cursor: 'pointer',
                 padding: '3px',
@@ -156,7 +156,7 @@ function RndComponent() {
               onClick={() => FocusCamBS()}
             />
             <HomeTwoToneIcon
-              fontSize='large' titleAccess="Default angle"
+              fontSize='large' titleAccess="初期の画面に戻ります。"
               sx={{
                 color: grey[100], cursor: 'pointer',
                 padding: '3px',
@@ -166,7 +166,7 @@ function RndComponent() {
               onClick={() => FocusCam()}
             />
             <BookTwoToneIcon
-              fontSize="large" titleAccess="Focus S&S"
+              fontSize="large" titleAccess="「書物型：星ト歌」にカメラを合わせます。"
               sx={{
                 color: grey[100],
                 cursor: 'pointer',
