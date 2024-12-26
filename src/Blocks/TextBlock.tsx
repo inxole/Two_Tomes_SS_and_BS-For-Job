@@ -30,7 +30,7 @@ function TextInput() {
           style={{
             width: '99.8%', height: '100%',
             border: '1px solid #ccc', overflow: 'auto', resize: 'none', backgroundColor: 'rgba(255, 255, 255, 1)',
-            padding: '0px', borderRadius: '4px'
+            padding: '4px', borderRadius: '4px'
           }}
           placeholder='文章を入力してください...'
           value={updatedText}
@@ -43,7 +43,7 @@ function TextInput() {
           style={{
             width: '99.8%', height: '100%',
             border: '1px solid #ccc', overflow: 'auto', resize: 'none', backgroundColor: 'rgba(255, 255, 255, 1)',
-            padding: '0px', borderRadius: '4px'
+            padding: '4px', borderRadius: '4px'
           }}
           value={pages[0]}
           onFocus={() => setEditNumber(1)}
@@ -82,7 +82,7 @@ function TextInput() {
                   backgroundColor: 'rgba(255, 255, 255, 1)',
                   boxSizing: 'border-box',
                   flexShrink: 0,
-                  padding: '0px', borderRadius: '4px'
+                  padding: '4px', borderRadius: '4px'
                 }}
                 value={page}
                 placeholder={`page ${startIndex + index + 1}`}
@@ -105,7 +105,7 @@ function TextInput() {
           style={{
             width: '99.8%', height: '100%',
             border: '1px solid #ccc', overflow: 'auto', resize: 'none', backgroundColor: 'rgba(255, 255, 255, 1)',
-            padding: '0px', borderRadius: '4px'
+            padding: '4px', borderRadius: '4px'
           }}
           value={pages[99]}
           onFocus={() => setEditNumber(100)}
