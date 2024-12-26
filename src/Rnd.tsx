@@ -27,6 +27,7 @@ function RndComponent() {
   const [, setCamera_SS] = useRecoilState(Camera_SS)
   const hideOrder = useRecoilValue(ChangeSize)
   const usedMobile = useRecoilValue(DeviceMobile)
+  const [rnd2, setRnd2] = useState(0)
 
   useEffect(() => {
     FocusCam()
@@ -45,18 +46,26 @@ function RndComponent() {
   }
 
   useEffect(() => {
-    if (isMovedDown && !hideOrder.size && !hideOrder.management) {
-      setPosition({ x: position.x, y: 10 })
-    } else if (isMovedDown && hideOrder.size && !hideOrder.management) {
-      setPosition({ x: position.x, y: -57.5 })
-    } else if (isMovedDown && !hideOrder.size && hideOrder.management) {
-      setPosition({ x: position.x, y: -57.5 })
-    } else if (isMovedDown && hideOrder.size && hideOrder.management) {
-      setPosition({ x: position.x, y: -125 })
-    } else {
-      setPosition({ x: position.x, y: -680 })
+    let newRnd2 = -680
+    let newY = -680
+
+    if (isMovedDown) {
+      if (!hideOrder.size && !hideOrder.management) {
+        newRnd2 = 10
+        newY = 10
+      } else if (hideOrder.size || hideOrder.management) {
+        newRnd2 = -57.5
+        newY = 10
+      }
+      if (hideOrder.size && hideOrder.management) {
+        newRnd2 = -125
+      }
     }
-  }, [isMovedDown, hideOrder.size, hideOrder.management, position.y])
+
+    setRnd2(newRnd2)
+    setPosition({ x: position.x, y: newY })
+  }, [isMovedDown, hideOrder.size, hideOrder.management, position.x])
+
 
   function FocusCam() {
     if (usedMobile) {
@@ -86,7 +95,13 @@ function RndComponent() {
   return (
     <>
       <Rnd
-        default={{ x: position.x, y: position.y, width: Rnd_width, height: Rnd_height }}
+        default={{
+          x: position.x, y: position.y, width: Rnd_width,
+          height: hideOrder.size && hideOrder.management ? 270 :
+            hideOrder.size && !hideOrder.management ? 202.5 :
+              !hideOrder.size && hideOrder.management ? 202.5 :
+                135
+        }}
         style={{
           borderRadius: '8px', padding: '4px',
           transition: 'transform 0.35s ease'
@@ -96,12 +111,6 @@ function RndComponent() {
         position={{ x: position.x, y: position.y }}
       >
         <div style={{ height: '100%', display: 'flex', flexDirection: 'column', justifyContent: 'space-between' }}>
-          <div style={{
-            height: hideOrder.size && hideOrder.management ? '135px' :
-              hideOrder.size && !hideOrder.management ? '67.5px' :
-                !hideOrder.size && hideOrder.management ? '67.5px' :
-                  '0px',
-          }} />
           <div style={{ width: inner_width, display: 'flex', ...BorderStyle }}>
             <TextInput />
           </div>
@@ -118,7 +127,7 @@ function RndComponent() {
       </Rnd>
       <Rnd
         default={{ x: position.x, y: Rnd_height, width: Rnd_width, height: 40 }}
-        position={{ x: position.x, y: isMovedDown ? position.y + Rnd_height - 10 : Rnd_height - hidden_position }}
+        position={{ x: position.x, y: isMovedDown ? rnd2 + Rnd_height - 10 : Rnd_height - hidden_position }}
         enableResizing={false}
         disableDragging={true}
         style={{ pointerEvents: 'none', transition: 'transform 0.38s ease' }}>
