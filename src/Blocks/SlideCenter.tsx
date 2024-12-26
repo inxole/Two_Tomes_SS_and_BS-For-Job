@@ -94,7 +94,9 @@ export function AutoOpenToBookmark() {
   return (
     <div style={{ display: 'flex', justifyContent: 'center', paddingRight: '34px' }}>
       <div style={{ paddingRight: '10px', cursor: 'pointer' }}>
-        <BookmarkIcon onClick={handleButtonClick} color='warning' />
+        <BookmarkIcon onClick={handleButtonClick} color='warning'
+          titleAccess='入力されたページに移動します。'
+        />
       </div>
       <div style={{ display: 'flex', alignItems: 'center' }}>
         <button
