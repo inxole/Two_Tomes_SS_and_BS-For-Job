@@ -96,6 +96,10 @@ export function AutoOpenToBookmark() {
       <div style={{ paddingRight: '10px', cursor: 'pointer' }}>
         <BookmarkIcon onClick={handleButtonClick} color='warning'
           titleAccess='入力されたページに移動します。'
+          sx={{
+            cursor: 'pointer',
+            '&:hover': { color: 'orange' }
+          }}
         />
       </div>
       <div style={{ display: 'flex', alignItems: 'center' }}>

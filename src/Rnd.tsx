@@ -142,6 +142,7 @@ function RndComponent() {
                 background: 'rgba(0, 105, 211, 0.7)',
                 borderRadius: '8px',
                 transform: isMovedDown ? 'rotate(180deg)' : 'none',
+                '&:hover': { background: 'rgba(0, 150, 255, 1)' }
               }}
               onClick={handleArchiveClick}
             />
@@ -150,8 +151,9 @@ function RndComponent() {
               sx={{
                 color: grey[100], cursor: 'pointer',
                 padding: '3px',
-                background: 'linear-gradient(45deg,rgba(244, 174, 35, 0.7),rgb(254, 236, 173, 0.7))',
+                background: 'linear-gradient(45deg,rgba(244, 174, 35, 0.7),rgba(254, 236, 173, 0.7))',
                 borderRadius: '8px',
+                '&:hover': { background: 'linear-gradient(45deg, rgba(255, 200, 50, 1), rgba(255, 250, 200, 1))' }
               }}
               onClick={() => FocusCamBS()}
             />
@@ -162,6 +164,7 @@ function RndComponent() {
                 padding: '3px',
                 background: 'rgba(0, 105, 211, 0.7)',
                 borderRadius: '8px',
+                '&:hover': { background: 'rgba(0, 150, 255, 1)' }
               }}
               onClick={() => FocusCam()}
             />
@@ -171,8 +174,9 @@ function RndComponent() {
                 color: grey[100],
                 cursor: 'pointer',
                 padding: '3px',
-                background: 'linear-gradient(45deg, rgb(113, 113, 117, 0.7), rgb(58, 58, 60, 0.7), rgb(230, 188, 76, 0.7))',
+                background: 'linear-gradient(45deg, rgba(113, 113, 117, 0.7), rgba(58, 58, 60, 0.7), rgba(230, 188, 76, 0.7))',
                 borderRadius: '8px',
+                '&:hover': { background: 'linear-gradient(45deg, rgba(150, 150, 160, 1), rgba(80, 80, 90, 1), rgba(255, 220, 100, 1))' }
               }}
               onClick={() => FocusCamSS()}
             />
