@@ -137,10 +137,8 @@ function RndComponent() {
               fontSize='large'
               titleAccess={'コントロールパネルの表示/非表示を切り替えます。'}
               sx={{
-                color: grey[300], cursor: 'pointer',
-                padding: '3px',
+                ...IconStyle,
                 background: 'rgba(0, 105, 211, 0.7)',
-                borderRadius: '8px',
                 transform: isMovedDown ? 'rotate(180deg)' : 'none',
                 '&:hover': { background: 'rgba(0, 150, 255, 1)' }
               }}
@@ -149,10 +147,8 @@ function RndComponent() {
             <BookTwoToneIcon
               fontSize="large" titleAccess="「書物型：血ト贄」にカメラを合わせます。"
               sx={{
-                color: grey[100], cursor: 'pointer',
-                padding: '3px',
+                ...IconStyle,
                 background: 'linear-gradient(45deg,rgba(244, 174, 35, 0.7),rgba(254, 236, 173, 0.7))',
-                borderRadius: '8px',
                 '&:hover': { background: 'linear-gradient(45deg, rgba(255, 200, 50, 1), rgba(255, 250, 200, 1))' }
               }}
               onClick={() => FocusCamBS()}
@@ -160,10 +156,8 @@ function RndComponent() {
             <HomeTwoToneIcon
               fontSize='large' titleAccess="初期の画面に戻ります。"
               sx={{
-                color: grey[100], cursor: 'pointer',
-                padding: '3px',
+                ...IconStyle,
                 background: 'rgba(0, 105, 211, 0.7)',
-                borderRadius: '8px',
                 '&:hover': { background: 'rgba(0, 150, 255, 1)' }
               }}
               onClick={() => FocusCam()}
@@ -171,12 +165,11 @@ function RndComponent() {
             <BookTwoToneIcon
               fontSize="large" titleAccess="「書物型：星ト歌」にカメラを合わせます。"
               sx={{
-                color: grey[100],
-                cursor: 'pointer',
-                padding: '3px',
-                background: 'linear-gradient(45deg, rgba(113, 113, 117, 0.7), rgba(58, 58, 60, 0.7), rgba(230, 188, 76, 0.7))',
-                borderRadius: '8px',
-                '&:hover': { background: 'linear-gradient(45deg, rgba(150, 150, 160, 1), rgba(80, 80, 90, 1), rgba(255, 220, 100, 1))' }
+                ...IconStyle,
+                background: 'linear-gradient(45deg, hsla(0, 0%, 50%, 0.70), hsla(0, 5%, 10%, 0.70), hsla(45, 80%, 60%, 0.7))',
+                '&:hover': {
+                  background: 'linear-gradient(45deg, hsla(220, 15%, 65%, 1), hsla(299, 20%, 50%, 1), hsla(45, 100%, 80%, 1))',
+                }
               }}
               onClick={() => FocusCamSS()}
             />
@@ -188,4 +181,5 @@ function RndComponent() {
 }
 
 const BorderStyle = { border: '1px', borderRadius: '8px', padding: '10px 15px', backgroundColor: 'rgba(255, 255, 255, 0.5)', margin: '1.5px' }
+const IconStyle = { color: grey[100], cursor: 'pointer', padding: '3px', borderRadius: '8px' }
 export default RndComponent
