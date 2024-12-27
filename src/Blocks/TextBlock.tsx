@@ -13,11 +13,11 @@ function TextInput() {
 
   return (
     <div style={{ display: 'flex', flexDirection: 'column', width: inner_width, height: '335px' }}>
-      <span style={{ display: 'flex', justifyContent: 'center', width: inner_width, paddingBottom: '8px' }}>
+      <span style={{ display: 'flex', justifyContent: 'center', width: inner_width, height: '21px', paddingBottom: '9px' }}>
         文章の変更
       </span>
       {renderTextAreas()}
-      <span style={{ display: 'flex', justifyContent: 'center', padding: '10px 0px' }}>文章の一括変更</span>
+      <span style={{ display: 'flex', justifyContent: 'center', height: '21px', padding: '10px 0px 9px 0px' }}>文章の一括変更</span>
       <span style={{ display: 'flex', justifyContent: 'center' }}>
         <Tooltip title="入力された文章をそのままページに描画します（単語が見切れる可能性があります）。">
           <Button size='small' variant='contained' onClick={UpdateFree} style={{ marginRight: '15px', width: '152.5px', height: '35px', boxShadow: 'none' }}>そのまま</Button>

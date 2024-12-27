@@ -57,7 +57,7 @@ function FontSizeSlider() {
             display: 'flex', justifyContent: 'center', flexDirection: 'row-reverse',
             height: '20px', minHeight: '20px', padding: '0px'
           }}>
-          <span style={{ flexGrow: 1, textAlign: 'center', fontSize: '1.0rem', padding: '10px 41px 10px 0px' }}>フォントサイズ</span>
+          <span style={{ flexGrow: 1, textAlign: 'center', fontSize: '1.0rem', padding: '10px 41px 10px 0px', height: '21px' }}>フォントサイズ</span>
         </AccordionSummary>
         <AccordionDetails style={{ padding: '0px' }}>
           <div>

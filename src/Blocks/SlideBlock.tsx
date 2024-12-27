@@ -49,7 +49,7 @@ export function PageSlider() {
             display: 'flex', justifyContent: 'center', flexDirection: 'row-reverse',
             height: '20px', minHeight: '20px', padding: '0px'
           }}>
-          <span style={{ flexGrow: 1, textAlign: 'center', fontSize: '1.0rem', padding: '10px 41px 10px 0px' }}>ページ管理</span>
+          <span style={{ flexGrow: 1, textAlign: 'center', fontSize: '1.0rem', padding: '10px 41px 10px 0px', height: '21px' }}>ページ管理</span>
         </AccordionSummary>
         <AccordionDetails style={{ padding: '0px' }}>
           <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', paddingTop: '10px' }}>
@@ -99,7 +99,7 @@ export function CoverState() {
 
   return (
     <div style={{ width: inner_width, justifyContent: 'center' }}>
-      <span style={{ display: 'flex', justifyContent: 'center', paddingBottom: '10px' }}>表紙</span>
+      <span style={{ display: 'flex', justifyContent: 'center', paddingBottom: '10px', height: '21px' }}>表紙</span>
       <span style={{ display: 'flex', justifyContent: 'center' }}>
         <ButtonGroup
           disableElevation
