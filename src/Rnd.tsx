@@ -3,18 +3,19 @@ import { Rnd } from 'react-rnd'
 import TextInput from './Blocks/TextBlock'
 import FontSizeSlider from './Blocks/FontSizeBlock'
 import { CoverState, PageSlider } from './Blocks/SlideBlock'
-import { amber, grey } from '@mui/material/colors'
+import { grey } from '@mui/material/colors'
 import { Stack } from '@mui/material'
 import HomeTwoToneIcon from '@mui/icons-material/HomeTwoTone'
 import ArchiveTwoToneIcon from '@mui/icons-material/ArchiveTwoTone'
 import BookTwoToneIcon from '@mui/icons-material/BookTwoTone'
-import { InitCamera, Camera_BS, Camera_SS, BookMark, ChangeSize } from './atom'
+import { InitCamera, Camera_BS, Camera_SS, BookMark, ChangeSize, DeviceMobile } from './atom'
 import { useRecoilState, useRecoilValue } from 'recoil'
 import { A_Camera } from './Camera/Camera_Focus'
 
 const Rnd_width = 360
 const Rnd_height = 680
-const hidden_position = Rnd_height + 10
+const hidden_position = Rnd_height - 8
+export const inner_width = '320px'
 
 function RndComponent() {
   const [isMovedDown, setIsMovedUp] = useState(false)
@@ -25,6 +26,8 @@ function RndComponent() {
   const [, setCamera_BS] = useRecoilState(Camera_BS)
   const [, setCamera_SS] = useRecoilState(Camera_SS)
   const hideOrder = useRecoilValue(ChangeSize)
+  const usedMobile = useRecoilValue(DeviceMobile)
+  const [rnd2, setRnd2] = useState(0)
 
   useEffect(() => {
     FocusCam()
@@ -43,36 +46,62 @@ function RndComponent() {
   }
 
   useEffect(() => {
-    if (isMovedDown && !hideOrder.size && !hideOrder.management) {
-      setPosition({ x: position.x, y: 10 })
-    } else if (isMovedDown && hideOrder.size && !hideOrder.management) {
-      setPosition({ x: position.x, y: -46.5 })
-    } else if (isMovedDown && !hideOrder.size && hideOrder.management) {
-      setPosition({ x: position.x, y: -59 })
-    } else if (isMovedDown && hideOrder.size && hideOrder.management) {
-      setPosition({ x: position.x, y: -115.5 })
-    } else {
-      setPosition({ x: position.x, y: -680 })
+    let newRnd2 = -680
+    let newY = -680
+
+    if (isMovedDown) {
+      if (!hideOrder.size && !hideOrder.management) {
+        newRnd2 = 10
+        newY = 10
+      } else if (hideOrder.size || hideOrder.management) {
+        newRnd2 = -57.5
+        newY = 10
+      }
+      if (hideOrder.size && hideOrder.management) {
+        newRnd2 = -125
+      }
     }
-  }, [isMovedDown, hideOrder.size, hideOrder.management, position.y])
+
+    setRnd2(newRnd2)
+    setPosition({ x: position.x, y: newY })
+  }, [isMovedDown, hideOrder.size, hideOrder.management, position.x])
+
 
   function FocusCam() {
-    bookmark >= 1 ? A_Camera.FocusOnDefault(true) : A_Camera.FocusOnDefault(false)
+    if (usedMobile) {
+      bookmark >= 1 ? A_Camera.FocusOnDefault(true, true) : A_Camera.FocusOnDefault(false, true)
+    } else {
+      bookmark >= 1 ? A_Camera.FocusOnDefault(true, false) : A_Camera.FocusOnDefault(false, false)
+    }
     setCamera(true), setCamera_BS(false), setCamera_SS(false)
   }
   function FocusCamBS() {
-    bookmark >= 1 ? A_Camera.FocusOnBS(true) : A_Camera.FocusOnBS(false)
+    if (usedMobile) {
+      bookmark >= 1 ? A_Camera.FocusOnBS(true, true) : A_Camera.FocusOnBS(false, true)
+    } else {
+      bookmark >= 1 ? A_Camera.FocusOnBS(true, false) : A_Camera.FocusOnBS(false, false)
+    }
     setCamera(false), setCamera_BS(true), setCamera_SS(false)
   }
   function FocusCamSS() {
-    bookmark >= 1 ? A_Camera.FocusOnSS(true) : A_Camera.FocusOnSS(false)
+    if (usedMobile) {
+      bookmark >= 1 ? A_Camera.FocusOnSS(true, true) : A_Camera.FocusOnSS(false, true)
+    } else {
+      bookmark >= 1 ? A_Camera.FocusOnSS(true, false) : A_Camera.FocusOnSS(false, false)
+    }
     setCamera(false), setCamera_BS(false), setCamera_SS(true)
   }
 
   return (
     <>
       <Rnd
-        default={{ x: position.x, y: position.y, width: Rnd_width, height: Rnd_height }}
+        default={{
+          x: position.x, y: position.y, width: Rnd_width,
+          height: hideOrder.size && hideOrder.management ? 270 :
+            hideOrder.size && !hideOrder.management ? 202.5 :
+              !hideOrder.size && hideOrder.management ? 202.5 :
+                135
+        }}
         style={{
           borderRadius: '8px', padding: '4px',
           transition: 'transform 0.35s ease'
@@ -82,56 +111,66 @@ function RndComponent() {
         position={{ x: position.x, y: position.y }}
       >
         <div style={{ height: '100%', display: 'flex', flexDirection: 'column', justifyContent: 'space-between' }}>
-          <div style={{
-            height: hideOrder.size && hideOrder.management ? '125.5px' :
-              hideOrder.size && !hideOrder.management ? '56.5px' :
-                !hideOrder.size && hideOrder.management ? '69px' :
-                  '0px',
-          }} />
-          <div style={{ width: '330px', height: '370px', display: 'flex', ...BorderStyle }}>
+          <div style={{ width: inner_width, display: 'flex', ...BorderStyle }}>
             <TextInput />
           </div>
-          <div style={{ width: '330px', display: 'flex', ...BorderStyle }}>
+          <div style={{ width: inner_width, display: 'flex', ...BorderStyle }}>
             <FontSizeSlider />
           </div>
-          <div style={{ width: '330px', display: 'flex', ...BorderStyle }}>
+          <div style={{ width: inner_width, display: 'flex', ...BorderStyle }}>
             <PageSlider />
           </div>
-          <div style={{ width: '330px', display: 'flex', ...BorderStyle }}>
+          <div style={{ width: inner_width, display: 'flex', ...BorderStyle }}>
             <CoverState />
           </div>
         </div>
       </Rnd>
       <Rnd
         default={{ x: position.x, y: Rnd_height, width: Rnd_width, height: 40 }}
-        position={{ x: position.x, y: isMovedDown ? position.y + Rnd_height - 10 : Rnd_height - hidden_position }}
+        position={{ x: position.x, y: isMovedDown ? rnd2 + Rnd_height - 10 : Rnd_height - hidden_position }}
         enableResizing={false}
         disableDragging={true}
         style={{ pointerEvents: 'none', transition: 'transform 0.38s ease' }}>
         <div style={{ width: '350px', margin: '0 auto', display: 'flex', justifyContent: 'center' }}>
-          <Stack direction="row" alignItems="center" justifyContent="center" spacing={2} sx={{ pointerEvents: 'auto' }}>
+          <Stack direction="row" alignItems="center" justifyContent="center" spacing={4} sx={{ pointerEvents: 'auto', paddingTop: '15px' }}>
             <ArchiveTwoToneIcon
               fontSize='large'
-              titleAccess={isMovedDown ? 'Hidden' : 'Display'}
-              style={{
-                color: grey[100],
-                cursor: 'pointer',
-                paddingTop: isMovedDown ? '0px' : '10px',
-                paddingBottom: !isMovedDown ? '0px' : '10px',
+              titleAccess={'コントロールパネルの表示/非表示を切り替えます。'}
+              sx={{
+                ...IconStyle,
+                background: 'rgba(0, 105, 211, 0.7)',
                 transform: isMovedDown ? 'rotate(180deg)' : 'none',
+                '&:hover': { background: 'rgba(0, 150, 255, 1)' }
               }}
               onClick={handleArchiveClick}
             />
             <BookTwoToneIcon
-              fontSize="large" titleAccess="Focus B&S" style={{ paddingTop: '10px', color: amber[100], cursor: 'pointer' }}
+              fontSize="large" titleAccess="「書物型：血ト贄」にカメラを合わせます。"
+              sx={{
+                ...IconStyle,
+                background: 'linear-gradient(45deg,rgba(244, 174, 35, 0.7),rgba(254, 236, 173, 0.7))',
+                '&:hover': { background: 'linear-gradient(45deg, rgba(255, 200, 50, 1), rgba(255, 250, 200, 1))' }
+              }}
               onClick={() => FocusCamBS()}
             />
             <HomeTwoToneIcon
-              fontSize='large' titleAccess="Default angle" style={{ paddingTop: '10px', color: grey[100], cursor: 'pointer' }}
+              fontSize='large' titleAccess="初期の画面に戻ります。"
+              sx={{
+                ...IconStyle,
+                background: 'rgba(0, 105, 211, 0.7)',
+                '&:hover': { background: 'rgba(0, 150, 255, 1)' }
+              }}
               onClick={() => FocusCam()}
             />
             <BookTwoToneIcon
-              fontSize="large" titleAccess="Focus S&S" style={{ paddingTop: '10px', color: grey[800], cursor: 'pointer' }}
+              fontSize="large" titleAccess="「書物型：星ト歌」にカメラを合わせます。"
+              sx={{
+                ...IconStyle,
+                background: 'linear-gradient(45deg, hsla(0, 0%, 50%, 0.70), hsla(0, 5%, 10%, 0.70), hsla(45, 80%, 60%, 0.7))',
+                '&:hover': {
+                  background: 'linear-gradient(45deg, hsla(220, 15%, 65%, 1), hsla(299, 20%, 50%, 1), hsla(45, 100%, 80%, 1))',
+                }
+              }}
               onClick={() => FocusCamSS()}
             />
           </Stack>
@@ -141,5 +180,6 @@ function RndComponent() {
   )
 }
 
-const BorderStyle = { border: '1px solid black', borderRadius: '8px', padding: '10px', backgroundColor: 'rgba(255, 255, 255, 0.5)' }
+const BorderStyle = { border: '1px', borderRadius: '8px', padding: '10px 15px', backgroundColor: 'rgba(255, 255, 255, 0.5)', margin: '1.5px' }
+const IconStyle = { color: grey[100], cursor: 'pointer', padding: '3px', borderRadius: '8px' }
 export default RndComponent

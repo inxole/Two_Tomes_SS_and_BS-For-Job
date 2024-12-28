@@ -1,7 +1,7 @@
 import { useEffect, useRef } from 'react'
-import { BookMark, SliderSwitch, EditingTextNumber, Long_Text, PagesText, Text_Switch_Automatic, Text_Switch_Freedom, TextReSize, InitCamera, Camera_BS, Camera_SS } from './atom'
+import { BookMark, SliderSwitch, EditingTextNumber, Long_Text, PagesText, Text_Switch_Automatic, Text_Switch_Freedom, TextReSize, InitCamera, Camera_BS, Camera_SS, DeviceMobile } from './atom'
 import { useRecoilState, useRecoilValue } from 'recoil'
-import { AnimationGroup, Scene, Skeleton, Mesh, PointerEventTypes } from '@babylonjs/core'
+import { AnimationGroup, Scene, Skeleton, Mesh, PointerEventTypes, Vector3 } from '@babylonjs/core'
 import { initializeScene } from './Babylon_Scene'
 import { animationReducer, closePageAnimation, openPageAnimation, pageBackAnimation, pageFrontAnimation, ToggleAnimationHandler, useDynamicReducers } from './Functions/Action'
 import { textAutoEdit } from './Text/Text_Auto'
@@ -34,6 +34,7 @@ function CanvasComponent() {
     const cam = useRecoilValue(InitCamera)
     const cam_BS = useRecoilValue(Camera_BS)
     const cam_SS = useRecoilValue(Camera_SS)
+    const usedMobile = useRecoilValue(DeviceMobile)
 
     // Initialize the scene
     useEffect(() => {
@@ -55,6 +56,12 @@ function CanvasComponent() {
         Tome_BS.ToDefaultPose()
         Tome_SS.ToDefaultPose()
     })
+
+    useEffect(() => {
+        const scene = sceneRef.current
+        if (!scene) return
+        A_Camera.camera?.setPosition(usedMobile ? new Vector3(0, 0, -5) : new Vector3(0, 0, -1.5))
+    }, [usedMobile])
 
     // Update the text on the front page in freedom mode
     useEffect(() => {

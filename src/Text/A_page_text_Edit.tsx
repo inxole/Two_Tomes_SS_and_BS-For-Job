@@ -2,6 +2,7 @@ import { DynamicTexture, Scene } from "@babylonjs/core"
 import { getTextLayoutDetails } from "./Text_Layout"
 import { fontFace } from "../Functions/Page_Mesh"
 import { splitTextIntoLines_Free } from "./Split_Text"
+import { nieRTextLayoutDetails } from "./Nier_Layout"
 
 export const oneTextDefaultEdit = async (scene: Scene, updated_text: string, text_size: number, target: number) => {
     const defaultFont = "bold " + text_size + "px monospace"
@@ -40,9 +41,9 @@ export const oneTextDefaultEdit = async (scene: Scene, updated_text: string, tex
 }
 
 export const oneTextNieREdit = async (scene: Scene, updated_text: string, text_size: number, target: number) => {
-    const nieRFont = "bold " + text_size + "px 'NieR-Regular'"
-    let { labelHeight, max_chars_per_line, max_lines_per_page, between_line, column } = getTextLayoutDetails(text_size)
-    const lines = splitTextIntoLines_Free(updated_text, max_chars_per_line)
+    let { changedSize, nieR_labelHeight, nieR_max_chars_per_line, nieR_max_lines_per_page, nieR_between_line, nieR_column } = nieRTextLayoutDetails(text_size)
+    const nieRFont = "bold " + changedSize + "px 'NieR-Regular'"
+    const lines = splitTextIntoLines_Free(updated_text, nieR_max_chars_per_line)
 
     await fontFace.load().then(() => {
         document.fonts.add(fontFace)
@@ -55,11 +56,11 @@ export const oneTextNieREdit = async (scene: Scene, updated_text: string, text_s
         front_textures_book2.clear()
         front_textures_book2.drawText("", 0, 0, nieRFont, "black", "white", true, true)
 
-        let line = labelHeight
-        for (let i = 0; i < max_lines_per_page && lineIndex < lines.length; i++) {
+        let line = nieR_labelHeight
+        for (let i = 0; i < nieR_max_lines_per_page && lineIndex < lines.length; i++) {
             const text = lines[lineIndex]
-            front_textures_book2.drawText(text, column, line, nieRFont, "black", null, true, true)
-            line += labelHeight - between_line
+            front_textures_book2.drawText(text, nieR_column, line, nieRFont, "black", null, true, true)
+            line += nieR_labelHeight - nieR_between_line
             lineIndex++
         }
     } else if (target % 2 == 0) {
@@ -68,12 +69,12 @@ export const oneTextNieREdit = async (scene: Scene, updated_text: string, text_s
         back_textures_book2.clear()
         back_textures_book2.drawText("", 0, 0, nieRFont, "black", "white", true, true)
 
-        let line = labelHeight
-        for (let i = 0; i < max_lines_per_page && lineIndex < lines.length; i++) {
+        let line = nieR_labelHeight
+        for (let i = 0; i < nieR_max_lines_per_page && lineIndex < lines.length; i++) {
             const text = lines[lineIndex]
-            back_textures_book2.drawText(text, column / 2, line, nieRFont, "black", null, true, true)
+            back_textures_book2.drawText(text, nieR_column / 2, line, nieRFont, "black", null, true, true)
             back_textures_book2.vAng = Math.PI
-            line += labelHeight - between_line
+            line += nieR_labelHeight - nieR_between_line
             lineIndex++
         }
     }
