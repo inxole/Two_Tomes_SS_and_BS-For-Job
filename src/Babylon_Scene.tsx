@@ -1,4 +1,5 @@
 import { AnimationGroup, Color4, Engine, Mesh, MeshBuilder, Scene, Skeleton, Space, Vector3 } from "@babylonjs/core"
+// import { Inspector } from "@babylonjs/inspector"
 import { LightUp, CameraWork } from "./Functions/Canvas"
 import { createPage } from "./Functions/Page_Mesh"
 import { createSkeleton } from "./Functions/Skeleton"
@@ -19,7 +20,7 @@ export function initializeScene(
     const engine = new Engine(canvas, true)
     const scene = new Scene(engine)
     sceneRef.current = scene
-    scene.clearColor = new Color4(0.8, 0.8, 0.8, 1)
+    scene.clearColor = new Color4(0.9, 0.9, 0.9, 1)
     LightUp(scene)
     CameraWork(scene, canvas)
     load_Tome_BS(scene)
@@ -92,6 +93,11 @@ export function initializeScene(
     back_pages.slice(50, 100).forEach(mesh => {
         mesh.position = mesh.position.subtract(control_mesh_SS.position).add(targetPosition_SS)
     })
+
+    // scene.debugLayer.show({
+    //     embedMode: true
+    // })
+    // Inspector.Show(scene, {})
 
     engine.runRenderLoop(() => scene.render())
     const resize = () => engine.resize()

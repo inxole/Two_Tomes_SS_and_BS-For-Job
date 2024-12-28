@@ -124,8 +124,10 @@ export function createPageTexture(scene: Scene, text: string, isFront: boolean) 
 export function createPageMaterial(scene: Scene, texture: DynamicTexture) {
     const material = new StandardMaterial("pageMat", scene)
     material.diffuseTexture = texture
-    material.diffuseColor = new Color3(1, 1, 1)
+    material.diffuseColor = new Color3(0.8, 0.8, 0.8)
     material.backFaceCulling = false
+    material.specularColor = new Color3(0.1, 0.1, 0.1)
+    material.specularPower = 64
     return material
 }
 
