@@ -60,7 +60,7 @@ function CanvasComponent() {
     useEffect(() => {
         const scene = sceneRef.current
         if (!scene) return
-        A_Camera.camera?.setPosition(usedMobile ? new Vector3(0, 0, -5) : new Vector3(0, 0, -1.5))
+        A_Camera.camera?.setPosition(usedMobile ? new Vector3(0, 0, -6) : new Vector3(0, 0, -1.5))
     }, [usedMobile])
 
     // Update the text on the front page in freedom mode

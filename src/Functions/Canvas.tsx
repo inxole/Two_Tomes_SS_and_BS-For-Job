@@ -36,7 +36,7 @@ export function createCamera(scene: Scene, canvas: HTMLCanvasElement) {
     camera.attachControl(canvas, true)
     camera.wheelPrecision = 200
     camera.lowerRadiusLimit = 1.2
-    camera.upperRadiusLimit = 5
+    camera.upperRadiusLimit = 8
     camera.fov = 0.3
     return camera
 }
