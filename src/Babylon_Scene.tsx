@@ -20,7 +20,7 @@ export function initializeScene(
     const engine = new Engine(canvas, true)
     const scene = new Scene(engine)
     sceneRef.current = scene
-    scene.clearColor = new Color4(0.9, 0.9, 0.9, 1)
+    scene.clearColor = new Color4(0.85, 0.85, 0.85, 1)
     LightUp(scene)
     CameraWork(scene, canvas)
     load_Tome_BS(scene)
