@@ -3,12 +3,13 @@ import { Camera_Angle } from "./Camera_Info"
 import { TargetAnimations } from "./Camera_Target"
 
 const name = 'camera1'
-const defaultClosePosition = new Vector3(0, 0, -1.5)
-const defaultOpenPosition = new Vector3(-0.115981, 0, -1.5)
-const Tome_BS_ClosePosition = new Vector3(-0.28, 0, -1.5)
-const Tome_BS_OpenPosition = new Vector3(-0.392505, 0, -1.5)
-const Tome_SS_ClosePosition = new Vector3(0.28, 0, -1.5)
-const Tome_SS_OpenPosition = new Vector3(0.164019, 0, -1.5)
+const camera_Z = -1.8
+const defaultClosePosition = new Vector3(0, 0, camera_Z)
+const defaultOpenPosition = new Vector3(-0.115981, 0, camera_Z)
+const Tome_BS_ClosePosition = new Vector3(-0.28, 0, camera_Z)
+const Tome_BS_OpenPosition = new Vector3(-0.392505, 0, camera_Z)
+const Tome_SS_ClosePosition = new Vector3(0.28, 0, camera_Z)
+const Tome_SS_OpenPosition = new Vector3(0.164019, 0, camera_Z)
 
 const defaultOpenTarget = new Vector3(-0.115981, 0, 0)
 const defaultCloseTarget = Vector3.Zero()

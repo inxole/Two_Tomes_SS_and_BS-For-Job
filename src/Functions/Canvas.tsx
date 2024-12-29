@@ -35,9 +35,10 @@ export function createCamera(scene: Scene, canvas: HTMLCanvasElement) {
     const camera = new ArcRotateCamera('camera1', Math.PI / 2, Math.PI / 4, 2, new Vector3(0, 0, 0), scene)
     camera.attachControl(canvas, true)
     camera.wheelPrecision = 200
-    camera.lowerRadiusLimit = 1.2
+    camera.lowerRadiusLimit = 1.8
     camera.upperRadiusLimit = 8
     camera.fov = 0.3
+    camera.maxZ = 8
     return camera
 }
 
