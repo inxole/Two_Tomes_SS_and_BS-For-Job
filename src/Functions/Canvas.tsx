@@ -6,24 +6,20 @@ import { ArcRotateCamera, DefaultRenderingPipeline, DirectionalLight, Hemispheri
  */
 export function LightUp(scene: Scene) {
     const light = new HemisphericLight('light1', new Vector3(1, 1, 0), scene)
-    light.intensity = 1.0
+    light.intensity = 0.9
 
-    // キーライト (主光源)
-    const keyLight = new DirectionalLight('KeyLight', new Vector3(-1, -1, -1), scene)
-    keyLight.intensity = 0.8
-    keyLight.position = new Vector3(5, 5, 5)
+    const keyLight = new DirectionalLight('KeyLight', Vector3.Zero(), scene)
+    keyLight.intensity = 0.7
+    keyLight.position = new Vector3(-3, 5, -5)
 
-    // フィルライト (補助光源)
-    const fillLight = new SpotLight('FillLight', new Vector3(1, 1, 0), new Vector3(0, 0, 0), Math.PI / 3, 2, scene)
-    fillLight.intensity = 0.35
-    fillLight.position = new Vector3(-5, 5, 5)
+    const fillLight = new SpotLight('FillLight', Vector3.Zero(), Vector3.Zero(), Math.PI / 3, 2, scene)
+    fillLight.intensity = 0.25
+    fillLight.position = new Vector3(3, 1, -3)
 
-    // バックライト (後方光源)
-    const backLight = new DirectionalLight('BackLight', new Vector3(0, -1, 1), scene)
-    backLight.intensity = 0.5
-    backLight.position = new Vector3(0, 5, -5)
+    const backLight = new DirectionalLight('BackLight', Vector3.Zero(), scene)
+    backLight.intensity = 0.4
+    backLight.position = new Vector3(0, 0, 5)
 
-    // 各ライトが (0, 0, 0) を向くように設定
     keyLight.direction = Vector3.Zero().subtract(keyLight.position).normalize()
     fillLight.direction = Vector3.Zero().subtract(fillLight.position).normalize()
     backLight.direction = Vector3.Zero().subtract(backLight.position).normalize()
