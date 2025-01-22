@@ -4,11 +4,14 @@ import Button from '@mui/material/Button'
 import Typography from '@mui/material/Typography'
 import ReportTwoToneIcon from '@mui/icons-material/ReportTwoTone'
 import { IconStyle } from "../Rnd"
+import { useRecoilValue } from "recoil"
+import { DeviceMobile } from "../atom"
 
 const Attention_Button = () => {
     const [open, setOpen] = useState(false)
     const handleClickOpen = () => { setOpen(true) }
     const handleClose = () => { setOpen(false) }
+    const usedMobile = useRecoilValue(DeviceMobile)
 
     return (
         <span style={{ display: 'flex', justifyContent: 'center' }} >
@@ -28,16 +31,14 @@ const Attention_Button = () => {
                 aria-describedby="alert-dialog-description"
                 PaperProps={{
                     style: {
-                        display: 'flex',
-                        justifyContent: 'center',
-                        alignItems: 'center',
+                        display: 'flex', justifyContent: 'center', alignItems: 'center',
                         margin: 0,
-                        maxHeight: '100%',
                         position: 'fixed',
                         top: '50%',
                         left: '50%',
                         transform: 'translate(-50%, -50%)',
                         height: '550px',
+                        width: usedMobile ? '400px' : '500px',
                         overflow: 'hidden'
                     },
                 }}
@@ -83,7 +84,6 @@ const Attention_Button = () => {
                             https://blog.jp.square-enix.com/nier/2021/02/02/nier_1.html
                         </a>
                     </Typography>
-
                     <Typography gutterBottom sx={{ textAlign: 'start', fontSize: 'small' }} >
                         3. © 2021 SQUARE ENIX CO., LTD. All Rights Reserved.
                     </Typography>
