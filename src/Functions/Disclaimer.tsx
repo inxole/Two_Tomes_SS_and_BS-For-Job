@@ -16,7 +16,7 @@ const Attention_Button = () => {
     return (
         <span style={{ display: 'flex', justifyContent: 'center' }} >
             <ReportTwoToneIcon
-                fontSize='large' titleAccess="初期の画面に戻ります。"
+                fontSize='large' titleAccess="利用規約を開きます。"
                 sx={{
                     ...IconStyle,
                     background: 'rgba(255, 101, 101, 0.7)',
