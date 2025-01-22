@@ -11,6 +11,7 @@ import BookTwoToneIcon from '@mui/icons-material/BookTwoTone'
 import { InitCamera, Camera_BS, Camera_SS, BookMark, ChangeSize, DeviceMobile } from './atom'
 import { useRecoilState, useRecoilValue } from 'recoil'
 import { A_Camera } from './Camera/Camera_Focus'
+import Attention_Button from './Functions/Disclaimer'
 
 const Rnd_width = 360
 const Rnd_height = 680
@@ -173,6 +174,7 @@ function RndComponent() {
               }}
               onClick={() => FocusCamSS()}
             />
+            <Attention_Button />
           </Stack>
         </div>
       </Rnd>
@@ -181,5 +183,5 @@ function RndComponent() {
 }
 
 const BorderStyle = { border: '1px', borderRadius: '8px', padding: '10px 15px', backgroundColor: 'rgba(255, 255, 255, 0.5)', margin: '1.5px' }
-const IconStyle = { color: grey[100], cursor: 'pointer', padding: '3px', borderRadius: '8px' }
+export const IconStyle = { color: grey[100], cursor: 'pointer', padding: '3px', borderRadius: '8px' }
 export default RndComponent
