@@ -1,30 +1,30 @@
-# React + TypeScript + Vite
+# Two Tomes(書物型)
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+## アプリゲーム「nieR Re[in]canation」に出てくるオトモを作成しました。
+ - 2024年4月30日にサービスを終了しています。
+ - 「書物型：血と贄」と「書物型：星と歌」の3Dビューワーを作成しました。
+ - 二冊の本は共通の動きをします。どちらに触れても動作します。
+ - テキストエリアに英語で入力してください。
+ - 入力すると「血と贄(白色)」に英語が表示され、「星と歌(黒色)」にゲームで使われている天使文字が表示されます。
+ - 営利目的で作成していません。
 
-Currently, two official plugins are available:
+### このプロジェクトは次の目的で作っています。
+1. 技術的アピールを行うため。
+2. ファンとして応援したいため。二次創作として作成しています。
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react/README.md) uses [Babel](https://babeljs.io/) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
-
-## Expanding the ESLint configuration
-
-If you are developing a production application, we recommend updating the configuration to enable type aware lint rules:
-
-- Configure the top-level `parserOptions` property like this:
-
-```js
-export default {
-  // other rules...
-  parserOptions: {
-    ecmaVersion: 'latest',
-    sourceType: 'module',
-    project: ['./tsconfig.json', './tsconfig.node.json'],
-    tsconfigRootDir: __dirname,
-  },
-}
+## Usage
+始める前にDocker Desktopをインストールしてください。
+1. コンテナの起動
+```bash
+$ docker compose up -d --build
+$ docker compose exec twotomes /bin/bash
 ```
-
-- Replace `plugin:@typescript-eslint/recommended` to `plugin:@typescript-eslint/recommended-type-checked` or `plugin:@typescript-eslint/strict-type-checked`
-- Optionally add `plugin:@typescript-eslint/stylistic-type-checked`
-- Install [eslint-plugin-react](https://github.com/jsx-eslint/eslint-plugin-react) and add `plugin:react/recommended` & `plugin:react/jsx-runtime` to the `extends` list
+2. pnpmのインストール
+```bash
+$ cd app
+$ pnpm install
+```
+3. ローカルで確認
+```bash
+$ pnpm dev --host
+```
